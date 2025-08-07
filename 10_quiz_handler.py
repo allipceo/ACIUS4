@@ -118,10 +118,10 @@ class QuizHandler:
             "question_data": {
                 "index": index + 1,
                 "total": len(self.questions),
-                "qcode": question.get("qcode", ""),
-                "question": question.get("question", ""),  # 절대 노터치
-                "layer1": question.get("layer1", ""),
-                "layer2": question.get("layer2", ""),
+                "qcode": question.get("QCODE", ""),
+                "question": question.get("QUESTION", ""),  # 절대 노터치
+                "layer1": question.get("LAYER1", ""),
+                "layer2": question.get("LAYER2", ""),
                 "answer_type": self._get_answer_type(question),
                 "choices": self._get_answer_choices(question)
             }
@@ -139,11 +139,11 @@ class QuizHandler:
         Returns:
             str: "true_false" 또는 "multiple_choice"
         """
-        answer = str(question.get("answer", "")).strip()
+        answer = str(question.get("ANSWER", "")).strip()
         
         # 진위형 문제와 선택형 문제를 구분하는 로직을 추가합니다.
-        # 선택형 문제의 경우, 'input' 필드에 '선택형'이라는 문자열이 포함되어 있을 수 있습니다.
-        input_type = str(question.get("input", "")).strip()
+        # 선택형 문제의 경우, 'INPUT' 필드에 '선택형'이라는 문자열이 포함되어 있을 수 있습니다.
+        input_type = str(question.get("INPUT", "")).strip()
 
         if input_type == '선택형' or answer in ["1", "2", "3", "4", "①", "②", "③", "④"]:
             return "multiple_choice"
@@ -190,7 +190,7 @@ class QuizHandler:
         self.is_answered = True
         
         # 정답 확인
-        correct_answer = str(self.current_question.get("answer", "")).strip()
+        correct_answer = str(self.current_question.get("ANSWER", "")).strip()
         is_correct = self._check_answer(self.user_answer, correct_answer)
         
         # 통계 업데이트
@@ -212,7 +212,7 @@ class QuizHandler:
     
     def _check_answer(self, user_answer: str, correct_answer: str) -> bool:
         """
-        답안 정확성 확인 (수정된 버전)
+        답안 정확성 확인
         
         Args:
             user_answer: 사용자 답안
@@ -221,27 +221,12 @@ class QuizHandler:
         Returns:
             bool: 정답 여부
         """
-        # 디버그 로그 추가
-        print(f"🔍 채점 디버그:")
-        print(f"  사용자 답안: '{user_answer}' (타입: {type(user_answer)})")
-        print(f"  정답: '{correct_answer}' (타입: {type(correct_answer)})")
-        
-        # None 체크
-        if user_answer is None or correct_answer is None:
-            print(f"  ❌ None 값 발견 - False 반환")
-            return False
-        
         # 정규화
-        user_normalized = str(user_answer).upper().strip()
-        correct_normalized = str(correct_answer).upper().strip()
-        
-        print(f"  정규화 후:")
-        print(f"    사용자: '{user_normalized}'")
-        print(f"    정답: '{correct_normalized}'")
+        user_normalized = user_answer.upper().strip()
+        correct_normalized = correct_answer.upper().strip()
         
         # 직접 비교
         if user_normalized == correct_normalized:
-            print(f"  ✅ 직접 비교 성공 - True 반환")
             return True
         
         # 진위형 변환 비교
@@ -251,10 +236,7 @@ class QuizHandler:
         user_is_true = user_normalized in true_values
         correct_is_true = correct_normalized in true_values
         
-        result = user_is_true == correct_is_true
-        print(f"  진위형 비교 결과: {result}")
-        
-        return result
+        return user_is_true == correct_is_true
     
     def _get_explanation(self) -> str:
         """
