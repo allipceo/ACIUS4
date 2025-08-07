@@ -20,10 +20,10 @@ class CSVToJSONConverter:
         self.json_output_path = json_output_path
         self.questions = []
         self.categories = {
-            "06재산보험": [],
-            "07특종보험": [],
-            "08배상책임보험": [],
-            "09해상보험": []
+            "재산보험": [],
+            "특종보험": [],
+            "배상책임보험": [],
+            "해상보험": []
         }
         self.total_count = 0
         self.ins_count = 0
@@ -171,7 +171,7 @@ class CSVToJSONConverter:
         
         # 카테고리 검증
         categories = json_data.get('categories', {})
-        expected_categories = ["06재산보험", "07특종보험", "08배상책임보험", "09해상보험"]
+        expected_categories = ["재산보험", "특종보험", "배상책임보험", "해상보험"]
         
         for category in expected_categories:
             if category not in categories:
@@ -226,8 +226,8 @@ def main():
     print()
     
     # 파일 경로 설정
-    csv_file = "../data/ins_master_db.csv"
-    json_output = "../data/questions.json"
+    csv_file = "ins_master_db.csv"
+    json_output = "data/questions.json"
     
     # 변환기 생성
     converter = CSVToJSONConverter(csv_file, json_output)
