@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AICU 시즌4 - 퀴즈 학습</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .user-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quiz-area {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .answer-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .answer-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .answer-btn:hover {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+        
+        .answer-btn.selected {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .answer-btn.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .answer-btn.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .result-message.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-message.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .stats-display {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .answer-buttons {
+                flex-direction: column;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 AICU 시즌4</h1>
+            <p>보험사 취업 준비 퀴즈 시스템</p>
+        </div>
+        
+        <div class="content">
+            <!-- 사용자 정보 입력 섹션 -->
+            <div class="user-section" id="userSection">
+                <div class="input-group">
+                    <label for="userName">이름을 입력하세요:</label>
+                    <input type="text" id="userName" placeholder="예: 김학생" maxlength="20">
+                </div>
+                <button class="btn" onclick="startQuiz()">퀴즈 시작하기</button>
+                <button class="btn" onclick="loadStats()" style="background: #2196F3;">통계 보기</button>
+            </div>
+            
+            <!-- 퀴즈 영역 -->
+            <div class="quiz-area" id="quizArea">
+                <div class="question-card">
+                    <div class="question-info">
+                        <span id="questionCode">문제 코드</span>
+                        <span id="questionProgress">1 / 789</span>
+                        <span id="questionType">문제 유형</span>
+                    </div>
+                    
+                    <div class="question-text" id="questionText">
+                        문제를 불러오는 중입니다...
+                    </div>
+                    
+                    <div class="answer-buttons" id="answerButtons">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                    
+                    <div class="result-message" id="resultMessage"></div>
+                    
+                    <div class="navigation">
+                        <button class="btn" onclick="prevQuestion()" id="prevBtn">◀ 이전</button>
+                        <button class="btn" onclick="submitAnswer()" id="submitBtn">정답 확인</button>
+                        <button class="btn" onclick="nextQuestion()" id="nextBtn">다음 ▶</button>
+                    </div>
+                </div>
+                
+                <!-- 실시간 통계 -->
+                <div class="stats-display">
+                    <h3 style="text-align: center; margin-bottom: 15px;">📊 실시간 통계</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="currentProgress">0</div>
+                            <div class="stat-label">진행률 (%)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="correctCount">0</div>
+                            <div class="stat-label">정답 수</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="wrongCount">0</div>
+                            <div class="stat-label">오답 수</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accuracyRate">0%</div>
+                            <div class="stat-label">정답률</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionData = null;
+        let selectedAnswer = null;
+        let isAnswered = false;
+
+        // 퀴즈 시작
+        async function startQuiz() {
+            const userName = document.getElementById('userName').value.trim();
+            if (!userName) {
+                alert('이름을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/quiz/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_name: userName })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('userSection').style.display = 'none';
+                    document.getElementById('quizArea').style.display = 'block';
+                    displayQuestion(data.question_data);
+                    updateStats();
+                } else {
+                    alert('퀴즈 시작 실패: ' + data.message);
+                }
+            } catch (error) {
+                alert('오류 발생: ' + error.message);
+            }
+        }
+
+        // 문제 표시
+        function displayQuestion(questionData) {
+            currentQuestionData = questionData;
+            selectedAnswer = null;
+            isAnswered = false;
+
+            document.getElementById('questionCode').textContent = questionData.qcode;
+            document.getElementById('questionProgress').textContent = 
+                `${questionData.index} / ${questionData.total}`;
+            document.getElementById('questionType').textContent = questionData.answer_type;
+            document.getElementById('questionText').textContent = questionData.question;
+
+            // 답안 버튼 생성
+            const answerButtons = document.getElementById('answerButtons');
+            answerButtons.innerHTML = '';
+
+            questionData.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.textContent = choice;
+                button.onclick = () => selectAnswer(choice);
+                answerButtons.appendChild(button);
+            });
+
+            // 결과 메시지 숨기기
+            document.getElementById('resultMessage').style.display = 'none';
+            
+            // 버튼 상태 초기화
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = '정답 확인';
+        }
+
+        // 답안 선택
+        function selectAnswer(answer) {
+            if (isAnswered) return;
+
+            selectedAnswer = answer;
+            
+            // 모든 버튼 선택 해제
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // 선택된 버튼 표시
+            event.target.classList.add('selected');
+        }
+
+        // 답안 제출
+        async function submitAnswer() {
+            if (!selectedAnswer) {
+                alert('답을 선택해주세요.');
+                return;
+            }
+
+            if (isAnswered) return;
+
+            try {
+                const response = await fetch('/api/quiz/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ answer: selectedAnswer })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    isAnswered = true;
+                    showResult(data);
+                    updateStats();
+                    
+                    // 버튼 상태 변경
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('submitBtn').textContent = '채점 완료';
+                } else {
+                    alert('채점 실패: ' + data.message);
+                }
+            } catch (error) {
+                alert('오류 발생: ' + error.message);
+            }
+        }
+
+        // 결과 표시
+        function showResult(data) {
+            const resultMessage = document.getElementById('resultMessage');
+            const answerButtons = document.querySelectorAll('.answer-btn');
+            
+            if (data.is_correct) {
+                resultMessage.className = 'result-message correct';
+                resultMessage.textContent = '✅ 정답입니다!';
+                
+                // 정답 버튼 표시
+                answerButtons.forEach(btn => {
+                    if (btn.textContent === data.correct_answer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            } else {
+                resultMessage.className = 'result-message wrong';
+                resultMessage.textContent = `❌ 오답입니다. 정답: ${data.correct_answer}`;
+                
+                // 정답/오답 버튼 표시
+                answerButtons.forEach(btn => {
+                    if (btn.textContent === data.correct_answer) {
+                        btn.classList.add('correct');
+                    } else if (btn.textContent === data.user_answer) {
+                        btn.classList.add('wrong');
+                    }
+                });
+            }
+            
+            resultMessage.style.display = 'block';
+        }
+
+        // 다음 문제
+        async function nextQuestion() {
+            try {
+                const response = await fetch('/api/quiz/next');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayQuestion(data.question_data);
+                    updateStats();
+                } else {
+                    if (data.is_last) {
+                        alert('마지막 문제입니다.');
+                    } else {
+                        alert('오류: ' + data.message);
+                    }
+                }
+            } catch (error) {
+                alert('오류 발생: ' + error.message);
+            }
+        }
+
+        // 이전 문제
+        async function prevQuestion() {
+            try {
+                const response = await fetch('/api/quiz/prev');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayQuestion(data.question_data);
+                    updateStats();
+                } else {
+                    if (data.is_first) {
+                        alert('첫 번째 문제입니다.');
+                    } else {
+                        alert('오류: ' + data.message);
+                    }
+                }
+            } catch (error) {
+                alert('오류 발생: ' + error.message);
+            }
+        }
+
+        // 통계 업데이트
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats/current');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.stats;
+                    document.getElementById('currentProgress').textContent = 
+                        stats.progress_percent + '%';
+                    document.getElementById('correctCount').textContent = stats.correct_count;
+                    document.getElementById('wrongCount').textContent = stats.wrong_count;
+                    document.getElementById('accuracyRate').textContent = 
+                        stats.accuracy_percent + '%';
+                }
+            } catch (error) {
+                console.error('통계 업데이트 실패:', error);
+            }
+        }
+
+        // 통계 페이지로 이동
+        function loadStats() {
+            window.location.href = '/stats';
+        }
+
+        // 키보드 단축키
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !isAnswered && selectedAnswer) {
+                submitAnswer();
+            } else if (event.key === 'ArrowLeft') {
+                prevQuestion();
+            } else if (event.key === 'ArrowRight') {
+                nextQuestion();
+            }
+        });
+
+        // 페이지 로드 시 헬스 체크
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                console.log('AICU 시즌4 상태:', data);
+            } catch (error) {
+                console.error('서버 연결 실패:', error);
+            }
+        });
+    </script>
+</body>
+</html>
