@@ -1,4 +1,9 @@
-# app_v1.7.py - AICU S4 점진적 리팩토링 완성본 (80줄 이하)
+"""
+AICU Season 4 v1.8 - Week3 퀴즈 기능 통합
+- Week2 완성 퀴즈 블록 연결
+- 789개 문제 데이터 활용
+- 실제 문제풀이 기능 구현
+"""
 
 from flask import Flask
 from datetime import timedelta
@@ -21,8 +26,9 @@ def create_app():
     return app
 
 def register_blueprints(app):
-    """Blueprint 등록 - 기존 + 신규 통합"""
-    # Existing Blueprints (user_registration_v2, user_routes)
+    """Blueprint 등록 - Week3 퀴즈 기능 추가"""
+    
+    # 기존 Blueprint들 (그대로 유지)
     try:
         from routes.user_registration_v2 import user_registration_bp
         app.register_blueprint(user_registration_bp, url_prefix='/user')
@@ -37,7 +43,6 @@ def register_blueprints(app):
     except ImportError:
         print("⚠️ user_routes 없음")
     
-    # New Blueprints
     try:
         from routes.home_routes import home_bp
         app.register_blueprint(home_bp)
@@ -58,6 +63,19 @@ def register_blueprints(app):
         print("✅ 설정 라우트 등록")
     except ImportError:
         print("❌ 설정 라우트 없음")
+    
+    # ✨ Week2 퀴즈 기능 추가 (새로 추가)
+    try:
+        from routes.quiz_routes_V1_0 import quiz_bp
+        app.register_blueprint(quiz_bp, url_prefix='/api')
+        print("✅ Week2 퀴즈 API 라우트 등록 (Week3 통합)")
+    except ImportError:
+        try:
+            from routes.quiz_routes_V1_0 import quiz_bp
+            app.register_blueprint(quiz_bp, url_prefix='/api')
+            print("✅ Week2 퀴즈 API 라우트 등록 (Week3 통합)")
+        except ImportError:
+            print("❌ Week2 퀴즈 라우트 없음 - 파일명 확인 필요")
 
 def register_error_handlers(app):
     """간단한 에러 핸들러"""
@@ -73,7 +91,7 @@ def register_error_handlers(app):
 if __name__ == '__main__':
     app = create_app()
     print("="*60)
-    print("🚀 AICU S4 v1.7 (점진적 리팩토링 완성)")
+    print("🚀 AICU S4 v1.8 (Week3 퀴즈 기능 통합)")
     print("📍 URL: http://localhost:5000")
     print("📋 개선 사항:")
     print("   ✅ 메인 앱: 694줄 → 80줄")

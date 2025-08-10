@@ -243,7 +243,7 @@ def create_app():
         
         # 설정 화면은 user_registration.html을 edit 모드로 사용
         try:
-            return render_template('user_registration.html', mode='edit')
+        return render_template('user_registration.html', mode='edit')
         except:
             # 템플릿이 없는 경우 간단한 설정 화면
             return f"""
