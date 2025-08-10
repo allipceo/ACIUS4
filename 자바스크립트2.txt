@@ -1,0 +1,160 @@
+// ===== 수정된 사용자 로드 함수 =====
+        async loadCurrentUser() {
+            try {
+                console.log('🔄 사용자 정보 설정 시작');
+                
+                // API 호출 없이 직접 사용자 정보 설정
+                currentUser = {
+                    userId: 'user_jo_ceo_default',
+                    userName: '조대표님',
+                    userPhone: '010-1234-5678',
+                    examSubject: '손해보험대리점',
+                    examDate: '2025-12-31',
+                    registeredAt: new Date().toISOString()
+                };
+                
+                console.log('✅ 사용자 정보 설정 완료:', currentUser);
+                
+                // 통계 로드
+                await this.loadUserStatistics();
+                
+                // 상태 업데이트
+                this.updateStatus(`환영합니다, ${currentUser.userName}님!`);
+                
+            } catch (error) {
+                console.error('❌ 사용자 정보 설정 실패:', error);
+                this.updateStatus('사용자 정보 설정 중 오류가 발생했습니다.', 'red');
+            }
+        }
+
+        // ===== 수정된 데이터 로드 함수 =====
+        async loadBasicLearningDataFixed(mode) {
+            try {
+                console.log(`🚀 수정된 데이터 로드 시작: ${mode}`);
+                
+                // 1. Week2 API 연결 시도
+                console.log('🔗 Week2 API Health Check 시도...');
+                
+                const healthResponse = await fetch('/api/quiz/health');
+                if (healthResponse.ok) {
+                    const healthData = await healthResponse.json();
+                    console.log('✅ Week2 API Health Check 성공:', healthData);
+                    
+                    // 2. 세션 시작 시도
+                    console.log('🎯 Week2 API 세션 시작 시도...');
+                    
+                    const sessionResponse = await fetch('/api/quiz/start', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: currentUser.userId,
+                            mode: mode,
+                            category: 'all'
+                        })
+                    });
+                    
+                    if (sessionResponse.ok) {
+                        const sessionData = await sessionResponse.json();
+                        console.log('✅ Week2 API 세션 생성 성공:', sessionData);
+                        
+                        // API 모드 설정
+                        window.useAPIMode = true;
+                        window.currentAPISession = sessionData.session_id;
+                        currentQuestionIndex = 0;
+                        
+                        // 첫 번째 문제 로드
+                        const questionResponse = await fetch(`/api/quiz/question/${sessionData.session_id}/0`);
+                        if (questionResponse.ok) {
+                            const questionData = await questionResponse.json();
+                            console.log('✅ Week2 API 첫 문제 로드 성공:', questionData);
+                            
+                            displayAPIQuestion(questionData);
+                            basicLearningSystem.updateStatus('Week2 API 모드로 학습을 시작합니다.', 'green');
+                            return;
+                        }
+                    }
+                }
+                
+                console.log('⚠️ Week2 API 실패, CSV 백업 모드로 전환');
+                
+                // 3. CSV 백업 모드
+                window.useAPIMode = false;
+                
+                const csvResponse = await fetch('ins_master_db.csv');
+                const csvText = await csvResponse.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    complete: (results) => {
+                        console.log(`✅ CSV 데이터 로드 완료: ${results.data.length}개 문제`);
+                        
+                        const filteredData = results.data.filter(row =>
+                            row.QCODE && row.QUESTION && row.ANSWER && row.QCODE.trim() !== ''
+                        );
+                        
+                        console.log(`✅ 필터링 후 문제 수: ${filteredData.length}개`);
+                        
+                        if (mode === 'random') {
+                            currentQuestionData = filteredData.sort(() => Math.random() - 0.5);
+                        } else if (mode === 'restart') {
+                            currentQuestionData = [...filteredData];
+                        } else {
+                            currentQuestionData = [...filteredData];
+                            if (userStatistics && userStatistics.basicLearning) {
+                                currentQuestionIndex = userStatistics.basicLearning.currentIndex || 0;
+                            }
+                        }
+                        
+                        if (mode !== 'restart' && mode !== 'random') {
+                            currentQuestionIndex = 0;
+                        }
+                        
+                        displayQuestion();
+                        basicLearningSystem.updateStatisticsDisplay();
+                        basicLearningSystem.updateStatus('CSV 백업 모드로 학습을 시작합니다.', 'blue');
+                    },
+                    error: (error) => {
+                        console.error('❌ CSV 로드 오류:', error);
+                        basicLearningSystem.updateStatus('데이터 로드 중 오류가 발생했습니다.', 'red');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ 데이터 로드 실패:', error);
+                basicLearningSystem.updateStatus('데이터 로드 실패. 네트워크를 확인해주세요.', 'red');
+            }
+        }
+
+        // ===== 기존 함수 교체 =====
+        // 기존 selectBasicLearningMode 함수에서 호출하는 부분 수정
+        async function selectBasicLearningModeFixed(mode) {
+            console.log(`=== 수정된 기본학습 모드 선택: ${mode} ===`);
+            
+            learningMode = mode;
+            
+            // 모드 선택 영역 숨기기
+            document.getElementById('mode-selection').classList.add('hidden');
+            
+            // 문제 표시 영역 표시
+            document.getElementById('basic-question-area').classList.remove('hidden');
+            
+            // 상태 업데이트
+            const modeNames = {
+                'continue': '이어풀기',
+                'restart': '처음풀기',
+                'random': '랜덤풀기'
+            };
+            
+            basicLearningSystem.updateStatus(`기본학습 - ${modeNames[mode]} 모드로 시작합니다.`);
+            
+            // 수정된 데이터 로드 함수 호출
+            await loadBasicLearningDataFixed(mode);
+        }
+
+        // 전역 함수로 교체
+        window.selectBasicLearningMode = selectBasicLearningModeFixed;
+        window.loadBasicLearningData = loadBasicLearningDataFixed;
+
+        console.log('✅ JavaScript 함수 수정 완료');

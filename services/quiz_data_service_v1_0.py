@@ -1,6 +1,6 @@
-# services/quiz_data_service_v1.0.py
+# services/quiz_data_service_v1_0.py
 # 문제풀이 기능 - 데이터 로드 서비스 (150줄 이하)
-# 저장경로: ACIUS4/services/quiz_data_service_v1.0.py
+# 저장경로: ACIUS4/services/quiz_data_service_v1_0.py
 # 기존 파일 보존: quiz_service.py → quiz_service.py (보존)
 
 import json

@@ -5,12 +5,12 @@ learning_bp = Blueprint('learning', __name__)
 
 @learning_bp.route('/basic-learning')
 def basic_learning():
-    """기본학습 페이지 - 기존 기능 보존"""
-    print("=== 기본학습 페이지 접속 ===")
+    """기본학습 페이지 - 분할 구조 적용"""
+    print("=== 기본학습 페이지 접속 (분할 구조) ===")
     current_user_id = check_user_session()
     
-    # 임시: 기존 f-string HTML 사용 (STEP 3에서 템플릿으로 변경)
-    return render_existing_basic_learning_html(current_user_id)
+    # 새로운 분할 템플릿 사용
+    return render_template('basic_learning_main.html', user_id=current_user_id)
 
 @learning_bp.route('/category-learning') 
 def category_learning():

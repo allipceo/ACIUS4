@@ -1,282 +1,372 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Quiz Routes - 퀴즈 관련 API 라우터
-기존 app_v1.3.py의 퀴즈 API 부분을 분리
+# routes/quiz_routes_v1.0.py
+# 문제풀이 기능 - API 엔드포인트 통합 (150줄 목표)
+# Day 4: RESTful API, 3개 서비스 연동, 에러 처리
+# 파일명: quiz_routes_v1.0.py (기존 quiz_routes.py와 구분)
 
-작성자: 노팀장
-작성일: 2025년 8월 9일
-파일: routes/quiz_routes.py
-"""
-
-from flask import Blueprint, request, jsonify, session, current_app
+from flask import Blueprint, request, jsonify, session
+import logging
+import time
 from datetime import datetime
+from typing import Dict, Any
 
-quiz_bp = Blueprint('quiz', __name__)
+# 기존 서비스들 import (경로 수정)
+import sys
+import os
+# 올바른 경로 설정
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
+
+try:
+    from services.quiz_data_service_v1_0 import get_quiz_data_service
+    from services.quiz_session_service import get_quiz_session_service  
+    from services.quiz_answer_service import get_quiz_answer_service
+    SERVICES_AVAILABLE = True
+    print("✅ Week2 서비스 import 성공 (v1_0)")
+except ImportError as e:
+    print(f"⚠️ 서비스 import 오류: {e}")
+    print("💡 기존 서비스로 fallback")
+    # 기존 서비스로 fallback
+    try:
+        from services.quiz_service import QuizService
+        quiz_service = QuizService()
+        get_quiz_data_service = lambda: quiz_service
+        get_quiz_session_service = lambda: quiz_service
+        get_quiz_answer_service = lambda: quiz_service
+        SERVICES_AVAILABLE = True
+        print("✅ 기존 서비스 fallback 성공")
+    except ImportError as e2:
+        print(f"❌ 기존 서비스도 실패: {e2}")
+        get_quiz_data_service = lambda: None
+        get_quiz_session_service = lambda: None
+        get_quiz_answer_service = lambda: None
+        SERVICES_AVAILABLE = False
+
+# Blueprint 생성
+quiz_bp = Blueprint('quiz', __name__, url_prefix='/api/quiz')
+logger = logging.getLogger(__name__)
 
 @quiz_bp.route('/start', methods=['POST'])
 def start_quiz():
-    """퀴즈 시작 API - app_v1.3.py에서 분리"""
+    """퀴즈 세션 시작"""
     try:
-        data = request.get_json()
-        user_name = data.get('user_name', 'anonymous').strip()
+        data = request.get_json() or {}
+        user_id = data.get('user_id') or session.get('current_user_id', 'anonymous')
+        mode = data.get('mode', 'basic')  # 'basic' or 'category'
+        category = data.get('category')
         
-        if not user_name:
+        if not user_id:
             return jsonify({
                 'success': False,
-                'message': '사용자 이름을 입력해주세요'
-            })
+                'error': '사용자 ID가 필요합니다',
+                'code': 'USER_ID_REQUIRED'
+            }), 400
         
-        # 서비스 사용
-        quiz_service = current_app.quiz_service
-        user_service = current_app.user_service
-        
-        # 사용자 ID 생성
-        user_id = f"user_{user_name}_{datetime.now().strftime('%Y%m%d')}"
-        
-        # 기존 사용자 데이터 로드
-        existing_data = user_service.get_user_data(user_id)
-        if not existing_data:
-            existing_data = user_service.create_new_user(user_name, user_id)
-            print(f"🆕 신규 사용자 생성: {user_name}")
-        else:
-            print(f"👤 기존 사용자 복원: {user_name}")
-        
-        # 세션 설정
-        session.permanent = True
-        session['user_id'] = user_id
-        session['user_name'] = user_name
-        session['session_start'] = datetime.now().isoformat()
-        session['current_question_index'] = existing_data.get('last_question_index', 0)
-        session['correct_count'] = 0
-        session['wrong_count'] = 0
-        session['session_stats'] = {
-            'start_time': datetime.now().isoformat(),
-            'questions_in_session': 0,
-            'correct_in_session': 0,
-            'wrong_in_session': 0
-        }
-        
-        # 퀴즈 시작
-        start_index = session['current_question_index']
-        result = quiz_service.start_quiz(start_index)
-        
-        if result and result.get('success'):
-            return jsonify({
-                'success': True,
-                'message': f'{user_name}님, 퀴즈가 시작되었습니다!',
-                'question_data': result['question_data'],
-                'user_info': {
-                    'user_name': user_name,
-                    'user_id': user_id,
-                    'resume_from': start_index + 1,
-                    'total_questions': quiz_service.get_total_questions(),
-                    'previous_stats': existing_data
-                }
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': '퀴즈 시작 실패: 문제를 불러올 수 없습니다'
-            })
+        # 세션 서비스로 새 세션 생성
+        session_service = get_quiz_session_service()
+        if not session_service:
+            return jsonify({'success': False, 'error': '세션 서비스를 사용할 수 없습니다'}), 500
             
+        session_id = session_service.create_session(user_id, mode, category)
+        
+        if not session_id:
+            return jsonify({
+                'success': False,
+                'error': '세션 생성에 실패했습니다',
+                'code': 'SESSION_CREATE_FAILED'
+            }), 500
+        
+        # 첫 번째 문제 로드
+        data_service = get_quiz_data_service()
+        if not data_service:
+            return jsonify({'success': False, 'error': '데이터 서비스를 사용할 수 없습니다'}), 500
+            
+        questions = data_service.get_questions_by_mode(mode, category)
+        
+        if not questions:
+            return jsonify({
+                'success': False,
+                'error': '문제를 찾을 수 없습니다',
+                'code': 'NO_QUESTIONS_FOUND'
+            }), 404
+        
+        first_question = data_service.get_question_by_index(questions, 0)
+        
+        return jsonify({
+            'success': True,
+            'session_id': session_id,
+            'mode': mode,
+            'category': category,
+            'total_questions': len(questions),
+            'current_question': first_question,
+            'question_index': 0,
+            'started_at': datetime.now().isoformat()
+        })
+        
     except Exception as e:
-        print(f"❌ 퀴즈 시작 오류: {str(e)}")
+        logger.error(f"퀴즈 시작 오류: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'퀴즈 시작 오류: {str(e)}'
-        })
+            'error': '퀴즈 시작 중 오류가 발생했습니다',
+            'code': 'INTERNAL_ERROR'
+        }), 500
 
-@quiz_bp.route('/question/<int:question_index>')
-def get_question(question_index):
-    """특정 문제 가져오기 API - app_v1.3.py에서 분리"""
+@quiz_bp.route('/question/<session_id>/<int:index>', methods=['GET'])
+def get_question(session_id: str, index: int):
+    """특정 문제 조회"""
     try:
-        quiz_service = current_app.quiz_service
-        result = quiz_service.get_question(question_index)
+        # 세션 검증
+        session_service = get_quiz_session_service()
+        current_session = session_service.get_current_session(session_id.split('_')[0])
         
-        if result and result.get('success'):
-            session['current_question_index'] = question_index
-            
-            return jsonify({
-                'success': True,
-                'question_data': result['question_data'],
-                'session_info': {
-                    'user_name': session.get('user_name', 'anonymous'),
-                    'current_index': question_index,
-                    'correct_count': session.get('correct_count', 0),
-                    'wrong_count': session.get('wrong_count', 0)
-                }
-            })
-        else:
+        if not current_session or current_session.get('session_id') != session_id:
             return jsonify({
                 'success': False,
-                'message': '문제를 가져올 수 없습니다'
-            })
-            
+                'error': '유효하지 않은 세션입니다',
+                'code': 'INVALID_SESSION'
+            }), 401
+        
+        # 문제 로드
+        data_service = get_quiz_data_service()
+        mode = current_session.get('mode', 'basic')
+        category = current_session.get('category')
+        
+        questions = data_service.get_questions_by_mode(mode, category)
+        
+        if index < 0 or index >= len(questions):
+            return jsonify({
+                'success': False,
+                'error': '유효하지 않은 문제 번호입니다',
+                'code': 'INVALID_QUESTION_INDEX'
+            }), 400
+        
+        question = data_service.get_question_by_index(questions, index)
+        
+        if not question:
+            return jsonify({
+                'success': False,
+                'error': '문제를 찾을 수 없습니다',
+                'code': 'QUESTION_NOT_FOUND'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'question': question,
+            'question_index': index,
+            'total_questions': len(questions),
+            'session_id': session_id
+        })
+        
     except Exception as e:
-        print(f"❌ 문제 가져오기 오류: {str(e)}")
+        logger.error(f"문제 조회 오류: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'문제 가져오기 오류: {str(e)}'
-        })
+            'error': '문제 조회 중 오류가 발생했습니다',
+            'code': 'INTERNAL_ERROR'
+        }), 500
 
 @quiz_bp.route('/submit', methods=['POST'])
 def submit_answer():
-    """답안 제출 API - app_v1.3.py에서 분리"""
+    """답안 제출 및 채점"""
     try:
-        data = request.get_json()
-        user_answer = data.get('answer')
+        data = request.get_json() or {}
+        session_id = data.get('session_id')
+        user_answer = data.get('user_answer')
+        question_data = data.get('question_data')
+        start_time = data.get('start_time')
         
-        if not user_answer:
+        if not all([session_id, user_answer, question_data]):
             return jsonify({
                 'success': False,
-                'message': '답안이 제출되지 않았습니다'
-            })
+                'error': '필수 정보가 누락되었습니다',
+                'code': 'MISSING_REQUIRED_DATA'
+            }), 400
         
-        current_index = session.get('current_question_index', 0)
-        quiz_service = current_app.quiz_service
-        user_service = current_app.user_service
+        # 응답 시간 계산
+        response_time = time.time() - float(start_time) if start_time else 0.0
         
-        # 답안 채점
-        result = quiz_service.submit_answer(current_index, user_answer)
+        # 답안 검증 및 채점
+        answer_service = get_quiz_answer_service()
+        if not answer_service:
+            return jsonify({'success': False, 'error': '답안 서비스를 사용할 수 없습니다'}), 500
+            
+        answer_result = answer_service.check_answer(user_answer, question_data)
         
-        if result and result.get('success'):
-            is_correct = result['is_correct']
-            
-            # 세션 통계 업데이트
-            if is_correct:
-                session['correct_count'] = session.get('correct_count', 0) + 1
-                session['session_stats']['correct_in_session'] += 1
-                message = "정답입니다! 🎉"
-            else:
-                session['wrong_count'] = session.get('wrong_count', 0) + 1
-                session['session_stats']['wrong_in_session'] += 1
-                message = f"오답입니다. 정답은 '{result['correct_answer']}' 입니다."
-            
-            session['session_stats']['questions_in_session'] += 1
-            session.permanent = True
-            
-            # 사용자 진도 업데이트
-            user_service.update_user_progress(
-                session.get('user_id'),
-                is_correct,
-                current_index,
-                session
-            )
-            
-            return jsonify({
-                'success': True,
-                'is_correct': is_correct,
-                'user_answer': user_answer,
-                'correct_answer': result['correct_answer'],
-                'message': message,
-                'session_info': {
-                    'user_name': session.get('user_name', 'anonymous'),
-                    'current_index': current_index,
-                    'correct_count': session.get('correct_count', 0),
-                    'wrong_count': session.get('wrong_count', 0)
-                },
-                'question_info': result.get('question_info', {})
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': '답안 처리 실패'
-            })
-            
+        # 세션에 시도 기록
+        session_service = get_quiz_session_service()
+        user_id = session_id.split('_')[0]
+        
+        record_success = session_service.record_attempt(
+            user_id, session_id, question_data, user_answer, response_time
+        )
+        
+        if not record_success:
+            logger.warning(f"시도 기록 실패: {session_id}")
+        
+        # 상세 피드백 생성
+        feedback = answer_service.generate_detailed_feedback(answer_result, question_data)
+        
+        return jsonify({
+            'success': True,
+            'answer_result': answer_result,
+            'feedback': feedback,
+            'response_time': round(response_time, 2),
+            'recorded': record_success
+        })
+        
     except Exception as e:
-        print(f"❌ 답안 제출 오류: {str(e)}")
+        logger.error(f"답안 제출 오류: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'답안 제출 오류: {str(e)}'
-        })
+            'error': '답안 제출 중 오류가 발생했습니다',
+            'code': 'INTERNAL_ERROR'
+        }), 500
 
-@quiz_bp.route('/next')
-def next_question():
-    """다음 문제 API - app_v1.3.py에서 분리"""
+@quiz_bp.route('/session/<session_id>/end', methods=['POST'])
+def end_quiz_session(session_id: str):
+    """퀴즈 세션 종료"""
     try:
-        current_index = session.get('current_question_index', 0)
-        next_index = current_index + 1
+        user_id = session_id.split('_')[0]
         
-        quiz_service = current_app.quiz_service
-        total_questions = quiz_service.get_total_questions()
+        # 세션 종료
+        session_service = get_quiz_session_service()
+        end_success = session_service.end_session(user_id, session_id)
         
-        if next_index >= total_questions:
-            user_service = current_app.user_service
-            completion_stats = user_service.complete_quiz_session(session)
-            
+        if not end_success:
             return jsonify({
                 'success': False,
-                'message': '🎉 모든 문제를 완료했습니다!',
-                'is_last': True,
-                'completion_stats': completion_stats
-            })
+                'error': '세션 종료에 실패했습니다',
+                'code': 'SESSION_END_FAILED'
+            }), 500
         
-        result = quiz_service.get_question(next_index)
+        # 최종 통계 계산
+        user_stats = session_service.get_user_statistics(user_id)
+        session_history = session_service.get_session_history(user_id, 1)
         
-        if result and result.get('success'):
-            session['current_question_index'] = next_index
-            return jsonify({
-                'success': True,
-                'question_data': result['question_data'],
-                'session_info': {
-                    'user_name': session.get('user_name', 'anonymous'),
-                    'current_index': next_index,
-                    'correct_count': session.get('correct_count', 0),
-                    'wrong_count': session.get('wrong_count', 0)
-                }
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': '다음 문제를 가져올 수 없습니다'
-            })
-            
+        final_session = session_history[0] if session_history else {}
+        attempts = final_session.get('attempts', [])
+        
+        # 세션 점수 계산
+        answer_service = get_quiz_answer_service()
+        session_score = answer_service.calculate_session_score(attempts)
+        
+        return jsonify({
+            'success': True,
+            'session_ended': True,
+            'session_summary': final_session,
+            'session_score': session_score,
+            'user_statistics': user_stats,
+            'ended_at': datetime.now().isoformat()
+        })
+        
     except Exception as e:
-        print(f"❌ 다음 문제 오류: {str(e)}")
+        logger.error(f"세션 종료 오류: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'다음 문제 오류: {str(e)}'
-        })
+            'error': '세션 종료 중 오류가 발생했습니다',
+            'code': 'INTERNAL_ERROR'
+        }), 500
 
-@quiz_bp.route('/prev')
-def prev_question():
-    """이전 문제 API - app_v1.3.py에서 분리"""
+@quiz_bp.route('/statistics/<user_id>', methods=['GET'])
+def get_user_statistics(user_id: str):
+    """사용자 통계 조회"""
     try:
-        current_index = session.get('current_question_index', 0)
-        prev_index = current_index - 1
+        session_service = get_quiz_session_service()
+        user_stats = session_service.get_user_statistics(user_id)
         
-        if prev_index < 0:
-            return jsonify({
-                'success': False,
-                'message': '첫 번째 문제입니다',
-                'is_first': True
-            })
+        return jsonify({
+            'success': True,
+            'statistics': user_stats
+        })
         
-        quiz_service = current_app.quiz_service
-        result = quiz_service.get_question(prev_index)
-        
-        if result and result.get('success'):
-            session['current_question_index'] = prev_index
-            return jsonify({
-                'success': True,
-                'question_data': result['question_data'],
-                'session_info': {
-                    'user_name': session.get('user_name', 'anonymous'),
-                    'current_index': prev_index,
-                    'correct_count': session.get('correct_count', 0),
-                    'wrong_count': session.get('wrong_count', 0)
-                }
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': '이전 문제를 가져올 수 없습니다'
-            })
-            
     except Exception as e:
-        print(f"❌ 이전 문제 오류: {str(e)}")
+        logger.error(f"통계 조회 오류: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'이전 문제 오류: {str(e)}'
-        })
+            'error': '통계 조회 중 오류가 발생했습니다',
+            'code': 'INTERNAL_ERROR'
+        }), 500
+
+@quiz_bp.route('/health', methods=['GET'])
+def health_check():
+    """API 상태 확인"""
+    try:
+        # 각 서비스 상태 확인
+        data_service = get_quiz_data_service()
+        session_service = get_quiz_session_service()
+        answer_service = get_quiz_answer_service()
+        
+        services_status = {
+            'quiz_data_service': data_service is not None,
+            'quiz_session_service': session_service is not None,
+            'quiz_answer_service': answer_service is not None
+        }
+        
+        all_healthy = all(services_status.values())
+        
+        return jsonify({
+            'success': True,
+            'status': 'healthy' if all_healthy else 'degraded',
+            'services': services_status,
+            'timestamp': datetime.now().isoformat()
+        }), 200 if all_healthy else 503
+        
+    except Exception as e:
+        logger.error(f"상태 확인 오류: {str(e)}")
+        return jsonify({
+            'success': False,
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+# 에러 핸들러
+@quiz_bp.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        'success': False,
+        'error': '요청하신 리소스를 찾을 수 없습니다',
+        'code': 'NOT_FOUND'
+    }), 404
+
+@quiz_bp.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        'success': False,
+        'error': '내부 서버 오류가 발생했습니다',
+        'code': 'INTERNAL_SERVER_ERROR'
+    }), 500
+
+# 테스트 함수 (개발용)
+def test_quiz_routes():
+    """퀴즈 API 라우트 테스트"""
+    print("=== QuizRoutes 테스트 시작 ===")
+    
+    # Blueprint 정보 출력
+    print(f"✅ Blueprint 이름: {quiz_bp.name}")
+    print(f"✅ URL 접두사: {quiz_bp.url_prefix}")
+    
+    # 서비스 연동 상태 확인
+    data_service = get_quiz_data_service()
+    session_service = get_quiz_session_service()
+    answer_service = get_quiz_answer_service()
+    
+    print(f"✅ 데이터 서비스: {'연결됨' if data_service else '연결 안됨'}")
+    print(f"✅ 세션 서비스: {'연결됨' if session_service else '연결 안됨'}")
+    print(f"✅ 답안 서비스: {'연결됨' if answer_service else '연결 안됨'}")
+    
+    # 실제 라우트 목록 (코드에서 확인)
+    print(f"✅ 정의된 라우트: 6개")
+    print("   - POST /api/quiz/start - 퀴즈 세션 시작")
+    print("   - GET  /api/quiz/question/<id>/<idx> - 문제 조회")
+    print("   - POST /api/quiz/submit - 답안 제출")
+    print("   - POST /api/quiz/session/<id>/end - 세션 종료")
+    print("   - GET  /api/quiz/statistics/<user> - 사용자 통계")
+    print("   - GET  /api/quiz/health - 상태 확인")
+    
+    print("=== 테스트 완료 ===")
+    print("📡 Flask 앱에 등록 후 API 테스트 가능")
+    return True
+
+if __name__ == "__main__":
+    test_quiz_routes()
