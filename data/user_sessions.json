@@ -1,0 +1,28 @@
+{
+  "조대표": [
+    {
+      "session_id": "조대표_20250810_174332",
+      "user_id": "조대표",
+      "start_time": "2025-08-10T17:43:32.098263",
+      "end_time": "2025-08-10T17:43:32.266244",
+      "mode": "basic",
+      "category": null,
+      "total_questions": 0,
+      "attempted_questions": 1,
+      "correct_answers": 1,
+      "session_duration_minutes": 0.0,
+      "attempts": [
+        {
+          "question_index": 1,
+          "question_id": "TEST-001",
+          "user_answer": "O",
+          "correct_answer": "O",
+          "is_correct": true,
+          "attempt_time": "2025-08-10T17:43:32.178605",
+          "response_time_seconds": 2.5,
+          "category": "06재산보험"
+        }
+      ]
+    }
+  ]
+}
