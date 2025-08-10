@@ -13,7 +13,6 @@ User Service - 사용자 데이터 관리 서비스
 import os
 import json
 from datetime import datetime
-from flask import session
 
 class UserService:
     """사용자 서비스 클래스"""
@@ -235,30 +234,3 @@ class UserService:
         except Exception as e:
             print(f"❌ 사용자 요약 정보 생성 실패: {str(e)}")
             return []
-
-# 전역 함수들 (Blueprint에서 사용)
-def get_ceo_info():
-    """조대표님 기본 정보 반환 - 실시간 D-Day 계산"""
-    exam_date = datetime.strptime("2025-09-13", "%Y-%m-%d")
-    today = datetime.now()
-    days_left = max(0, (exam_date - today).days)
-    daily_needed = round(1370 / max(days_left, 1), 1)
-    
-    return {
-        "name": "조대표",
-        "phone": "010-2067-6442",
-        "exam_date": "2025년 9월 13일",
-        "exam_date_raw": "2025-09-13",
-        "days_left": days_left,
-        "daily_needed": daily_needed
-    }
-
-def check_user_session():
-    """사용자 세션 체크 - 강화된 디버깅"""
-    current_user_id = session.get('current_user_id')
-    session_data = dict(session)
-    print(f"🔍 세션 체크 - 사용자 ID: {current_user_id}")
-    print(f"🔍 전체 세션: {session_data}")
-    print(f"🔑 세션 키 존재: {'current_user_id' in session}")
-    print(f"💾 세션 영구: {session.permanent}")
-    return current_user_id

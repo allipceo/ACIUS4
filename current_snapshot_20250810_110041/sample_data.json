@@ -1,0 +1,22 @@
+{
+  "app_info": {
+    "name": "GIA_WP",
+    "version": "1.0",
+    "last_updated": "2025-08-01 21:25 KST"
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "조대표",
+      "role": "총괄",
+      "login_count": 0
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "content": "JSON 데이터 연동 성공!",
+      "timestamp": "2025-08-01 21:25"
+    }
+  ]
+} 
