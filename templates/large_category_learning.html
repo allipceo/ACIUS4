@@ -149,6 +149,11 @@
     <script src="/static/js/large_category_ui.js"></script>
     <script src="/static/js/large_category_stats.js"></script>
     
+    <!-- 고도화된 통계 시스템 스크립트들 -->
+    <script src="/static/js/advanced_progress_manager.js"></script>
+    <script src="/static/js/real_time_stats_updater.js"></script>
+    <script src="/static/js/advanced_statistics_system.js"></script>
+    
     <script>
         // 전역 변수 초기화
         let currentQuestionData = [];
@@ -171,8 +176,130 @@
             // 통계 초기화
             initializeLargeCategoryStatistics();
             
+            // 고도화된 통계 시스템 초기화
+            initializeAdvancedStatisticsSystem();
+            
             console.log('대분류 학습 페이지 초기화 완료');
         });
+        
+        // 고도화된 통계 시스템 초기화
+        async function initializeAdvancedStatisticsSystem() {
+            console.log('🎯 대분류 학습 페이지 고도화된 통계 시스템 초기화 시작...');
+            
+            // AdvancedStatisticsSystem 초기화 대기
+            setTimeout(async () => {
+                if (typeof window.advancedStatisticsSystem !== 'undefined') {
+                    try {
+                        // 시스템 초기화
+                        const initResult = await window.advancedStatisticsSystem.initialize();
+                        if (initResult) {
+                            console.log('✅ 대분류 학습 페이지 고도화된 통계 시스템 초기화 완료');
+                            
+                            // 대분류 학습 통계 업데이트
+                            updateLargeCategoryStats();
+                            
+                            console.log('✅ 대분류 학습 페이지 통계 업데이트 완료');
+                        } else {
+                            console.error('❌ 대분류 학습 페이지 고도화된 통계 시스템 초기화 실패');
+                        }
+                    } catch (error) {
+                        console.error('❌ 고도화된 통계 시스템 초기화 중 오류:', error);
+                    }
+                } else {
+                    console.error('❌ AdvancedStatisticsSystem 모듈을 찾을 수 없습니다.');
+                }
+            }, 2000);
+        }
+        
+        // 대분류 학습 통계 업데이트 함수
+        function updateLargeCategoryStats() {
+            if (window.advancedProgressManager) {
+                // 전체 대분류 학습 통계 계산
+                let totalAttempted = 0;
+                let totalCorrect = 0;
+                let todayAttempted = 0;
+                let todayCorrect = 0;
+                
+                // 각 카테고리별 통계 합산
+                Object.values(window.advancedProgressManager.progressData.categories).forEach(category => {
+                    totalAttempted += category.total_attempted;
+                    totalCorrect += category.total_correct;
+                    todayAttempted += category.today_attempted;
+                    todayCorrect += category.today_correct;
+                });
+                
+                // 누적현황 업데이트
+                const cumulativeTotal = document.getElementById('cumulative-total');
+                if (cumulativeTotal) {
+                    cumulativeTotal.textContent = totalAttempted;
+                }
+                
+                const cumulativeCorrect = document.getElementById('cumulative-correct');
+                if (cumulativeCorrect) {
+                    cumulativeCorrect.textContent = totalCorrect;
+                }
+                
+                const cumulativeAccuracy = document.getElementById('cumulative-accuracy');
+                if (cumulativeAccuracy) {
+                    const accuracy = totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0;
+                    cumulativeAccuracy.textContent = accuracy;
+                }
+                
+                // 금일현황 업데이트
+                const todayTotal = document.getElementById('today-total');
+                if (todayTotal) {
+                    todayTotal.textContent = todayAttempted;
+                }
+                
+                const todayCorrect = document.getElementById('today-correct');
+                if (todayCorrect) {
+                    todayCorrect.textContent = todayCorrect;
+                }
+                
+                const todayAccuracy = document.getElementById('today-accuracy');
+                if (todayAccuracy) {
+                    const todayAccuracyValue = todayAttempted > 0 ? Math.round((todayCorrect / todayAttempted) * 100) : 0;
+                    todayAccuracy.textContent = todayAccuracyValue;
+                }
+            }
+        }
+        
+        // 정답 확인 시 고도화된 통계 시스템 업데이트
+        function updateLargeCategoryAnswerStats(category, questionNumber, isCorrect) {
+            console.log(`✅ 대분류 학습 정답 확인: ${category} - Q${questionNumber} - ${isCorrect ? '정답' : '오답'}`);
+            
+            // AdvancedStatisticsSystem에 진도 저장
+            if (typeof window.advancedStatisticsSystem !== 'undefined' && window.advancedStatisticsSystem.isInitialized) {
+                const updateResult = window.advancedStatisticsSystem.updateOnQuestionSolved(category, questionNumber, isCorrect);
+                if (updateResult) {
+                    console.log('✅ 대분류 학습 고도화된 통계 시스템 업데이트 완료');
+                    
+                    // 통계 박스 업데이트
+                    updateLargeCategoryStats();
+                    
+                } else {
+                    console.error('❌ 대분류 학습 고도화된 통계 시스템 업데이트 실패');
+                }
+            }
+        }
+        
+        // 기존 정답 확인 함수를 새로운 함수로 교체
+        if (typeof largeCategorySystem !== 'undefined' && largeCategorySystem.checkAnswer) {
+            const originalCheckAnswer = largeCategorySystem.checkAnswer;
+            largeCategorySystem.checkAnswer = function() {
+                // 현재 카테고리와 문제 번호, 정답 여부를 가져와서 통계 업데이트
+                if (selectedCategory && currentQuestionData.length > 0) {
+                    const currentQuestion = currentQuestionData[currentQuestionIndex];
+                    const questionNumber = currentQuestion.question_number || currentQuestionIndex + 1;
+                    const isCorrect = selectedAnswer === currentQuestion.correct_answer;
+                    
+                    updateLargeCategoryAnswerStats(selectedCategory, questionNumber, isCorrect);
+                }
+                
+                // 기존 정답 확인 로직 실행
+                originalCheckAnswer.call(this);
+            };
+        }
     </script>
 </body>
 </html>

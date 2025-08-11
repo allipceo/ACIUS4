@@ -97,23 +97,23 @@ def register_blueprints(app):
     
     print("✅ 대분류 학습 라우트 등록")
 
-                      # =============================================================
-                  # 통계 시스템 테스트 라우트 추가 (Day 3 개발)
-                  # =============================================================
-                  @app.route('/stats-test')
-                  def stats_test():
-                      return render_template('stats_test.html')
+    # =============================================================
+    # 통계 시스템 테스트 라우트 추가 (Day 3 개발)
+    # =============================================================
+    @app.route('/stats-test')
+    def stats_test():
+        return render_template('stats_test.html')
 
-                  print("✅ 통계 시스템 테스트 라우트 등록")
+    print("✅ 통계 시스템 테스트 라우트 등록")
 
-                  # =============================================================
-                  # 고도화된 통계 시스템 테스트 라우트 추가 (Phase 1 Day 2)
-                  # =============================================================
-                  @app.route('/advanced-stats-test')
-                  def advanced_stats_test():
-                      return render_template('advanced_stats_test.html')
+    # =============================================================
+    # 고도화된 통계 시스템 테스트 라우트 추가 (Phase 1 Day 2)
+    # =============================================================
+    @app.route('/advanced-stats-test')
+    def advanced_stats_test():
+        return render_template('advanced_stats_test.html')
 
-                  print("✅ 고도화된 통계 시스템 테스트 라우트 등록")
+    print("✅ 고도화된 통계 시스템 테스트 라우트 등록")
 
 def register_error_handlers(app):
     """에러 핸들러 등록"""

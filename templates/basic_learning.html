@@ -152,48 +152,90 @@
     <script src="/static/js/basic_learning_stats.js"></script>
     <script src="/static/js/basic_learning_main.js"></script>
     
-    <!-- 통계 시스템 초기화 스크립트 -->
+    <!-- 고도화된 통계 시스템 스크립트들 -->
+    <script src="/static/js/advanced_progress_manager.js"></script>
+    <script src="/static/js/real_time_stats_updater.js"></script>
+    <script src="/static/js/advanced_statistics_system.js"></script>
+    
+    <!-- 고도화된 통계 시스템 초기화 스크립트 -->
     <script>
-        // 통계 시스템 초기화 및 업데이트
+        // 고도화된 통계 시스템 초기화 및 업데이트
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎯 기본학습 페이지 통계 시스템 초기화 시작...');
+            console.log('🎯 기본학습 페이지 고도화된 통계 시스템 초기화 시작...');
             
-            // ProgressSystem 초기화 대기
-            setTimeout(() => {
-                if (typeof progressSystem !== 'undefined') {
-                    // 시스템 초기화
-                    const initResult = progressSystem.initialize();
-                    if (initResult) {
-                        console.log('✅ 기본학습 페이지 통계 시스템 초기화 완료');
-                        
-                        // 기본학습 통계 업데이트
-                        progressSystem.updateStats('basic');
-                        
-                        // 다음 문제 안내 업데이트
-                        const nextQuestion = progressSystem.getNextQuestion('basic');
-                        const nextQuestionText = document.getElementById('next-question-text');
-                        if (nextQuestionText) {
-                            nextQuestionText.textContent = `다음 문제: ${nextQuestion}번`;
+            // AdvancedStatisticsSystem 초기화 대기
+            setTimeout(async () => {
+                if (typeof window.advancedStatisticsSystem !== 'undefined') {
+                    try {
+                        // 시스템 초기화
+                        const initResult = await window.advancedStatisticsSystem.initialize();
+                        if (initResult) {
+                            console.log('✅ 기본학습 페이지 고도화된 통계 시스템 초기화 완료');
+                            
+                            // 기본학습 통계 업데이트
+                            window.advancedStatisticsSystem.refreshAllStats();
+                            
+                            // 다음 문제 안내 업데이트
+                            const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
+                            const nextQuestionText = document.getElementById('next-question-text');
+                            if (nextQuestionText) {
+                                nextQuestionText.textContent = `다음 문제: ${nextQuestion}번`;
+                            }
+                            
+                            // 통계 박스 업데이트
+                            updateBasicLearningStats();
+                            
+                            console.log('✅ 기본학습 페이지 통계 업데이트 완료');
+                        } else {
+                            console.error('❌ 기본학습 페이지 고도화된 통계 시스템 초기화 실패');
                         }
-                        
-                        console.log('✅ 기본학습 페이지 통계 업데이트 완료');
-                    } else {
-                        console.error('❌ 기본학습 페이지 통계 시스템 초기화 실패');
+                    } catch (error) {
+                        console.error('❌ 고도화된 통계 시스템 초기화 중 오류:', error);
                     }
                 } else {
-                    console.error('❌ ProgressSystem 모듈을 찾을 수 없습니다.');
+                    console.error('❌ AdvancedStatisticsSystem 모듈을 찾을 수 없습니다.');
                 }
-            }, 1000);
+            }, 2000);
         });
         
-        // 이어풀기 기능 구현
+        // 기본학습 통계 업데이트 함수
+        function updateBasicLearningStats() {
+            if (window.advancedProgressManager) {
+                const progress = window.advancedProgressManager.getProgressForCategory('basic_learning');
+                const stats = window.advancedProgressManager.statistics;
+                
+                // 진행률 업데이트
+                const progressText = document.getElementById('basic-progress-text');
+                if (progressText) {
+                    progressText.textContent = `${progress.total_attempted} / 789`;
+                }
+                
+                // 정답률 업데이트
+                const accuracyText = document.getElementById('basic-accuracy-text');
+                if (accuracyText) {
+                    const accuracy = progress.total_attempted > 0 ? 
+                        Math.round((progress.total_correct / progress.total_attempted) * 100) : 0;
+                    accuracyText.textContent = `${accuracy}%`;
+                }
+                
+                // 오늘 정답률 업데이트
+                const todayAccuracy = document.getElementById('basic-today-accuracy');
+                if (todayAccuracy) {
+                    const todayAccuracyValue = progress.today_attempted > 0 ? 
+                        Math.round((progress.today_correct / progress.today_attempted) * 100) : 0;
+                    todayAccuracy.textContent = `${todayAccuracyValue}%`;
+                }
+            }
+        }
+        
+        // 이어풀기 기능 구현 (고도화된 통계 시스템 연동)
         function selectBasicLearningMode(mode) {
             console.log(`🎯 기본학습 모드 선택: ${mode}`);
             
             if (mode === 'continue') {
-                // 이어풀기: ProgressSystem에서 다음 문제 조회
-                if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
-                    const nextQuestion = progressSystem.getNextQuestion('basic');
+                // 이어풀기: AdvancedStatisticsSystem에서 다음 문제 조회
+                if (typeof window.advancedStatisticsSystem !== 'undefined' && window.advancedStatisticsSystem.isInitialized) {
+                    const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
                     console.log(`🔄 이어풀기: ${nextQuestion}번 문제부터 시작`);
                     
                     // 기존 기본학습 로직과 통합
@@ -203,7 +245,7 @@
                         console.log('⚠️ 기본학습 시작 함수를 찾을 수 없습니다.');
                     }
                 } else {
-                    console.log('⚠️ 통계 시스템이 초기화되지 않았습니다. 처음부터 시작합니다.');
+                    console.log('⚠️ 고도화된 통계 시스템이 초기화되지 않았습니다. 처음부터 시작합니다.');
                     if (typeof startBasicLearning === 'function') {
                         startBasicLearning(1);
                     }
@@ -228,27 +270,27 @@
             document.getElementById('basic-question-area').classList.remove('hidden');
         }
         
-        // 정답 확인 시 통계 업데이트
+        // 정답 확인 시 통계 업데이트 (고도화된 통계 시스템 연동)
         function checkAnswerWithStats(mode, questionNumber, isCorrect) {
             console.log(`✅ 정답 확인: ${mode} - Q${questionNumber} - ${isCorrect ? '정답' : '오답'}`);
             
-            // ProgressSystem에 진도 저장
-            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
-                const saveResult = progressSystem.saveProgress(mode, questionNumber, isCorrect);
-                if (saveResult) {
-                    console.log('✅ 진도 저장 완료');
+            // AdvancedStatisticsSystem에 진도 저장
+            if (typeof window.advancedStatisticsSystem !== 'undefined' && window.advancedStatisticsSystem.isInitialized) {
+                const updateResult = window.advancedStatisticsSystem.updateOnQuestionSolved('basic_learning', questionNumber, isCorrect);
+                if (updateResult) {
+                    console.log('✅ 고도화된 통계 시스템 업데이트 완료');
                     
-                    // 통계 업데이트
-                    progressSystem.updateStats(mode);
+                    // 통계 박스 업데이트
+                    updateBasicLearningStats();
                     
                     // 다음 문제 안내 업데이트
-                    const nextQuestion = progressSystem.getNextQuestion(mode);
+                    const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
                     const nextQuestionText = document.getElementById('next-question-text');
                     if (nextQuestionText) {
                         nextQuestionText.textContent = `다음 문제: ${nextQuestion}번`;
                     }
                 } else {
-                    console.error('❌ 진도 저장 실패');
+                    console.error('❌ 고도화된 통계 시스템 업데이트 실패');
                 }
             }
             
