@@ -129,42 +129,6 @@ class BasicLearningSystem {
         };
     }
     
-    selectAnswer(answer) {
-        selectedAnswer = answer;
-        isAnswerChecked = false;
-        
-        // 모든 답안 버튼 초기화
-        const buttons = document.querySelectorAll('#answer-buttons button');
-        buttons.forEach(btn => {
-            btn.classList.remove('ring-4', 'ring-blue-300', 'bg-blue-600');
-            btn.classList.add('bg-gray-200');
-        });
-        
-        // 선택된 답안 하이라이트
-        const selectedButton = document.querySelector(`#answer-buttons button[data-answer="${answer}"]`);
-        if (selectedButton) {
-            selectedButton.classList.remove('bg-gray-200');
-            selectedButton.classList.add('bg-blue-600', 'text-white', 'ring-4', 'ring-blue-300');
-        }
-        
-        // 정답확인 버튼 활성화
-        const checkButton = document.getElementById('check-button');
-        if (checkButton) {
-            checkButton.textContent = '정답 확인';
-            checkButton.disabled = false;
-        }
-        
-        console.log(`답안 선택: ${answer}`);
-    }
-    
-    updateStatus(message, color = 'blue') {
-        const statusElement = document.getElementById('status');
-        if (statusElement) {
-            statusElement.textContent = message;
-            statusElement.className = `text-center text-${color}-600 mb-4 font-semibold`;
-        }
-    }
-    
     updateStatisticsDisplay() {
         if (!userStatistics) return;
         
@@ -175,7 +139,19 @@ class BasicLearningSystem {
         document.getElementById('cumulative-correct').textContent = basic.cumulative.totalCorrect;
         document.getElementById('cumulative-accuracy').textContent = basic.cumulative.accuracy.toFixed(1);
         
-        // 금일 현황 업데이트
+        // 금일 현황 업데이트 (날짜 확인)
+        const today = new Date().toISOString().split('T')[0];
+        if (basic.today.date !== today) {
+            // 날짜가 바뀐 경우 금일 통계 초기화
+            basic.today = {
+                date: today,
+                todayAttempted: 0,
+                todayCorrect: 0,
+                todayWrong: 0,
+                accuracy: 0.0
+            };
+        }
+        
         document.getElementById('today-total').textContent = basic.today.todayAttempted;
         document.getElementById('today-correct').textContent = basic.today.todayCorrect;
         document.getElementById('today-accuracy').textContent = basic.today.accuracy.toFixed(1);
@@ -202,10 +178,9 @@ class BasicLearningSystem {
             basic.cumulative.totalWrong++;
             basic.streak = 0;
         }
-        basic.cumulative.accuracy = this.calculateAccuracy(
-            basic.cumulative.totalCorrect, 
-            basic.cumulative.totalAttempted
-        );
+        basic.cumulative.accuracy = basic.cumulative.totalAttempted > 0 
+            ? (basic.cumulative.totalCorrect / basic.cumulative.totalAttempted) * 100 
+            : 0;
         
         // 금일 통계 업데이트
         if (basic.today.date !== today) {
@@ -224,25 +199,25 @@ class BasicLearningSystem {
         } else {
             basic.today.todayWrong++;
         }
-        basic.today.accuracy = this.calculateAccuracy(
-            basic.today.todayCorrect, 
-            basic.today.todayAttempted
-        );
+        basic.today.accuracy = basic.today.todayAttempted > 0 
+            ? (basic.today.todayCorrect / basic.today.todayAttempted) * 100 
+            : 0;
         
         // 현재 인덱스 업데이트
         basic.currentIndex = currentQuestionIndex;
         userStatistics.lastUpdated = new Date().toISOString();
         
         // 저장
-        await this.saveStatistics();
+        await this.saveUserStatistics();
         
         // 화면 업데이트
         this.updateStatisticsDisplay();
     }
     
-    async saveStatistics() {
+    async saveUserStatistics() {
         try {
             if (isFlaskMode && currentUser) {
+                // Flask 서버에 저장
                 const response = await fetch(`/user/api/users/${currentUser.userId}/statistics`, {
                     method: 'PUT',
                     headers: {
@@ -257,7 +232,7 @@ class BasicLearningSystem {
                 }
             }
             
-            // 로컬 저장
+            // 로컬 저장 (백업 또는 기본)
             localStorage.setItem(`aciu_stats_${currentUser.userId}`, JSON.stringify(userStatistics));
             console.log('로컬에 통계 저장 완료');
         } catch (error) {
@@ -265,93 +240,36 @@ class BasicLearningSystem {
         }
     }
     
-    calculateAccuracy(correct, total) {
-        return total > 0 ? (correct / total) * 100 : 0;
+    selectAnswer(answer) {
+        selectedAnswer = answer;
+        
+        // 모든 답안 버튼 초기화
+        const buttons = document.querySelectorAll('#answer-buttons button');
+        buttons.forEach(btn => {
+            btn.classList.remove('ring-4', 'ring-blue-300', 'bg-blue-600');
+            btn.classList.add('bg-gray-200');
+        });
+        
+        // 선택된 답안 하이라이트
+        const selectedButton = document.querySelector(`#answer-buttons button[data-answer="${answer}"]`);
+        if (selectedButton) {
+            selectedButton.classList.remove('bg-gray-200');
+            selectedButton.classList.add('bg-blue-600', 'text-white', 'ring-4', 'ring-blue-300');
+        }
+        
+        console.log(`답안 선택: ${answer}`);
+    }
+    
+    updateStatus(message, color = 'blue') {
+        const statusElement = document.getElementById('status');
+        if (statusElement) {
+            statusElement.textContent = message;
+            statusElement.className = `text-center text-${color}-600 mb-4 font-semibold`;
+        }
     }
 }
 
-// 전역 인스턴스
-let basicLearningSystem = null;
-
-// 기본학습 데이터 로딩 함수
-async function loadBasicLearningData(mode = 'basic') {
-    console.log('🔄 기본학습 데이터 로딩 시작...');
-    
-    try {
-        // JSON 파일 로딩
-        console.log('📁 JSON 파일 로딩 시도...');
-        const response = await fetch('/static/questions.json');
-        
-        if (response.ok) {
-            const jsonData = await response.json();
-            console.log('JSON 데이터 로드 완료:', jsonData.questions.length, '개 문제');
-            
-            // 문제 필터링 (기본학습용)
-            const filteredQuestions = jsonData.questions.filter(q => 
-                q.type === 'basic' || q.category === 'basic' || !q.type
-            );
-            console.log('필터링 후 문제 수:', filteredQuestions.length, '개');
-            
-            if (filteredQuestions.length > 0) {
-                currentQuestionData = filteredQuestions;
-                
-                // 모드에 따른 인덱스 설정
-                if (mode === 'continue') {
-                    // 이어풀기: 저장된 인덱스 사용
-                    const savedIndex = localStorage.getItem('basic_learning_index');
-                    currentQuestionIndex = savedIndex ? parseInt(savedIndex) : 0;
-                } else if (mode === 'restart') {
-                    // 처음풀기: 0부터 시작
-                    currentQuestionIndex = 0;
-                } else if (mode === 'random') {
-                    // 랜덤풀기: 무작위 인덱스
-                    currentQuestionIndex = Math.floor(Math.random() * filteredQuestions.length);
-                } else {
-                    currentQuestionIndex = 0;
-                }
-                
-                displayQuestion();
-                basicLearningSystem.updateStatisticsDisplay();
-                basicLearningSystem.updateStatus('JSON 모드로 학습을 시작합니다.', 'blue');
-                return;
-            }
-        }
-    } catch (error) {
-        console.error('JSON 로딩 실패:', error);
-    }
-    
-    // CSV 파일 로딩 (폴백)
-    try {
-        console.log('📄 CSV 파일 로딩 시도...');
-        const response = await fetch('/data/ins_master_db.csv');
-        
-        if (response.ok) {
-            const csvText = await response.text();
-            const results = Papa.parse(csvText, { header: true });
-            
-            if (results.data && results.data.length > 0) {
-                currentQuestionData = results.data.filter(row => 
-                    row.QUESTION && row.ANSWER
-                );
-                console.log('CSV 데이터 로드 완료:', currentQuestionData.length, '개 문제');
-                
-                currentQuestionIndex = 0;
-                displayQuestion();
-                basicLearningSystem.updateStatisticsDisplay();
-                basicLearningSystem.updateStatus('CSV 모드로 학습을 시작합니다.', 'blue');
-                return;
-            }
-        }
-    } catch (error) {
-        console.error('CSV 로딩 실패:', error);
-    }
-    
-    // 모든 로딩 실패
-    basicLearningSystem.updateStatus('데이터 로드 실패. 네트워크를 확인해주세요.', 'red');
-    throw new Error('모든 데이터 소스 로딩 실패');
-}
-
-// 모드 선택 함수
+// 기본학습 모드 선택 함수
 async function selectBasicLearningMode(mode) {
     console.log(`=== 기본학습 모드 선택: ${mode} ===`);
     
@@ -391,10 +309,10 @@ function displayQuestion() {
     const question = currentQuestionData[currentQuestionIndex];
     
     // 문제 정보 표시
-    document.getElementById('question-code').textContent = question.QCODE || question.qcode || 'Q???';
-    document.getElementById('question-type').textContent = question.TYPE || question.type || '진위형';
-    document.getElementById('layer-info').textContent = `${question.LAYER1 || question.layer1 || ''} > ${question.LAYER2 || question.layer2 || ''}`;
-    document.getElementById('question-text').textContent = question.QUESTION || question.question || '문제를 불러올 수 없습니다.';
+    document.getElementById('question-code').textContent = question.QCODE || 'Q???';
+    document.getElementById('question-type').textContent = question.TYPE || '진위형';
+    document.getElementById('layer-info').textContent = `${question.LAYER1 || ''} > ${question.LAYER2 || ''}`;
+    document.getElementById('question-text').textContent = question.QUESTION || '문제를 불러올 수 없습니다.';
     document.getElementById('progress-info').textContent = `${currentQuestionIndex + 1} / ${currentQuestionData.length}`;
     
     // 답안 버튼 생성
@@ -406,7 +324,7 @@ function displayQuestion() {
     document.getElementById('result-area').classList.add('hidden');
     document.getElementById('check-button').textContent = '정답 확인';
     
-    console.log(`문제 표시: ${question.QCODE || question.qcode}, 진도: ${currentQuestionIndex + 1}/${currentQuestionData.length}`);
+    console.log(`문제 표시: ${question.QCODE}, 진도: ${currentQuestionIndex + 1}/${currentQuestionData.length}`);
 }
 
 // 답안 버튼 생성 함수
@@ -421,9 +339,7 @@ function createAnswerButtons(question) {
             button.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg mr-4 transition-all';
             button.textContent = answer === 'O' ? '⭕ 맞다 (O)' : '❌ 틀리다 (X)';
             button.setAttribute('data-answer', answer);
-            button.onclick = () => {
-                basicLearningSystem.selectAnswer(answer);
-            };
+            button.onclick = () => basicLearningSystem.selectAnswer(answer);
             buttonsContainer.appendChild(button);
         });
     } else {
@@ -433,9 +349,7 @@ function createAnswerButtons(question) {
             button.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg mr-2 mb-2 transition-all';
             button.textContent = `${i}번`;
             button.setAttribute('data-answer', i.toString());
-            button.onclick = () => {
-                basicLearningSystem.selectAnswer(i.toString());
-            };
+            button.onclick = () => basicLearningSystem.selectAnswer(i.toString());
             buttonsContainer.appendChild(button);
         }
     }
@@ -449,6 +363,7 @@ async function checkAnswer() {
     }
     
     if (isAnswerChecked) {
+        // 이미 확인됨 - 다음 문제로
         nextQuestion();
         return;
     }
@@ -470,32 +385,41 @@ async function checkAnswer() {
         resultMessage.className = 'p-3 rounded font-medium bg-red-100 text-red-800';
         resultMessage.textContent = `❌ 틀렸습니다. 정답은 "${correctAnswer}"입니다.`;
         
+        // 정답 버튼 하이라이트
         const correctButton = document.querySelector(`#answer-buttons button[data-answer="${correctAnswer}"]`);
         if (correctButton) {
             correctButton.classList.add('bg-green-500', 'text-white', 'ring-4', 'ring-green-300');
         }
     }
     
+    // 통계 업데이트
     await basicLearningSystem.updateLearningStatistics(isCorrect);
     
+    // 상태 변경
     isAnswerChecked = true;
     document.getElementById('check-button').textContent = '다음 문제';
     
-    console.log(`정답 확인: ${isCorrect ? '정답' : '오답'}`);
+    console.log(`정답 확인: ${isCorrect ? '정답' : '오답'}, 선택: ${selectedAnswer}, 정답: ${correctAnswer}`);
 }
 
 // 다음 문제 함수
 function nextQuestion() {
     if (currentQuestionIndex >= currentQuestionData.length - 1) {
-        basicLearningSystem.updateStatus('🎉 모든 문제를 완료했습니다!', 'green');
+        // 마지막 문제
+        basicLearningSystem.updateStatus('🎉 모든 문제를 완료했습니다! 수고하셨습니다!', 'green');
+        
+        // 완료 통계 표시
+        if (userStatistics && userStatistics.basicLearning) {
+            const basic = userStatistics.basicLearning;
+            setTimeout(() => {
+                alert(`학습 완료!\n\n누적 통계:\n- 총 문제: ${basic.cumulative.totalAttempted}개\n- 정답: ${basic.cumulative.totalCorrect}개\n- 정답률: ${basic.cumulative.accuracy.toFixed(1)}%\n\n금일 통계:\n- 금일 문제: ${basic.today.todayAttempted}개\n- 정답: ${basic.today.todayCorrect}개\n- 정답률: ${basic.today.accuracy.toFixed(1)}%`);
+            }, 1000);
+        }
         return;
     }
     
     currentQuestionIndex++;
     displayQuestion();
-    
-    // 현재 인덱스 저장
-    localStorage.setItem('basic_learning_index', currentQuestionIndex.toString());
 }
 
 // 이전 문제 함수
@@ -515,6 +439,7 @@ function goHome() {
         window.location.href = '/home';
     } else {
         alert('홈 화면으로 이동합니다.');
+        // 로컬 모드에서는 사용자 등록 화면으로
         window.location.href = 'user_registration.html';
     }
 }
@@ -550,19 +475,326 @@ function simulateWrongAnswer() {
 }
 
 // 전역 함수로 노출
-window.selectBasicLearningMode = selectBasicLearningMode;
-window.loadBasicLearningData = loadBasicLearningData;
-window.displayQuestion = displayQuestion;
-window.createAnswerButtons = createAnswerButtons;
-window.checkAnswer = checkAnswer;
-window.nextQuestion = nextQuestion;
-window.prevQuestion = prevQuestion;
-window.goHome = goHome;
 window.debugCurrentState = debugCurrentState;
 window.simulateCorrectAnswer = simulateCorrectAnswer;
 window.simulateWrongAnswer = simulateWrongAnswer;
 
 // 초기화
+let basicLearningSystem;
+
+// ===== Week2 API 연결 추가 코드 =====
+
+// API 기본 설정
+const API_BASE = '/api/quiz';
+let currentAPISession = null;
+
+// Week2 API 연결 시도 함수
+async function connectToWeek2API() {
+    try {
+        console.log('🔗 Week2 API 연결 시도...');
+        
+        const response = await fetch(`${API_BASE}/health`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Week2 API 연결 성공:', data);
+            return true;
+        } else {
+            console.log('⚠️ Week2 API 응답 오류:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.log('⚠️ Week2 API 연결 실패, 기존 방식 사용:', error.message);
+        return false;
+    }
+}
+
+// Week2 API로 퀴즈 세션 시작
+async function startWeek2QuizSession(mode, category = 'all') {
+    try {
+        const response = await fetch(`${API_BASE}/start`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currentUser?.userId || 'user_' + Date.now(),
+                mode: mode,
+                category: category
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        currentAPISession = data.session_id;
+        console.log('✅ Week2 세션 생성 성공:', currentAPISession);
+        return currentAPISession;
+        
+    } catch (error) {
+        console.log('❌ Week2 세션 생성 실패:', error);
+        return null;
+    }
+}
+
+// Week2 API로 문제 조회
+async function loadQuestionFromAPI(sessionId, questionIndex) {
+    try {
+        const response = await fetch(`${API_BASE}/question/${sessionId}/${questionIndex}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Week2 문제 로딩 성공:', data);
+        return data;
+        
+    } catch (error) {
+        console.log('❌ Week2 문제 로딩 실패:', error);
+        return null;
+    }
+}
+
+// Week2 API로 답안 제출
+async function submitAnswerToAPI(sessionId, questionIndex, answer) {
+    try {
+        const response = await fetch(`${API_BASE}/submit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                session_id: sessionId,
+                question_index: questionIndex,
+                answer: answer,
+                user_id: currentUser?.userId || 'user_' + Date.now()
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('✅ Week2 답안 제출 성공:', result);
+        return result;
+        
+    } catch (error) {
+        console.log('❌ Week2 답안 제출 실패:', error);
+        return null;
+    }
+}
+
+// 기존 함수 개선: API 우선, CSV 백업
+async function loadBasicLearningData(mode) {
+    try {
+        console.log(`=== 개선된 데이터 로드: ${mode} ===`);
+        
+        // 1. Week2 API 연결 시도
+        const apiConnected = await connectToWeek2API();
+        
+        if (apiConnected) {
+            console.log('🚀 Week2 API 모드로 시작');
+            
+            // API로 세션 시작
+            const sessionId = await startWeek2QuizSession(mode);
+            
+            if (sessionId) {
+                // API에서 첫 번째 문제 로드
+                const firstQuestion = await loadQuestionFromAPI(sessionId, 0);
+                
+                if (firstQuestion) {
+                    // API 모드로 설정
+                    window.useAPIMode = true;
+                    currentQuestionIndex = 0;
+                    
+                    // 문제 표시 (API 데이터 형식에 맞게)
+                    displayAPIQuestion(firstQuestion);
+                    basicLearningSystem.updateStatus('Week2 API 모드로 학습을 시작합니다.', 'green');
+                    return;
+                }
+            }
+        }
+        
+        // 2. API 실패 시 기존 CSV 방식 사용
+        console.log('📄 기존 CSV 모드로 전환');
+        window.useAPIMode = false;
+        
+        // 검증된 JSON 파일 로드
+        const response = await fetch('/static/questions.json');
+        const jsonData = await response.json();
+       
+        console.log(`JSON 데이터 로드 완료: ${jsonData.questions.length}개 문제`);
+        
+        // 데이터 필터링 - 유효한 문제만 선택
+        const filteredData = jsonData.questions.filter(question =>
+            question.qcode && question.question && question.answer && question.qcode.trim() !== ''
+        );
+      
+        console.log(`필터링 후 문제 수: ${filteredData.length}개`);
+        
+        // JSON 데이터를 기존 형식으로 변환
+        const convertedData = filteredData.map(question => ({
+            QCODE: question.qcode,
+            QUESTION: question.question,
+            ANSWER: question.answer,
+            TYPE: question.type || '진위형',
+            LAYER1: question.layer1 || '',
+            LAYER2: question.layer2 || ''
+        }));
+        
+        if (mode === 'random') {
+            currentQuestionData = convertedData.sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+        } else if (mode === 'restart') {
+            currentQuestionData = [...convertedData];
+            currentQuestionIndex = 0;
+        } else if (mode === 'continue') {
+            currentQuestionData = [...convertedData];
+            if (userStatistics && userStatistics.basicLearning) {
+                currentQuestionIndex = userStatistics.basicLearning.currentIndex || 0;
+            } else {
+                currentQuestionIndex = 0;
+            }
+        }
+        
+        displayQuestion();
+        basicLearningSystem.updateStatisticsDisplay();
+        basicLearningSystem.updateStatus('JSON 모드로 학습을 시작합니다.', 'blue');
+       
+    } catch (error) {
+        console.error('데이터 로드 실패:', error);
+        basicLearningSystem.updateStatus('데이터 로드 실패. 네트워크를 확인해주세요.', 'red');
+    }
+}
+
+// API 모드용 문제 표시 함수
+function displayAPIQuestion(questionData) {
+    console.log('📋 API 문제 표시:', questionData);
+    
+    // 기존 DOM 업데이트 (API 데이터 형식에 맞게)
+    document.getElementById('question-code').textContent = questionData.q_code || 'Q???';
+    document.getElementById('question-type').textContent = questionData.question_type || '진위형';
+    document.getElementById('layer-info').textContent = `${questionData.category || ''} > ${questionData.subcategory || ''}`;
+    document.getElementById('question-text').textContent = questionData.question || '문제를 불러올 수 없습니다.';
+    document.getElementById('progress-info').textContent = `${questionData.current_index + 1} / ${questionData.total_questions}`;
+    
+    // 답안 버튼 생성 (기존 방식과 동일)
+    createAnswerButtons({
+        TYPE: questionData.question_type,
+        ANSWER: questionData.correct_answer
+    });
+    
+    // 상태 초기화
+    selectedAnswer = null;
+    isAnswerChecked = false;
+    document.getElementById('result-area').classList.add('hidden');
+    document.getElementById('check-button').textContent = '정답 확인';
+}
+
+// 개선된 정답 확인 함수 (API/CSV 모드 모두 지원)
+async function checkAnswerImproved() {
+    if (!selectedAnswer) {
+        alert('답안을 선택해주세요.');
+        return;
+    }
+    
+    if (isAnswerChecked) {
+        nextQuestionImproved();
+        return;
+    }
+    
+    let isCorrect = false;
+    let correctAnswer = '';
+    
+    if (window.useAPIMode && currentAPISession) {
+        // API 모드: 서버로 답안 제출
+        const result = await submitAnswerToAPI(currentAPISession, currentQuestionIndex, selectedAnswer);
+        
+        if (result) {
+            isCorrect = result.correct;
+            correctAnswer = result.correct_answer;
+            
+            // 다음 문제 미리 로드
+            const nextQuestion = await loadQuestionFromAPI(currentAPISession, currentQuestionIndex + 1);
+            if (nextQuestion) {
+                window.nextAPIQuestion = nextQuestion;
+            }
+        } else {
+            basicLearningSystem.updateStatus('답안 제출에 실패했습니다.', 'red');
+            return;
+        }
+    } else {
+        // CSV 모드: 기존 방식
+        const question = currentQuestionData[currentQuestionIndex];
+        correctAnswer = question.ANSWER;
+        isCorrect = selectedAnswer === correctAnswer;
+    }
+    
+    // 결과 표시 (기존 로직 유지)
+    const resultArea = document.getElementById('result-area');
+    const resultMessage = document.getElementById('result-message');
+    
+    resultArea.classList.remove('hidden');
+    
+    if (isCorrect) {
+        resultMessage.className = 'p-3 rounded font-medium bg-green-100 text-green-800';
+        resultMessage.textContent = '🎉 정답입니다!';
+    } else {
+        resultMessage.className = 'p-3 rounded font-medium bg-red-100 text-red-800';
+        resultMessage.textContent = `❌ 틀렸습니다. 정답은 "${correctAnswer}"입니다.`;
+        
+        const correctButton = document.querySelector(`#answer-buttons button[data-answer="${correctAnswer}"]`);
+        if (correctButton) {
+            correctButton.classList.add('bg-green-500', 'text-white', 'ring-4', 'ring-green-300');
+        }
+    }
+    
+    await basicLearningSystem.updateLearningStatistics(isCorrect);
+    
+    isAnswerChecked = true;
+    document.getElementById('check-button').textContent = '다음 문제';
+    
+    console.log(`정답 확인 (${window.useAPIMode ? 'API' : 'CSV'} 모드): ${isCorrect ? '정답' : '오답'}`);
+}
+
+// 개선된 다음 문제 함수
+async function nextQuestionImproved() {
+    if (window.useAPIMode && window.nextAPIQuestion) {
+        // API 모드: 미리 로드된 문제 사용
+        currentQuestionIndex++;
+        displayAPIQuestion(window.nextAPIQuestion);
+        window.nextAPIQuestion = null;
+    } else if (window.useAPIMode && currentAPISession) {
+        // API 모드: 실시간 로드
+        currentQuestionIndex++;
+        const nextQuestion = await loadQuestionFromAPI(currentAPISession, currentQuestionIndex);
+        
+        if (nextQuestion) {
+            displayAPIQuestion(nextQuestion);
+        } else {
+            basicLearningSystem.updateStatus('🎉 모든 문제를 완료했습니다!', 'green');
+        }
+    } else {
+        // CSV 모드: 기존 방식
+        if (currentQuestionIndex >= currentQuestionData.length - 1) {
+            basicLearningSystem.updateStatus('🎉 모든 문제를 완료했습니다!', 'green');
+            return;
+        }
+        
+        currentQuestionIndex++;
+        displayQuestion();
+    }
+}
+
+// 기존 함수들을 개선된 버전으로 연결
+window.checkAnswer = checkAnswerImproved;
+window.nextQuestion = nextQuestionImproved;
+
+console.log('✅ Week2 API 연결 코드 추가 완료');
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('ACIU S4 기본학습 시스템 초기화 시작');
     console.log('Flask 모드:', isFlaskMode);

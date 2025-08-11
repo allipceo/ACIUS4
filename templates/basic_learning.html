@@ -21,24 +21,24 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-semibold">기본학습</h2>
                 
-                <!-- 조대표님 요구사항: 2단계 구조 통계 -->
+                <!-- 조대표님 요구사항: 2줄 구조 통계 -->
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 min-w-[300px]">
-                    <!-- 누적현황 (1단계) -->
+                    <!-- 누적현황 (1줄) -->
                     <div class="mb-2">
                         <span class="text-sm font-medium text-gray-700">누적현황:</span>
                         <span class="ml-2 text-sm">
-                            총<span id="cumulative-total" class="font-bold text-blue-600">0</span>문제 | 
+                            총 <span id="cumulative-total" class="font-bold text-blue-600">0</span>문제 | 
                             정답 <span id="cumulative-correct" class="font-bold text-green-600">0</span>개 | 
-                            정답률<span id="cumulative-accuracy" class="font-bold text-purple-600">0</span>%
+                            정답률 <span id="cumulative-accuracy" class="font-bold text-purple-600">0</span>%
                         </span>
                     </div>
-                    <!-- 금일현황 (2단계) -->
+                    <!-- 금일현황 (2줄) -->
                     <div>
                         <span class="text-sm font-medium text-gray-700">금일현황:</span>
                         <span class="ml-2 text-sm">
                             금일 <span id="today-total" class="font-bold text-orange-600">0</span>문제 | 
                             정답 <span id="today-correct" class="font-bold text-green-600">0</span>개 | 
-                            정답률<span id="today-accuracy" class="font-bold text-red-600">0</span>%
+                            정답률 <span id="today-accuracy" class="font-bold text-red-600">0</span>%
                         </span>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
             
             <!-- 기본학습 문제 표시 영역 -->
             <div id="basic-question-area" class="hidden">
-                <h3 class="text-lg font-semibold mb-4">문제 풀기</h3>
+                <h3 class="text-lg font-semibold mb-4">문제 풀이</h3>
                 
                 <!-- 문제 정보 -->
                 <div class="mb-4 p-4 bg-gray-50 rounded">
@@ -80,17 +80,17 @@
                         <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
                         <span id="question-code" class="text-sm text-gray-600">Q001</span>
                     </div>
-                    <div id="layer-info" class="text-sm text-gray-500 mb-2">생명보험 > 일반생명보험</div>
+                    <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm text-gray-600">진도</span>
                         <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 100</span>
                     </div>
-                    <div id="question-text" class="text-lg font-medium">문제 텍스트가 여기에 표시됩니다</div>
+                    <div id="question-text" class="text-lg font-medium">문제 텍스트가 여기에 표시됩니다.</div>
                 </div>
                 
                 <!-- 답안 버튼 영역 -->
                 <div id="answer-buttons" class="mb-4">
-                    <!-- 동적으로 생성되는 답안 버튼들-->
+                    <!-- 동적으로 생성될 답안 버튼들 -->
                 </div>
                 
                 <!-- 결과 표시 영역 -->
@@ -111,7 +111,7 @@
                     </button>
                 </div>
                 
-                <!-- 상세 통계 표시 영역 (선택사항) -->
+                <!-- 상세 통계 확장 영역 (선택사항) -->
                 <div class="mt-6 bg-gray-50 p-4 rounded-lg">
                     <h4 class="font-semibold mb-3">상세 통계</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
@@ -137,7 +137,10 @@
         </div>
     </div>
 
-    <!-- JavaScript 파일 로드 -->
-    <script src="/static/js/basic_learning_all.js"></script>
+    <!-- JavaScript 모듈 로드 (순서 중요) -->
+    <script src="/static/js/basic_learning_core.js"></script>
+    <script src="/static/js/basic_learning_ui.js"></script>
+    <script src="/static/js/basic_learning_stats.js"></script>
+    <script src="/static/js/basic_learning_main.js"></script>
 </body>
 </html>
