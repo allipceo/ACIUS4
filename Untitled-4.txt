@@ -1,0 +1,97 @@
+// 문제풀이 연결 테스트 스크립트
+// 브라우저 개발자 도구 Console에서 실행
+
+console.log("🔍 AICU 문제풀이 API 연결 테스트 시작...");
+
+// 1. API Health Check
+async function testAPIHealth() {
+    try {
+        const response = await fetch('/api/quiz/health');
+        const data = await response.json();
+        console.log("✅ API Health Check:", data);
+        return true;
+    } catch (error) {
+        console.log("❌ API Health Check 실패:", error);
+        return false;
+    }
+}
+
+// 2. 퀴즈 세션 시작 테스트
+async function testQuizStart() {
+    try {
+        const response = await fetch('/api/quiz/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: 'test_user',
+                mode: 'basic',
+                category: 'all'
+            })
+        });
+        const data = await response.json();
+        console.log("✅ 퀴즈 세션 시작:", data);
+        return data.session_id;
+    } catch (error) {
+        console.log("❌ 퀴즈 세션 시작 실패:", error);
+        return null;
+    }
+}
+
+// 3. 첫 번째 문제 조회 테스트
+async function testGetQuestion(sessionId) {
+    try {
+        const response = await fetch(`/api/quiz/question/${sessionId}/0`);
+        const data = await response.json();
+        console.log("✅ 문제 조회 성공:", data);
+        return data;
+    } catch (error) {
+        console.log("❌ 문제 조회 실패:", error);
+        return null;
+    }
+}
+
+// 4. 전체 테스트 실행
+async function runFullTest() {
+    console.log("🚀 전체 API 테스트 시작...");
+    
+    // Step 1: Health Check
+    const healthOK = await testAPIHealth();
+    if (!healthOK) {
+        console.log("🚨 API 서버 연결 실패 - app_v2.0.py 재시작 필요");
+        return;
+    }
+    
+    // Step 2: 세션 시작
+    const sessionId = await testQuizStart();
+    if (!sessionId) {
+        console.log("🚨 퀴즈 세션 생성 실패 - Week2 API 연결 문제");
+        return;
+    }
+    
+    // Step 3: 문제 조회
+    const question = await testGetQuestion(sessionId);
+    if (!question) {
+        console.log("🚨 문제 조회 실패 - 789개 문제 데이터 연결 문제");
+        return;
+    }
+    
+    console.log("🎉 모든 API 테스트 성공!");
+    console.log("📋 다음 단계: 프론트엔드 JavaScript 연결 확인");
+}
+
+// 즉시 실행
+runFullTest();
+
+// 5. 수동 테스트용 개별 함수들
+window.testAPIHealth = testAPIHealth;
+window.testQuizStart = testQuizStart;
+window.testGetQuestion = testGetQuestion;
+window.runFullTest = runFullTest;
+
+console.log("📋 수동 테스트 함수들이 window 객체에 등록되었습니다:");
+console.log("- testAPIHealth()");
+console.log("- testQuizStart()");
+console.log("- testGetQuestion(sessionId)");
+console.log("- runFullTest()");

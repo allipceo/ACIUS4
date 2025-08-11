@@ -122,7 +122,7 @@ def render_existing_home_html(current_user_id, ceo_info):
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="location.href='/category-learning'">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="location.href='/large-category-learning'">
                     <div class="text-center">
                         <div class="text-4xl mb-4">🎯</div>
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">대분류학습</h3>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 대분류 학습</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">ACIU QUIZ</h1>
+            <p class="text-gray-600">보험중개사 자격증 학습 시스템 - Season 4</p>
+            <div id="status" class="text-center text-blue-600 mb-4 font-semibold">대분류 학습 모드</div>
+        </header>
+
+        <!-- 대분류 학습 화면 -->
+        <div id="large-category-learning-screen" class="bg-white rounded-lg shadow-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">대분류 학습</h2>
+                
+                <!-- 조대표님 요구사항: 2줄 구조 통계 -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 min-w-[300px]">
+                    <!-- 누적현황 (1줄) -->
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">누적현황:</span>
+                        <span class="ml-2 text-sm">
+                            총 <span id="cumulative-total" class="font-bold text-blue-600">0</span>문제 | 
+                            정답 <span id="cumulative-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="cumulative-accuracy" class="font-bold text-purple-600">0</span>%
+                        </span>
+                    </div>
+                    <!-- 금일현황 (2줄) -->
+                    <div>
+                        <span class="text-sm font-medium text-gray-700">금일현황:</span>
+                        <span class="ml-2 text-sm">
+                            금일 <span id="today-total" class="font-bold text-orange-600">0</span>문제 | 
+                            정답 <span id="today-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="today-accuracy" class="font-bold text-red-600">0</span>%
+                        </span>
+                    </div>
+                </div>
+                
+                <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                    홈으로
+                </button>
+            </div>
+            
+            <!-- 카테고리 탭 -->
+            <div class="mb-6" id="category-tabs">
+                <h3 class="text-lg font-semibold mb-4">카테고리 선택</h3>
+                <div class="flex gap-3 w-full" id="category-tab-container">
+                    <!-- 동적으로 생성될 카테고리 탭들 -->
+                </div>
+            </div>
+            
+            <!-- 대분류 학습 문제 표시 영역 -->
+            <div id="large-category-question-area" class="hidden">
+                <!-- 카테고리별 진행 상황 -->
+                <div class="mb-4 p-3 bg-green-50 rounded border border-green-200">
+                    <div id="category-progress" class="text-sm font-medium text-green-700">
+                        카테고리를 선택해주세요.
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold mb-4">문제 풀이</h3>
+                
+
+                
+                <!-- 문제 정보 -->
+                <div class="mb-4 p-4 bg-gray-50 rounded">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
+                        <span id="question-code" class="text-sm text-gray-600">Q001</span>
+                    </div>
+                    <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-600">진도</span>
+                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 100</span>
+                    </div>
+                    <div id="question-text" class="text-lg font-medium">문제 텍스트가 여기에 표시됩니다.</div>
+                </div>
+                
+                <!-- 답안 버튼 영역 -->
+                <div id="answer-buttons" class="mb-4">
+                    <!-- 동적으로 생성될 답안 버튼들 -->
+                </div>
+                
+                <!-- 결과 표시 영역 -->
+                <div id="result-area" class="hidden">
+                    <div id="result-message" class="p-3 rounded font-medium"></div>
+                </div>
+                
+                <!-- 네비게이션 버튼 -->
+                <div class="flex justify-between items-center mt-6">
+                    <button onclick="largeCategorySystem.prevQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                        ← 이전 문제
+                    </button>
+                    
+                    <button id="check-button" onclick="largeCategorySystem.checkAnswer()" disabled class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
+                        정답 확인
+                    </button>
+                    
+                    <button onclick="largeCategorySystem.nextQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                        다음 문제 →
+                    </button>
+                </div>
+                
+                <!-- 상세 통계 -->
+                <div class="mt-8 p-4 bg-gray-50 rounded">
+                    <h4 class="font-semibold mb-3">상세 통계</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">총 문제 수:</span>
+                            <span id="total-questions" class="ml-2 font-bold">0</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">정답 수:</span>
+                            <span id="correct-answers" class="ml-2 font-bold text-green-600">0</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">오답 수:</span>
+                            <span id="wrong-answers" class="ml-2 font-bold text-red-600">0</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">연속 정답:</span>
+                            <span id="current-streak" class="ml-2 font-bold text-orange-600">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 통계 관리 버튼 -->
+                <div class="mt-4 flex justify-center space-x-4">
+                    <button onclick="resetLargeCategoryStatistics()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                        통계 초기화
+                    </button>
+                    <button onclick="exportLargeCategoryStatistics()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                        통계 내보내기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 모듈 로드 -->
+    <script src="/static/js/large_category_data_filter.js"></script>
+    <script src="/static/js/large_category_main.js"></script>
+    <script src="/static/js/large_category_ui.js"></script>
+    <script src="/static/js/large_category_stats.js"></script>
+    
+    <script>
+        // 전역 변수 초기화
+        let currentQuestionData = [];
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null;
+        let isAnswerChecked = false;
+        let selectedCategory = null;
+        let userStatistics = null;
+        let currentUser = null;
+        let isFlaskMode = true;
+        let learningMode = 'large_category';
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 대분류 학습 페이지 로드 ===');
+            
+            // UI 초기화
+            initializeLargeCategoryUI();
+            
+            // 통계 초기화
+            initializeLargeCategoryStatistics();
+            
+            console.log('대분류 학습 페이지 초기화 완료');
+        });
+    </script>
+</body>
+</html>
