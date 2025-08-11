@@ -30,12 +30,19 @@ def register_blueprints(app):
     # =============================================================
     try:
         # 코코치 제안: 명시적으로 quiz_routes_backup.py 사용
-        from routes.quiz_routes_backup import quiz_bp
-        app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
-        print("✅ Week2 퀴즈 API 등록 성공 (quiz_routes_backup.py 명시적 사용)")
+        from routes.quiz_routes import register_quiz_blueprints
+        register_quiz_blueprints(app)
+        print("✅ Week2 퀴즈 API 등록 성공 (Lego 모델 방식)")
     except ImportError as e:
-        print(f"❌ Week2 퀴즈 API 로드 실패: {e}")
-        print("📋 확인사항:")
+        print(f"⚠️ Week2 퀴즈 API 등록 실패: {e}")
+        # fallback: 기존 방식
+        try:
+            from routes.quiz_routes_backup import quiz_bp
+            app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
+            print("✅ Week2 퀴즈 API fallback 성공 (quiz_routes_backup.py)")
+        except ImportError as e2:
+            print(f"❌ Week2 퀴즈 API fallback도 실패: {e2}")
+            print("📋 확인사항:")
         print("   1. routes/quiz_routes_backup.py 파일 존재하는가?")
         print("   2. 파일 내에 quiz_bp가 정의되어 있는가?")
         print("   3. 파일명과 import 구문이 일치하는가?")
@@ -90,20 +97,40 @@ def register_blueprints(app):
     
     print("✅ 대분류 학습 라우트 등록")
 
+                      # =============================================================
+                  # 통계 시스템 테스트 라우트 추가 (Day 3 개발)
+                  # =============================================================
+                  @app.route('/stats-test')
+                  def stats_test():
+                      return render_template('stats_test.html')
+
+                  print("✅ 통계 시스템 테스트 라우트 등록")
+
+                  # =============================================================
+                  # 고도화된 통계 시스템 테스트 라우트 추가 (Phase 1 Day 2)
+                  # =============================================================
+                  @app.route('/advanced-stats-test')
+                  def advanced_stats_test():
+                      return render_template('advanced_stats_test.html')
+
+                  print("✅ 고도화된 통계 시스템 테스트 라우트 등록")
+
 def register_error_handlers(app):
-    """간단한 에러 핸들러"""
+    """에러 핸들러 등록"""
+    
     @app.errorhandler(404)
     def not_found(error):
-        return "<h1>404 - 페이지를 찾을 수 없습니다</h1><a href='/home'>🏠 대문으로</a>", 404
+        return render_template('404.html'), 404
     
     @app.errorhandler(500)
     def internal_error(error):
-        print(f"❌ 서버 내부 오류: {str(error)}")
-        return f"<h1>500 - 서버 오류</h1><a href='/home'>🏠 대문으로</a><br><pre>{str(error)}</pre>", 500
+        return render_template('500.html'), 500
+
+# Flask 앱 생성
+app = create_app()
 
 if __name__ == '__main__':
-    app = create_app()
-    print("="*60)
+    print("=" * 60)
     print("🚀 AICU S4 v2.1 (코코치 안정성 개선 버전)")
     print("📍 URL: http://localhost:5000")
     print("📋 v2.1 특징:")
@@ -112,5 +139,7 @@ if __name__ == '__main__':
     print("   ✅ 맥락 유지: 파일명과 import 구문 일치")
     print("   ✅ 복잡성 감소: 명확한 의존성 관리")
     print("   ✅ 기본학습 모듈 리팩토링 완료")
-    print("="*60)
+    print("   ✅ 통계 시스템 테스트 페이지 추가")
+    print("=" * 60)
+    
     app.run(host='0.0.0.0', port=5000, debug=True)

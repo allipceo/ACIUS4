@@ -298,3 +298,4 @@ function initializeLargeCategoryStatistics() {
     
     console.log('대분류 학습 통계 초기화 완료');
 }
+
