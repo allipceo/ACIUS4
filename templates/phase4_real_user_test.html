@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: 실제 사용자 테스트 - AICU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- 헤더 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">🎯 Phase 4: 실제 사용자 테스트</h1>
+                <p class="text-gray-600 mb-4">
+                    서비스 시나리오에 따른 실제 사용자 테스트 환경입니다. 
+                    데모 모드에서 실제 사용자 등록까지의 전체 플로우를 검증합니다.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">5</div>
+                        <div class="text-sm text-blue-800">테스트 단계</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">실시간</div>
+                        <div class="text-sm text-green-800">결과 확인</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">시나리오</div>
+                        <div class="text-sm text-purple-800">기반 검증</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 서비스 시나리오 설명 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 서비스 시나리오</h2>
+                <div class="space-y-3">
+                    <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                        <div class="font-semibold text-yellow-800">1️⃣ 데모 모드 시작</div>
+                        <div class="text-sm text-yellow-700">최초 앱 실행 시 홍길동으로 데모 모드 시작</div>
+                    </div>
+                    <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                        <div class="font-semibold text-yellow-800">2️⃣ 데모 학습 진행</div>
+                        <div class="text-sm text-yellow-700">기본학습 10문제, 해상보험 5문제 풀이</div>
+                    </div>
+                    <div class="p-3 bg-green-50 border-l-4 border-green-400 rounded">
+                        <div class="font-semibold text-green-800">3️⃣ 실제 사용자 등록</div>
+                        <div class="text-sm text-green-700">김철수로 전환, 데모 데이터 초기화</div>
+                    </div>
+                    <div class="p-3 bg-green-50 border-l-4 border-green-400 rounded">
+                        <div class="font-semibold text-green-800">4️⃣ 실제 학습 진행</div>
+                        <div class="text-sm text-green-700">기본학습 8문제, 배상책임보험 3문제 풀이</div>
+                    </div>
+                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                        <div class="font-semibold text-blue-800">5️⃣ 데이터 지속성 검증</div>
+                        <div class="text-sm text-blue-700">이어풀기 기능 및 진도 독립성 확인</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 테스트 컨트롤 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🚀 테스트 실행</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="runRealUserTests()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold">
+                        🎯 전체 시나리오 테스트 실행
+                    </button>
+                    <button onclick="runIndividualTests()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold">
+                        🔧 개별 단계 테스트
+                    </button>
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-100 border border-blue-300 rounded">
+                    <p class="text-blue-800 text-sm">
+                        💡 <strong>테스트 실행 전 확인사항:</strong> 
+                        브라우저 콘솔에서 실시간 진행 상황을 확인할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 개별 테스트 섹션 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 개별 테스트</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="runDemoModeTest()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                        📋 Day 1: 데모 모드 초기화
+                    </button>
+                    <button onclick="runDemoLearningTest()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                        📚 Day 2: 데모 학습 진행
+                    </button>
+                    <button onclick="runRegistrationTest()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                        👤 Day 3: 실제 사용자 등록
+                    </button>
+                    <button onclick="runRealLearningTest()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                        🎯 Day 4: 실제 학습 진행
+                    </button>
+                    <button onclick="runPersistenceTest()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                        💾 Day 5: 데이터 지속성
+                    </button>
+                    <button onclick="resetTestEnvironment()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                        🔄 테스트 환경 초기화
+                    </button>
+                </div>
+            </div>
+
+            <!-- 실시간 상태 모니터링 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 실시간 상태</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="current-user">홍길동</div>
+                        <div class="text-sm text-gray-500">현재 사용자</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="current-mode">데모 모드</div>
+                        <div class="text-sm text-gray-500">사용자 모드</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="total-solved">0</div>
+                        <div class="text-sm text-gray-500">총 풀이 문제</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="correct-rate">0%</div>
+                        <div class="text-sm text-gray-500">정답률</div>
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">기본학습 진도:</span>
+                        <span id="basic-progress">0/0</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">해상보험 진도:</span>
+                        <span id="marine-progress">0/0</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">배상책임보험 진도:</span>
+                        <span id="liability-progress">0/0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 테스트 결과 표시 영역 -->
+            <div id="real-user-test-results"></div>
+
+            <!-- 로그 출력 영역 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📝 테스트 로그</h2>
+                <div id="test-log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                    <div>🎯 Phase 4 테스트 환경이 준비되었습니다.</div>
+                    <div>테스트를 실행하여 결과를 확인하세요.</div>
+                </div>
+            </div>
+
+            <!-- 네비게이션 -->
+            <div class="flex flex-col md:flex-row gap-4">
+                <button onclick="location.href='/advanced-stats-test'" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded">
+                    🔙 이전 테스트 페이지
+                </button>
+                <button onclick="location.href='/home'" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded">
+                    🏠 홈으로 돌아가기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 고도화된 통계 시스템 스크립트들 -->
+    <script src="/static/js/advanced_progress_manager.js"></script>
+    <script src="/static/js/real_time_stats_updater.js"></script>
+    <script src="/static/js/advanced_statistics_system.js"></script>
+    <script src="/static/js/real_user_test_suite.js"></script>
+    
+    <script>
+        // 로그 출력 함수
+        function log(message) {
+            const logContainer = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logContainer.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 상태 업데이트 함수
+        function updateStatus() {
+            if (window.advancedProgressManager) {
+                const manager = window.advancedProgressManager;
+                const userInfo = manager.userInfo;
+                const stats = manager.statistics;
+                const progressData = manager.progressData;
+
+                // 사용자 정보 업데이트
+                document.getElementById('current-user').textContent = userInfo.name;
+                document.getElementById('current-mode').textContent = userInfo.is_demo_mode ? '데모 모드' : '실제 사용자';
+                
+                // 통계 업데이트
+                document.getElementById('total-solved').textContent = stats.total_questions_solved;
+                const correctRate = stats.total_questions_solved > 0 ? 
+                    Math.round((stats.total_correct_answers / stats.total_questions_solved) * 100) : 0;
+                document.getElementById('correct-rate').textContent = correctRate + '%';
+
+                // 진도 업데이트
+                const basicProgress = progressData.basic_learning;
+                const marineProgress = progressData.categories.해상보험 || { last_question: 0, total_attempted: 0 };
+                const liabilityProgress = progressData.categories.배상책임보험 || { last_question: 0, total_attempted: 0 };
+
+                document.getElementById('basic-progress').textContent = `${basicProgress.last_question}/${basicProgress.total_attempted}`;
+                document.getElementById('marine-progress').textContent = `${marineProgress.last_question}/${marineProgress.total_attempted}`;
+                document.getElementById('liability-progress').textContent = `${liabilityProgress.last_question}/${liabilityProgress.total_attempted}`;
+            }
+        }
+
+        // 개별 테스트 함수들
+        async function runDemoModeTest() {
+            log('=== Day 1: 데모 모드 초기화 테스트 시작 ===');
+            if (window.realUserTestSuite) {
+                await window.realUserTestSuite.testDemoModeInitialization();
+                updateStatus();
+            }
+        }
+
+        async function runDemoLearningTest() {
+            log('=== Day 2: 데모 학습 진행 테스트 시작 ===');
+            if (window.realUserTestSuite) {
+                await window.realUserTestSuite.testDemoLearningProgress();
+                updateStatus();
+            }
+        }
+
+        async function runRegistrationTest() {
+            log('=== Day 3: 실제 사용자 등록 테스트 시작 ===');
+            if (window.realUserTestSuite) {
+                await window.realUserTestSuite.testRealUserRegistration();
+                updateStatus();
+            }
+        }
+
+        async function runRealLearningTest() {
+            log('=== Day 4: 실제 학습 진행 테스트 시작 ===');
+            if (window.realUserTestSuite) {
+                await window.realUserTestSuite.testRealLearningProgress();
+                updateStatus();
+            }
+        }
+
+        async function runPersistenceTest() {
+            log('=== Day 5: 데이터 지속성 테스트 시작 ===');
+            if (window.realUserTestSuite) {
+                await window.realUserTestSuite.testDataPersistenceAndContinueLearning();
+                updateStatus();
+            }
+        }
+
+        async function runIndividualTests() {
+            log('🔧 개별 테스트 실행 중...');
+            await runDemoModeTest();
+            await runDemoLearningTest();
+            await runRegistrationTest();
+            await runRealLearningTest();
+            await runPersistenceTest();
+            log('✅ 모든 개별 테스트 완료');
+        }
+
+        function resetTestEnvironment() {
+            log('🔄 테스트 환경 초기화 중...');
+            if (window.advancedProgressManager) {
+                // LocalStorage 초기화
+                localStorage.removeItem('aicu_statistics');
+                localStorage.removeItem('aicu_user_info');
+                localStorage.removeItem('aicu_progress_data');
+                
+                // 페이지 새로고침
+                location.reload();
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🎯 Phase 4 테스트 페이지 로드 완료');
+            
+            // 2초 후 상태 업데이트 시작
+            setTimeout(() => {
+                updateStatus();
+                setInterval(updateStatus, 1000); // 1초마다 상태 업데이트
+            }, 2000);
+        });
+
+        // 전역 함수로 노출
+        window.runRealUserTests = async function() {
+            log('🚀 Phase 4 전체 시나리오 테스트 시작...');
+            if (window.realUserTestSuite) {
+                const report = await window.realUserTestSuite.runAllTests();
+                window.realUserTestSuite.displayResults(report);
+                updateStatus();
+                log('✅ Phase 4 전체 테스트 완료');
+            }
+        };
+    </script>
+</body>
+</html>

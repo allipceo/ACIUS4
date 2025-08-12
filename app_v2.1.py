@@ -43,9 +43,9 @@ def register_blueprints(app):
         except ImportError as e2:
             print(f"❌ Week2 퀴즈 API fallback도 실패: {e2}")
             print("📋 확인사항:")
-        print("   1. routes/quiz_routes_backup.py 파일 존재하는가?")
-        print("   2. 파일 내에 quiz_bp가 정의되어 있는가?")
-        print("   3. 파일명과 import 구문이 일치하는가?")
+            print("   1. routes/quiz_routes_backup.py 파일 존재하는가?")
+            print("   2. 파일 내에 quiz_bp가 정의되어 있는가?")
+            print("   3. 파일명과 import 구문이 일치하는가?")
     
     # =============================================================
     # 기존 사용자 관리 Blueprint (v2.0 유지)
@@ -112,8 +112,23 @@ def register_blueprints(app):
     @app.route('/advanced-stats-test')
     def advanced_stats_test():
         return render_template('advanced_stats_test.html')
-
+    
     print("✅ 고도화된 통계 시스템 테스트 라우트 등록")
+    
+    @app.route('/phase4-real-user-test')
+    def phase4_real_user_test():
+        return render_template('phase4_real_user_test.html')
+    
+    print("✅ Phase 4 실제 사용자 테스트 라우트 등록")
+    
+    # =============================================================
+    # Phase 5: 실제 사용자 피드백 및 최종 최적화 라우트
+    # =============================================================
+    @app.route('/phase5-final-optimization')
+    def phase5_final_optimization():
+        return render_template('phase5_final_optimization.html')
+    
+    print("✅ Phase 5 최종 최적화 라우트 등록")
 
 def register_error_handlers(app):
     """에러 핸들러 등록"""

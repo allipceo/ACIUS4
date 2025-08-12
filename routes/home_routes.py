@@ -181,34 +181,83 @@ def render_home_with_stats_html(current_user_id, ceo_info):
         <script src="/static/js/ui_updater.js"></script>
         <script src="/static/js/progress_system.js"></script>
         
-        <!-- JavaScript - 통계 업데이트 및 세션 모니터링 -->
+        <!-- 고도화된 통계 시스템 스크립트들 -->
+        <script src="/static/js/advanced_progress_manager.js"></script>
+        <script src="/static/js/real_time_stats_updater.js"></script>
+        <script src="/static/js/advanced_statistics_system.js"></script>
+        
+        <!-- JavaScript - 고도화된 통계 업데이트 및 세션 모니터링 -->
         <script>
-            // 통계 시스템 초기화 및 업데이트
+            // 고도화된 통계 시스템 초기화 및 업데이트
             document.addEventListener('DOMContentLoaded', function() {{
-                console.log('🎯 홈페이지 통계 시스템 초기화 시작...');
+                console.log('🎯 홈페이지 고도화된 통계 시스템 초기화 시작...');
                 
-                // ProgressSystem 초기화 대기
-                setTimeout(() => {{
-                    if (typeof progressSystem !== 'undefined') {{
-                        // 시스템 초기화
-                        const initResult = progressSystem.initialize();
-                        if (initResult) {{
-                            document.getElementById('stats-status').textContent = '활성';
-                            document.getElementById('stats-status').className = 'text-sm text-green-600 mt-1';
-                            
-                            // 홈페이지 통계 업데이트
-                            progressSystem.updateStats();
-                            console.log('✅ 홈페이지 통계 업데이트 완료');
-                        }} else {{
-                            document.getElementById('stats-status').textContent = '초기화 실패';
+                // AdvancedStatisticsSystem 초기화 대기
+                setTimeout(async () => {{
+                    if (typeof window.advancedStatisticsSystem !== 'undefined') {{
+                        try {{
+                            // 시스템 초기화
+                            const initResult = await window.advancedStatisticsSystem.initialize();
+                            if (initResult) {{
+                                document.getElementById('stats-status').textContent = '고도화된 통계 시스템 활성';
+                                document.getElementById('stats-status').className = 'text-sm text-green-600 mt-1';
+                                
+                                // 홈페이지 통계 업데이트
+                                window.advancedStatisticsSystem.refreshAllStats();
+                                updateHomeStats();
+                                console.log('✅ 홈페이지 고도화된 통계 업데이트 완료');
+                            }} else {{
+                                document.getElementById('stats-status').textContent = '고도화된 통계 초기화 실패';
+                                document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
+                            }}
+                        }} catch (error) {{
+                            console.error('❌ 고도화된 통계 시스템 초기화 중 오류:', error);
+                            document.getElementById('stats-status').textContent = '초기화 오류';
                             document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
                         }}
                     }} else {{
-                        document.getElementById('stats-status').textContent = '모듈 로드 실패';
+                        document.getElementById('stats-status').textContent = '고도화된 통계 모듈 로드 실패';
                         document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
                     }}
-                }}, 1000);
+                }}, 2000);
             }});
+            
+            // 홈페이지 통계 업데이트 함수
+            function updateHomeStats() {{
+                if (window.advancedProgressManager) {{
+                    const stats = window.advancedProgressManager.statistics;
+                    const userInfo = window.advancedProgressManager.userInfo;
+                    
+                    // 진행률 업데이트
+                    const progressText = document.getElementById('home-progress-text');
+                    if (progressText) {{
+                        progressText.textContent = `${{stats.total_questions_solved}} / 1,370`;
+                    }}
+                    
+                    // 정답률 업데이트
+                    const accuracyText = document.getElementById('home-accuracy-text');
+                    if (accuracyText) {{
+                        accuracyText.textContent = `정답률: ${{stats.overall_accuracy}}%`;
+                    }}
+                    
+                    // 총 시도/정답 업데이트
+                    const totalAttempted = document.getElementById('home-total-attempted');
+                    if (totalAttempted) {{
+                        totalAttempted.textContent = `시도: ${{stats.total_questions_solved}}`;
+                    }}
+                    
+                    const totalCorrect = document.getElementById('home-total-correct');
+                    if (totalCorrect) {{
+                        totalCorrect.textContent = `정답: ${{stats.total_correct_answers}}`;
+                    }}
+                    
+                    // 사용자 정보 업데이트
+                    const userStatusElement = document.getElementById('user-status');
+                    if (userStatusElement) {{
+                        userStatusElement.textContent = userInfo.is_demo_mode ? '데모 모드' : '실제 등록';
+                    }}
+                }}
+            }}
             
             // 5초마다 세션 상태 확인 (기존 기능 유지)
             setInterval(async () => {{

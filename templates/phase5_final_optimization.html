@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 5: 최종 최적화 - AICU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- 헤더 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">🚀 Phase 5: 최종 최적화</h1>
+                <p class="text-gray-600 mb-4">
+                    실제 사용자 피드백 수집 및 성능 최적화를 통한 최종 완성 단계입니다.
+                    메모리, 응답 시간, 데이터베이스 최적화를 진행합니다.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">🧠</div>
+                        <div class="text-sm text-green-800">메모리 최적화</div>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">⚡</div>
+                        <div class="text-sm text-blue-800">응답 시간</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">🗄️</div>
+                        <div class="text-sm text-purple-800">데이터베이스</div>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600">👤</div>
+                        <div class="text-sm text-yellow-800">사용자 피드백</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최적화 목표 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🎯 최적화 목표</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="p-3 bg-green-50 border-l-4 border-green-400 rounded">
+                            <div class="font-semibold text-green-800">메모리 사용량 최적화</div>
+                            <div class="text-sm text-green-700">불필요한 데이터 정리 및 가비지 컬렉션</div>
+                        </div>
+                        <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                            <div class="font-semibold text-blue-800">응답 시간 개선</div>
+                            <div class="text-sm text-blue-700">디바운싱 및 비동기 처리 최적화</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-purple-50 border-l-4 border-purple-400 rounded">
+                            <div class="font-semibold text-purple-800">데이터베이스 최적화</div>
+                            <div class="text-sm text-purple-700">LocalStorage 구조 개선 및 압축</div>
+                        </div>
+                        <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                            <div class="font-semibold text-yellow-800">사용자 경험 향상</div>
+                            <div class="text-sm text-yellow-700">피드백 수집 및 만족도 측정</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최적화 컨트롤 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🚀 최적화 실행</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="runPhase5Optimization()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold">
+                        🎯 전체 최적화 실행
+                    </button>
+                    <button onclick="runIndividualOptimizations()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold">
+                        🔧 개별 최적화 실행
+                    </button>
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-100 border border-blue-300 rounded">
+                    <p class="text-blue-800 text-sm">
+                        💡 <strong>최적화 실행 전 확인사항:</strong> 
+                        브라우저 콘솔에서 실시간 최적화 진행 상황을 확인할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 개별 최적화 섹션 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 개별 최적화</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button onclick="runMemoryOptimization()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                        🧠 메모리 최적화
+                    </button>
+                    <button onclick="runResponseTimeOptimization()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                        ⚡ 응답 시간 최적화
+                    </button>
+                    <button onclick="runDatabaseOptimization()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">
+                        🗄️ 데이터베이스 최적화
+                    </button>
+                    <button onclick="collectUserFeedback()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                        👤 사용자 피드백 수집
+                    </button>
+                </div>
+            </div>
+
+            <!-- 성능 모니터링 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 성능 모니터링</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="memory-usage">0 MB</div>
+                        <div class="text-sm text-gray-500">메모리 사용량</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="load-time">0 ms</div>
+                        <div class="text-sm text-gray-500">페이지 로드 시간</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="resource-count">0</div>
+                        <div class="text-sm text-gray-500">리소스 개수</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-bold text-gray-600" id="error-count">0</div>
+                        <div class="text-sm text-gray-500">에러 개수</div>
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">DOM 로드 시간:</span>
+                        <span id="dom-load-time">0 ms</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">이벤트 리스너 개수:</span>
+                        <span id="event-listeners">0</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="font-medium">LocalStorage 크기:</span>
+                        <span id="localstorage-size">0 KB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최적화 결과 표시 영역 -->
+            <div id="optimization-results"></div>
+
+            <!-- 최적화 컨테이너 -->
+            <div id="optimization-container" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 최적화 작업 영역</h2>
+                <div class="text-gray-600">
+                    최적화 작업이 실행되면 여기에 결과가 표시됩니다.
+                </div>
+            </div>
+
+            <!-- 로그 출력 영역 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📝 최적화 로그</h2>
+                <div id="optimization-log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                    <div>🚀 Phase 5 최적화 환경이 준비되었습니다.</div>
+                    <div>최적화를 실행하여 결과를 확인하세요.</div>
+                </div>
+            </div>
+
+            <!-- 네비게이션 -->
+            <div class="flex flex-col md:flex-row gap-4">
+                <button onclick="location.href='/phase4-real-user-test'" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded">
+                    🔙 이전 테스트 페이지
+                </button>
+                <button onclick="location.href='/home'" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded">
+                    🏠 홈으로 돌아가기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 고도화된 통계 시스템 스크립트들 -->
+    <script src="/static/js/advanced_progress_manager.js"></script>
+    <script src="/static/js/real_time_stats_updater.js"></script>
+    <script src="/static/js/advanced_statistics_system.js"></script>
+    <script src="/static/js/phase5_final_optimizer.js"></script>
+    
+    <script>
+        // 로그 출력 함수
+        function log(message) {
+            const logContainer = document.getElementById('optimization-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logContainer.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 성능 모니터링 업데이트
+        function updatePerformanceMonitoring() {
+            // 메모리 사용량
+            if (performance.memory) {
+                const memoryMB = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                document.getElementById('memory-usage').textContent = memoryMB + ' MB';
+            }
+
+            // 페이지 로드 시간
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            document.getElementById('load-time').textContent = loadTime + ' ms';
+
+            // DOM 로드 시간
+            const domLoadTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
+            document.getElementById('dom-load-time').textContent = domLoadTime + ' ms';
+
+            // 리소스 개수
+            const resourceCount = performance.getEntriesByType('resource').length;
+            document.getElementById('resource-count').textContent = resourceCount;
+
+            // 에러 개수
+            document.getElementById('error-count').textContent = window.errorCount || 0;
+
+            // 이벤트 리스너 개수 (추정)
+            const elements = document.querySelectorAll('*');
+            document.getElementById('event-listeners').textContent = elements.length;
+
+            // LocalStorage 크기
+            let localStorageSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    localStorageSize += localStorage[key].length;
+                }
+            }
+            document.getElementById('localstorage-size').textContent = (localStorageSize / 1024).toFixed(2) + ' KB';
+        }
+
+        // 개별 최적화 함수들
+        async function runMemoryOptimization() {
+            log('🧠 메모리 최적화 시작...');
+            if (window.phase5Optimizer) {
+                const result = await window.phase5Optimizer.optimizeMemoryUsage();
+                log(`✅ 메모리 최적화 완료: ${result.reductionPercent}% 감소`);
+                updatePerformanceMonitoring();
+            }
+        }
+
+        async function runResponseTimeOptimization() {
+            log('⚡ 응답 시간 최적화 시작...');
+            if (window.phase5Optimizer) {
+                const result = await window.phase5Optimizer.optimizeResponseTime();
+                log(`✅ 응답 시간 최적화 완료: ${result.optimizationTime.toFixed(2)}ms`);
+                updatePerformanceMonitoring();
+            }
+        }
+
+        async function runDatabaseOptimization() {
+            log('🗄️ 데이터베이스 최적화 시작...');
+            if (window.phase5Optimizer) {
+                const result = await window.phase5Optimizer.optimizeDatabase();
+                log(`✅ 데이터베이스 최적화 완료: ${result.optimizationTime.toFixed(2)}ms`);
+                updatePerformanceMonitoring();
+            }
+        }
+
+        function collectUserFeedback() {
+            log('👤 사용자 피드백 수집 시작...');
+            if (window.phase5Optimizer) {
+                const feedback = window.phase5Optimizer.collectUserFeedback();
+                log(`✅ 사용자 피드백 수집 완료: ${feedback.userExperience}/10점`);
+                log(`💡 제안사항: ${feedback.suggestions}`);
+            }
+        }
+
+        async function runIndividualOptimizations() {
+            log('🔧 개별 최적화 실행 중...');
+            await runMemoryOptimization();
+            await runResponseTimeOptimization();
+            await runDatabaseOptimization();
+            collectUserFeedback();
+            log('✅ 모든 개별 최적화 완료');
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Phase 5 최적화 페이지 로드 완료');
+            
+            // 에러 카운터 초기화
+            window.errorCount = 0;
+            
+            // 에러 이벤트 리스너 추가
+            window.addEventListener('error', function() {
+                window.errorCount = (window.errorCount || 0) + 1;
+            });
+            
+            // 2초 후 성능 모니터링 시작
+            setTimeout(() => {
+                updatePerformanceMonitoring();
+                setInterval(updatePerformanceMonitoring, 2000); // 2초마다 업데이트
+            }, 2000);
+        });
+
+        // 전역 함수로 노출
+        window.runPhase5Optimization = async function() {
+            log('🚀 Phase 5 전체 최적화 시작...');
+            if (window.phase5Optimizer) {
+                const results = await window.phase5Optimizer.runFullOptimization();
+                window.phase5Optimizer.displayOptimizationResults(results);
+                updatePerformanceMonitoring();
+                log('✅ Phase 5 전체 최적화 완료');
+                return results;
+            }
+        };
+    </script>
+</body>
+</html>
