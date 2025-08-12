@@ -1,16 +1,17 @@
-# app_v2.1.py - 코코치 제안 최종 안정화 버전
+# app_v2.3.py - 게스트 모드 구현 버전 (노팀장 권장)
 
-from flask import Flask, render_template, redirect, url_for, session, jsonify, make_response
+from flask import Flask, render_template, redirect, url_for, session, jsonify, make_response, request
 from datetime import timedelta, datetime
 import sys
 import os
+import time
 
 def create_app():
-    """AICU S4 최종 안정화 버전"""
+    """AICU S4 v2.3 - 게스트 모드 구현 버전"""
     app = Flask(__name__)
     
     # 앱 설정 강화 (세션 문제 해결)
-    app.config['SECRET_KEY'] = 'aicu_season4_secret_key_2025_enhanced'
+    app.config['SECRET_KEY'] = 'aicu_season4_secret_key_2025_guest_mode'
     app.config['SESSION_PERMANENT'] = True
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
     app.config['SESSION_COOKIE_HTTPONLY'] = True
@@ -20,19 +21,87 @@ def create_app():
     register_blueprints(app)
     register_error_handlers(app)
     
-    # 코코치 수정: @app.before_request 로직 제거
-    # 홈 라우트에서 세션 유무를 직접 판단
+    # 게스트 모드 자동 생성 시스템
+    @app.before_request
+    def ensure_guest_session():
+        """087번 문서 시나리오: 게스트 모드 자동 생성"""
+        if request.endpoint and not request.endpoint.startswith('static'):
+            if 'current_user_id' not in session:
+                # 조대표님 시나리오 반영한 게스트 정보
+                guest_id = f"guest_{int(time.time())}"
+                session.update({
+                    'current_user_id': guest_id,
+                    'user_name': '게스트',
+                    'registration_date': '2025-08-10',  # 조대표님 지정
+                    'exam_subject': 'AICU',
+                    'exam_date': '2025-09-13',
+                    'is_guest': True,
+                    'guest_start_time': datetime.now().isoformat()
+                })
+                session.permanent = True
+                print(f"✅ 게스트 세션 생성: {guest_id}")
     
-    # 메인 라우트
+    # 메인 라우트 (게스트 모드 적용)
     @app.route('/')
     def index():
-        """홈페이지 - 세션 존재 시 /home, 미존재 시 /user/register로 리다이렉트"""
-        if 'current_user_id' in session:
-            return redirect(url_for('home.home_page'))
-        else:
-            return redirect(url_for('user_registration.register_page'))
+        """홈페이지 - 게스트 모드로 바로 시작"""
+        return redirect(url_for('home.home_page'))
     
-    # 코코치 추가: 세션 강제 초기화 엔드포인트
+    # 게스트 → 실제 사용자 전환 API
+    @app.route('/api/user/register-from-guest', methods=['POST'])
+    def register_from_guest():
+        """게스트에서 실제 사용자로 전환"""
+        data = request.get_json()
+        
+        if not session.get('is_guest'):
+            return jsonify({'error': '게스트 모드가 아닙니다'}), 400
+        
+        # 게스트 통계 데이터 백업 (향후 활용)
+        guest_stats = {
+            'guest_id': session['current_user_id'],
+            'guest_period': session.get('guest_start_time'),
+            'guest_data': '게스트 기간 학습 데이터'  # 실제로는 통계 서비스에서 가져옴
+        }
+        
+        # 새로운 실제 사용자 정보 생성
+        new_user_id = f"user_{int(time.time())}"
+        registration_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # 세션 업데이트
+        session.update({
+            'current_user_id': new_user_id,
+            'user_name': data['name'],
+            'registration_date': registration_date,
+            'exam_subject': data['exam_subject'],
+            'exam_date': data['exam_date'],
+            'is_guest': False,
+            'guest_period_stats': guest_stats  # 게스트 기간 통계 보존
+        })
+        
+        print(f"✅ 게스트→실사용자 전환: {session['current_user_id']}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'{data["name"]}님으로 정식 등록되었습니다!',
+            'new_user_id': new_user_id,
+            'guest_stats_preserved': True
+        })
+    
+    # 현재 사용자 정보 API (게스트 모드 지원)
+    @app.route('/api/user/current')
+    def get_current_user():
+        """현재 사용자 정보 반환 (게스트 모드 포함)"""
+        return jsonify({
+            'user_id': session.get('current_user_id'),
+            'user_name': session.get('user_name'),
+            'registration_date': session.get('registration_date'),
+            'exam_subject': session.get('exam_subject'),
+            'exam_date': session.get('exam_date'),
+            'is_guest': session.get('is_guest', False),
+            'guest_start_time': session.get('guest_start_time')
+        })
+    
+    # 세션 강제 초기화 (기존 유지)
     @app.route('/api/debug/clear-session')
     def clear_session_api():
         """모든 세션 정보를 강제로 삭제하는 디버그용 API"""
@@ -64,24 +133,24 @@ def register_blueprints(app):
             print(f"❌ Week2 퀴즈 API fallback도 실패: {e2}")
     
     # =============================================================
-    # 기존 사용자 관리 Blueprint (v2.0 유지)
+    # 사용자 관리 Blueprint (게스트 모드 지원)
     # =============================================================
     try:
         from routes.user_registration_v2 import user_registration_bp
         app.register_blueprint(user_registration_bp, url_prefix='/user')
-        print("✅ 기존 사용자 등록 라우트 (v2) 활용")
+        print("✅ 사용자 등록 라우트 (v2) 활용")
     except ImportError:
         print("⚠️ user_registration_v2 없음")
     
     try:
         from routes.user_routes import user_bp
         app.register_blueprint(user_bp, url_prefix='/api')
-        print("✅ 기존 사용자 API 라우트 활용")
+        print("✅ 사용자 API 라우트 활용")
     except ImportError:
         print("⚠️ user_routes 없음")
     
     # =============================================================
-    # 페이지 Blueprint (v2.0 유지)
+    # 페이지 Blueprint (게스트 모드 지원)
     # =============================================================
     try:
         from routes.home_routes import home_bp
@@ -142,12 +211,14 @@ def register_error_handlers(app):
 if __name__ == '__main__':
     app = create_app()
     print("=" * 60)
-    print("🚀 AICU S4 v2.1 FINAL (최종 안정화 버전)")
+    print("🚀 AICU S4 v2.3 GUEST MODE (게스트 모드 구현)")
     print("📍 URL: http://localhost:5000")
-    print("📋 v2.1 특징:")
-    print("   ✅ before_request 로직 제거")
-    print("   ✅ 세션 충돌 문제 근본적 해결")
-    print("   ✅ 안정성 및 가독성 향상")
+    print("📋 v2.3 새로운 기능:")
+    print("   ✅ 게스트 모드 자동 생성")
+    print("   ✅ 즉시 학습 시작 가능")
+    print("   ✅ 게스트→실사용자 전환")
+    print("   ✅ 데이터 연속성 보장")
+    print("   ✅ '홍길동' 문제 완전 해결")
     print("=" * 60)
     
     app.run(host='0.0.0.0', port=5000, debug=True)

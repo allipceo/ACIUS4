@@ -650,5 +650,200 @@
       "session_duration_minutes": 0.0,
       "attempts": []
     }
+  ],
+  "user_1755011451444": [
+    {
+      "session_id": "user_1755011451444_20250813_001051",
+      "user_id": "user_1755011451444",
+      "start_time": "2025-08-13T00:10:51.987869",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755011526011": [
+    {
+      "session_id": "user_1755011526011_20250813_001207",
+      "user_id": "user_1755011526011",
+      "start_time": "2025-08-13T00:12:07.951073",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755011544832": [
+    {
+      "session_id": "user_1755011544832_20250813_001224",
+      "user_id": "user_1755011544832",
+      "start_time": "2025-08-13T00:12:24.914278",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755011566621": [
+    {
+      "session_id": "user_1755011566621_20250813_001246",
+      "user_id": "user_1755011566621",
+      "start_time": "2025-08-13T00:12:46.697094",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755012265708": [
+    {
+      "session_id": "user_1755012265708_20250813_002425",
+      "user_id": "user_1755012265708",
+      "start_time": "2025-08-13T00:24:25.738717",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755012464793": [
+    {
+      "session_id": "user_1755012464793_20250813_002745",
+      "user_id": "user_1755012464793",
+      "start_time": "2025-08-13T00:27:45.517245",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755012969155": [
+    {
+      "session_id": "user_1755012969155_20250813_003609",
+      "user_id": "user_1755012969155",
+      "start_time": "2025-08-13T00:36:09.182627",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755013287074": [
+    {
+      "session_id": "user_1755013287074_20250813_004127",
+      "user_id": "user_1755013287074",
+      "start_time": "2025-08-13T00:41:27.225321",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755013348386": [
+    {
+      "session_id": "user_1755013348386_20250813_004229",
+      "user_id": "user_1755013348386",
+      "start_time": "2025-08-13T00:42:29.508422",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755014146480": [
+    {
+      "session_id": "user_1755014146480_20250813_005546",
+      "user_id": "user_1755014146480",
+      "start_time": "2025-08-13T00:55:46.719237",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755014442200": [
+    {
+      "session_id": "user_1755014442200_20250813_010042",
+      "user_id": "user_1755014442200",
+      "start_time": "2025-08-13T01:00:42.247587",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755014540781": [
+    {
+      "session_id": "user_1755014540781_20250813_010220",
+      "user_id": "user_1755014540781",
+      "start_time": "2025-08-13T01:02:20.849237",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
+  ],
+  "user_1755014586911": [
+    {
+      "session_id": "user_1755014586911_20250813_010307",
+      "user_id": "user_1755014586911",
+      "start_time": "2025-08-13T01:03:07.248742",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    }
   ]
 }
