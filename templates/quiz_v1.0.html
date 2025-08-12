@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AICU 시즌4 - 문제풀이 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .quiz-container { transition: all 0.3s ease; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .correct { background-color: #10b981; color: white; }
+        .incorrect { background-color: #ef4444; color: white; }
+        .loading { animation: pulse 1.5s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 헤더 -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">AICU 시즌4 문제풀이</h1>
+            <div class="flex items-center space-x-4">
+                <span id="user-info" class="text-sm">사용자: 로그인 필요</span>
+                <span id="session-info" class="text-sm bg-blue-700 px-2 py-1 rounded">세션: 없음</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- 퀴즈 시작 화면 -->
+        <div id="start-screen" class="quiz-container">
+            <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-6">문제풀이 시작</h2>
+                
+                <!-- 학습 모드 선택 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">학습 모드</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
+                            <input type="radio" name="mode" value="basic" class="mr-3" checked>
+                            <div>
+                                <div class="font-semibold">기본학습</div>
+                                <div class="text-sm text-gray-600">전체 문제 무작위 출제</div>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
+                            <input type="radio" name="mode" value="category" class="mr-3">
+                            <div>
+                                <div class="font-semibold">대분류학습</div>
+                                <div class="text-sm text-gray-600">카테고리별 집중 학습</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 카테고리 선택 (대분류학습 시) -->
+                <div id="category-selection" class="mb-6 hidden">
+                    <h3 class="text-lg font-semibold mb-3">카테고리 선택</h3>
+                    <select id="category-select" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <option value="">카테고리를 선택하세요</option>
+                        <option value="재산보험">재산보험</option>
+                        <option value="특종보험">특종보험</option>
+                        <option value="배상책임보험">배상책임보험</option>
+                        <option value="해상보험">해상보험</option>
+                    </select>
+                </div>
+
+                <!-- 시작 버튼 -->
+                <button id="start-quiz-btn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+                    문제풀이 시작
+                </button>
+            </div>
+        </div>
+
+        <!-- 퀴즈 진행 화면 -->
+        <div id="quiz-screen" class="quiz-container hidden">
+            <!-- 진행 상황 표시 -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold">진행 상황</span>
+                    <span id="progress-text" class="text-sm text-gray-600">1 / 10</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- 문제 영역 -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="question-category" class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">카테고리</span>
+                        <span id="question-timer" class="text-sm font-mono bg-gray-100 px-2 py-1 rounded">00:00</span>
+                    </div>
+                    <h3 id="question-text" class="text-xl font-semibold leading-relaxed mb-6">
+                        문제가 로딩 중입니다...
+                    </h3>
+                </div>
+
+                <!-- 답안 선택 -->
+                <div id="answer-options" class="space-y-3">
+                    <!-- 진위형 문제 답안 -->
+                    <div id="true-false-options" class="hidden space-y-3">
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="O">
+                            <span class="font-semibold">O</span> - 맞다
+                        </button>
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="X">
+                            <span class="font-semibold">X</span> - 틀리다
+                        </button>
+                    </div>
+
+                    <!-- 4지선다 문제 답안 -->
+                    <div id="multiple-choice-options" class="hidden space-y-3">
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="1">
+                            <span class="font-semibold">1번</span> <span class="option-text">선택지 1</span>
+                        </button>
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="2">
+                            <span class="font-semibold">2번</span> <span class="option-text">선택지 2</span>
+                        </button>
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="3">
+                            <span class="font-semibold">3번</span> <span class="option-text">선택지 3</span>
+                        </button>
+                        <button class="answer-btn w-full p-4 text-left border-2 border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" data-answer="4">
+                            <span class="font-semibold">4번</span> <span class="option-text">선택지 4</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 답안 피드백 -->
+            <div id="feedback-area" class="bg-white rounded-lg shadow-lg p-6 mb-6 hidden">
+                <div id="feedback-content" class="mb-4">
+                    <div id="feedback-result" class="text-center py-4 rounded-lg mb-4">
+                        <div id="feedback-icon" class="text-4xl mb-2">🎉</div>
+                        <div id="feedback-message" class="text-xl font-semibold">정답입니다!</div>
+                    </div>
+                    <div id="feedback-explanation" class="text-gray-700 mb-4">
+                        해설이 여기에 표시됩니다.
+                    </div>
+                </div>
+                <button id="next-question-btn" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                    다음 문제
+                </button>
+            </div>
+
+            <!-- 컨트롤 버튼 -->
+            <div class="flex justify-between">
+                <button id="pause-quiz-btn" class="bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors">
+                    일시정지
+                </button>
+                <button id="end-quiz-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                    퀴즈 종료
+                </button>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="quiz-container hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-6">퀴즈 완료!</h2>
+                
+                <!-- 점수 요약 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" id="final-score">85</div>
+                        <div class="text-sm text-gray-600">최종 점수</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" id="correct-count">8</div>
+                        <div class="text-sm text-gray-600">정답 수</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-600" id="total-count">10</div>
+                        <div class="text-sm text-gray-600">총 문제 수</div>
+                    </div>
+                </div>
+
+                <!-- 카테고리별 성과 -->
+                <div id="category-results" class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">카테고리별 성과</h3>
+                    <div id="category-stats" class="space-y-2">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 액션 버튼 -->
+                <div class="flex space-x-4">
+                    <button id="restart-quiz-btn" class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        다시 시작
+                    </button>
+                    <button id="view-stats-btn" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                        통계 보기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 전역 변수
+        let currentSession = null;
+        let currentQuestionIndex = 0;
+        let totalQuestions = 0;
+        let questionStartTime = 0;
+        let timer = null;
+        let elapsedTime = 0;
+
+        // DOM 요소
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const categorySelection = document.getElementById('category-selection');
+        const feedbackArea = document.getElementById('feedback-area');
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeQuiz();
+            attachEventListeners();
+        });
+
+        function initializeQuiz() {
+            // 사용자 정보 설정 (세션에서 가져오기)
+            const userInfo = document.getElementById('user-info');
+            userInfo.textContent = '사용자: 조대표'; // 실제로는 세션에서 가져옴
+        }
+
+        function attachEventListeners() {
+            // 모드 선택 이벤트
+            document.querySelectorAll('input[name="mode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const isCategory = this.value === 'category';
+                    categorySelection.classList.toggle('hidden', !isCategory);
+                });
+            });
+
+            // 퀴즈 시작 버튼
+            document.getElementById('start-quiz-btn').addEventListener('click', startQuiz);
+
+            // 답안 선택 버튼들
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('answer-btn') || e.target.closest('.answer-btn')) {
+                    const btn = e.target.closest('.answer-btn') || e.target;
+                    selectAnswer(btn.dataset.answer);
+                }
+            });
+
+            // 다음 문제 버튼
+            document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
+
+            // 퀴즈 종료 버튼
+            document.getElementById('end-quiz-btn').addEventListener('click', endQuiz);
+
+            // 다시 시작 버튼
+            document.getElementById('restart-quiz-btn').addEventListener('click', restartQuiz);
+        }
+
+        async function startQuiz() {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const category = mode === 'category' ? document.getElementById('category-select').value : null;
+
+            if (mode === 'category' && !category) {
+                alert('카테고리를 선택해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/quiz/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: '조대표',
+                        mode: mode,
+                        category: category
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentSession = result;
+                    totalQuestions = result.total_questions;
+                    currentQuestionIndex = 0;
+                    
+                    updateSessionInfo();
+                    showScreen('quiz');
+                    displayQuestion(result.current_question);
+                    startTimer();
+                } else {
+                    alert('퀴즈 시작에 실패했습니다: ' + result.error);
+                }
+            } catch (error) {
+                console.error('퀴즈 시작 오류:', error);
+                alert('퀴즈 시작 중 오류가 발생했습니다.');
+            }
+        }
+
+        function displayQuestion(question) {
+            if (!question) {
+                console.error('문제 데이터가 없습니다');
+                return;
+            }
+
+            // 문제 정보 표시
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('question-category').textContent = question.layer1 || '카테고리 없음';
+
+            // 진행 상황 업데이트
+            updateProgress();
+
+            // 답안 옵션 표시
+            const answer = question.answer;
+            if (answer === 'O' || answer === 'X') {
+                showTrueFalseOptions();
+            } else {
+                showMultipleChoiceOptions(question);
+            }
+
+            // 피드백 영역 숨기기
+            feedbackArea.classList.add('hidden');
+
+            // 문제 시작 시간 기록
+            questionStartTime = Date.now();
+        }
+
+        function showTrueFalseOptions() {
+            document.getElementById('true-false-options').classList.remove('hidden');
+            document.getElementById('multiple-choice-options').classList.add('hidden');
+        }
+
+        function showMultipleChoiceOptions(question) {
+            document.getElementById('true-false-options').classList.add('hidden');
+            document.getElementById('multiple-choice-options').classList.remove('hidden');
+            
+            // 실제 선택지 텍스트는 추후 API에서 가져와야 함
+            // 현재는 기본 텍스트 사용
+        }
+
+        async function selectAnswer(userAnswer) {
+            const responseTime = (Date.now() - questionStartTime) / 1000;
+
+            try {
+                const response = await fetch('/api/quiz/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: currentSession.session_id,
+                        user_answer: userAnswer,
+                        question_data: currentSession.current_question,
+                        start_time: questionStartTime / 1000
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showFeedback(result.answer_result, result.feedback);
+                } else {
+                    alert('답안 제출에 실패했습니다: ' + result.error);
+                }
+            } catch (error) {
+                console.error('답안 제출 오류:', error);
+                alert('답안 제출 중 오류가 발생했습니다.');
+            }
+        }
+
+        function showFeedback(answerResult, feedback) {
+            const feedbackResult = document.getElementById('feedback-result');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackMessage = document.getElementById('feedback-message');
+            const feedbackExplanation = document.getElementById('feedback-explanation');
+
+            // 결과에 따른 스타일링
+            if (answerResult.is_correct) {
+                feedbackResult.className = 'text-center py-4 rounded-lg mb-4 bg-green-100 text-green-800';
+                feedbackIcon.textContent = '🎉';
+                feedbackMessage.textContent = '정답입니다!';
+            } else {
+                feedbackResult.className = 'text-center py-4 rounded-lg mb-4 bg-red-100 text-red-800';
+                feedbackIcon.textContent = '😅';
+                feedbackMessage.textContent = '오답입니다.';
+            }
+
+            // 해설 표시
+            feedbackExplanation.textContent = feedback.explanation || '해설이 없습니다.';
+
+            // 피드백 영역 표시
+            feedbackArea.classList.remove('hidden');
+        }
+
+        async function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex >= totalQuestions) {
+                await endQuiz();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/quiz/question/${currentSession.session_id}/${currentQuestionIndex}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    currentSession.current_question = result.question;
+                    displayQuestion(result.question);
+                } else {
+                    alert('다음 문제 로드에 실패했습니다: ' + result.error);
+                }
+            } catch (error) {
+                console.error('다음 문제 로드 오류:', error);
+                alert('다음 문제 로드 중 오류가 발생했습니다.');
+            }
+        }
+
+        async function endQuiz() {
+            try {
+                const response = await fetch(`/api/quiz/session/${currentSession.session_id}/end`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showResults(result.session_score, result.session_summary);
+                } else {
+                    alert('퀴즈 종료에 실패했습니다: ' + result.error);
+                }
+            } catch (error) {
+                console.error('퀴즈 종료 오류:', error);
+                alert('퀴즈 종료 중 오류가 발생했습니다.');
+            }
+
+            stopTimer();
+        }
+
+        function showResults(sessionScore, sessionSummary) {
+            // 점수 정보 표시
+            document.getElementById('final-score').textContent = sessionScore.final_score || 0;
+            document.getElementById('correct-count').textContent = sessionScore.correct_answers || 0;
+            document.getElementById('total-count').textContent = sessionScore.total_questions || 0;
+
+            // 카테고리별 성과 표시
+            const categoryStats = document.getElementById('category-stats');
+            categoryStats.innerHTML = '';
+
+            if (sessionScore.category_scores) {
+                Object.entries(sessionScore.category_scores).forEach(([category, score]) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-2 bg-gray-50 rounded';
+                    div.innerHTML = `
+                        <span>${category}</span>
+                        <span class="font-semibold">${score}%</span>
+                    `;
+                    categoryStats.appendChild(div);
+                });
+            }
+
+            showScreen('result');
+        }
+
+        function updateProgress() {
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+
+            const current = currentQuestionIndex + 1;
+            const percentage = (current / totalQuestions) * 100;
+
+            progressText.textContent = `${current} / ${totalQuestions}`;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function updateSessionInfo() {
+            const sessionInfo = document.getElementById('session-info');
+            if (currentSession) {
+                sessionInfo.textContent = `세션: ${currentSession.mode}`;
+                sessionInfo.className = 'text-sm bg-green-700 px-2 py-1 rounded';
+            }
+        }
+
+        function startTimer() {
+            elapsedTime = 0;
+            timer = setInterval(() => {
+                elapsedTime++;
+                const minutes = Math.floor(elapsedTime / 60);
+                const seconds = elapsedTime % 60;
+                document.getElementById('question-timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        function showScreen(screenName) {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+
+            switch (screenName) {
+                case 'start':
+                    startScreen.classList.remove('hidden');
+                    break;
+                case 'quiz':
+                    quizScreen.classList.remove('hidden');
+                    break;
+                case 'result':
+                    resultScreen.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        function restartQuiz() {
+            currentSession = null;
+            currentQuestionIndex = 0;
+            totalQuestions = 0;
+            stopTimer();
+            showScreen('start');
+            
+            // 세션 정보 초기화
+            document.getElementById('session-info').textContent = '세션: 없음';
+            document.getElementById('session-info').className = 'text-sm bg-blue-700 px-2 py-1 rounded';
+        }
+    </script>
+</body>
+</html>

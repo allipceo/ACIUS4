@@ -1,1 +1,10 @@
-{} 
+{
+  "조대표": {
+    "total_attempts": 1,
+    "correct_answers": 1,
+    "categories_attempted": [
+      "06재산보험"
+    ],
+    "last_updated": "2025-08-10T17:43:32.202555"
+  }
+}
