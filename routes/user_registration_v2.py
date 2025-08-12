@@ -366,6 +366,7 @@ def get_user_statistics(user_id):
         # 권한 확인 (자신의 통계만 조회 가능)
         current_user_id = session.get('current_user_id')
         if current_user_id != user_id:
+            print(f"⚠️ 권한 불일치: 세션={current_user_id}, 요청={user_id}")
             return jsonify({
                 'success': False,
                 'error': '권한이 없습니다.'
@@ -380,11 +381,21 @@ def get_user_statistics(user_id):
                 'statistics': statistics
             }), 200
         else:
-            print(f"❌ 통계 정보 없음: {user_id}")
-            return jsonify({
-                'success': False,
-                'error': '통계 정보를 찾을 수 없습니다.'
-            }), 404
+            # 게스트 모드인 경우 초기 통계 생성
+            if user_id.startswith('guest_'):
+                print(f"🔧 게스트 모드 초기 통계 생성: {user_id}")
+                initial_stats = create_initial_statistics(user_id)
+                USER_STATS[user_id] = initial_stats
+                return jsonify({
+                    'success': True,
+                    'statistics': initial_stats
+                }), 200
+            else:
+                print(f"❌ 통계 정보 없음: {user_id}")
+                return jsonify({
+                    'success': False,
+                    'error': '통계 정보를 찾을 수 없습니다.'
+                }), 404
             
     except Exception as e:
         print(f"❌ 통계 조회 오류: {str(e)}")
@@ -435,3 +446,20 @@ def debug_session():
         'sessionModified': session.modified,
         'sessionPermanent': session.permanent
     })
+
+@user_registration_bp.route('/api/debug/clear', methods=['POST'])
+def debug_clear_session():
+    """세션 초기화 (개발용)"""
+    try:
+        session.clear()
+        print("✅ 세션 초기화 완료")
+        return jsonify({
+            'success': True,
+            'message': '세션이 초기화되었습니다.'
+        }), 200
+    except Exception as e:
+        print(f"❌ 세션 초기화 실패: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'세션 초기화 실패: {str(e)}'
+        }), 500

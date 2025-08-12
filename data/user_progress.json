@@ -6,5 +6,77 @@
       "06재산보험"
     ],
     "last_updated": "2025-08-10T17:43:32.202555"
+  },
+  "user_테스트_20250812": {
+    "user_name": "테스트",
+    "created_date": "2025-08-12T22:59:40.506146",
+    "total_sessions": 0,
+    "total_questions_answered": 0,
+    "total_correct": 0,
+    "total_wrong": 0,
+    "overall_accuracy": 0.0,
+    "last_question_index": 0,
+    "last_session_date": "2025-08-12T22:59:40.506158",
+    "session_history": [],
+    "category_stats": {
+      "06재산보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "07특종보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "08배상책임보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "09해상보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      }
+    },
+    "achievements": [],
+    "study_streak": 0
+  },
+  "user_anonymous_20250812": {
+    "user_name": "anonymous",
+    "created_date": "2025-08-12T23:00:49.153662",
+    "total_sessions": 0,
+    "total_questions_answered": 0,
+    "total_correct": 0,
+    "total_wrong": 0,
+    "overall_accuracy": 0.0,
+    "last_question_index": 0,
+    "last_session_date": "2025-08-12T23:00:49.153674",
+    "session_history": [],
+    "category_stats": {
+      "06재산보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "07특종보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "08배상책임보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      },
+      "09해상보험": {
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": 0.0
+      }
+    },
+    "achievements": [],
+    "study_streak": 0
   }
 }

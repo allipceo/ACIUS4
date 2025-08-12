@@ -7,11 +7,11 @@ import logging
 
 # 분리된 모듈들 import
 try:
-    from quiz_session_routes import session_bp
-    from quiz_question_routes import question_bp
-    from quiz_answer_routes import answer_bp
-    from quiz_stats_routes import stats_bp
-    from quiz_common import common_bp
+    from routes.quiz_session_routes import session_bp
+    from routes.quiz_question_routes import question_bp
+    from routes.quiz_answer_routes import answer_bp
+    from routes.quiz_stats_routes import stats_bp
+    from routes.quiz_common import common_bp
     MODULES_AVAILABLE = True
     print("✅ Quiz 모듈들 import 성공")
 except ImportError as e:
@@ -36,7 +36,7 @@ def register_quiz_blueprints(app):
     else:
         # fallback: 기존 방식 사용
         try:
-            from quiz_routes_backup import quiz_bp as backup_bp
+            from routes.quiz_routes_backup import quiz_bp as backup_bp
             app.register_blueprint(backup_bp)
             print("✅ Quiz backup Blueprint 등록 완료")
         except ImportError as e:

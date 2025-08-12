@@ -623,6 +623,32 @@
       "correct_answers": 0,
       "session_duration_minutes": 0.0,
       "attempts": []
+    },
+    {
+      "session_id": "user_50941425_6442_20250812_213959",
+      "user_id": "user_50941425_6442",
+      "start_time": "2025-08-12T21:39:59.756711",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
+    },
+    {
+      "session_id": "user_50941425_6442_20250812_214130",
+      "user_id": "user_50941425_6442",
+      "start_time": "2025-08-12T21:41:30.984021",
+      "end_time": null,
+      "mode": "basic",
+      "category": "all",
+      "total_questions": 0,
+      "attempted_questions": 0,
+      "correct_answers": 0,
+      "session_duration_minutes": 0.0,
+      "attempts": []
     }
   ]
 }

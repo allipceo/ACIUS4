@@ -14,6 +14,31 @@ from datetime import datetime
 
 quiz_bp = Blueprint('quiz', __name__)
 
+@quiz_bp.route('/health')
+def health_check():
+    """퀴즈 API 상태 확인"""
+    try:
+        quiz_service = current_app.quiz_service
+        if quiz_service:
+            status = quiz_service.get_status()
+            return jsonify({
+                'status': 'healthy',
+                'quiz_service': status,
+                'timestamp': datetime.now().isoformat()
+            })
+        else:
+            return jsonify({
+                'status': 'unhealthy',
+                'error': 'QuizService not available',
+                'timestamp': datetime.now().isoformat()
+            }), 500
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 @quiz_bp.route('/start', methods=['POST'])
 def start_quiz():
     """퀴즈 시작 API - app_v1.3.py에서 분리"""
@@ -280,3 +305,4 @@ def prev_question():
             'success': False,
             'message': f'이전 문제 오류: {str(e)}'
         })
+
