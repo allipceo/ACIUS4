@@ -281,13 +281,18 @@ class StatsHandler:
         
     def get_overall_stats(self) -> Dict[str, Any]:
         """
-        전체 통계 정보 반환
+        전체 통계 정보 반환 (클라이언트 호환성 개선)
         
         Returns:
             Dict: 전체 통계
         """
         return {
             "user_id": self.stats_data["user_id"],
+            # 클라이언트 호환 필드명
+            "totalAttempted": self.stats_data["total_questions_attempted"],
+            "totalCorrect": self.stats_data["total_correct"],
+            "accuracy": self.stats_data["accuracy_rate"],
+            # 기존 필드명 (하위 호환성)
             "total_questions": self.stats_data["total_questions_attempted"],
             "total_correct": self.stats_data["total_correct"],
             "total_wrong": self.stats_data["total_wrong"],

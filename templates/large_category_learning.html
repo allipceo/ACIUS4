@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 대분류 학습</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">ACIU QUIZ</h1>
+            <p class="text-gray-600">보험중개사 자격증 학습 시스템 - Season 4</p>
+            <div id="status" class="text-center text-blue-600 mb-4 font-semibold">대분류 학습 모드</div>
+        </header>
+
+        <!-- 대분류 학습 화면 -->
+        <div id="large-category-learning-screen" class="bg-white rounded-lg shadow-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">대분류 학습</h2>
+                
+                <!-- 통계 박스 -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 min-w-[300px]">
+                    <!-- 누적현황 (1줄) -->
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">누적현황:</span>
+                        <span class="ml-2 text-sm">
+                            총 <span id="cumulative-total" class="font-bold text-blue-600">0</span>문제 | 
+                            정답 <span id="cumulative-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="cumulative-accuracy" class="font-bold text-purple-600">0</span>%
+                        </span>
+                    </div>
+                    <!-- 금일현황 (2줄) -->
+                    <div>
+                        <span class="text-sm font-medium text-gray-700">금일현황:</span>
+                        <span class="ml-2 text-sm">
+                            금일 <span id="today-total" class="font-bold text-orange-600">0</span>문제 | 
+                            정답 <span id="today-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="today-accuracy" class="font-bold text-red-600">0</span>%
+                        </span>
+                    </div>
+                </div>
+                
+                <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                    홈으로
+                </button>
+            </div>
+            
+            <!-- 카테고리 선택 -->
+            <div class="mb-8" id="category-selection">
+                <h3 class="text-lg font-semibold mb-4">카테고리 선택</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button onclick="selectCategory('재산보험')" class="bg-gray-200 hover:bg-blue-100 text-gray-700 p-6 rounded-lg text-center transition-all border-2 border-transparent">
+                        <div class="text-3xl mb-2">🏠</div>
+                        <div class="font-semibold">재산보험</div>
+                        <div class="text-sm text-gray-500 mt-1" id="category-count-재산보험">로딩 중...</div>
+                    </button>
+                    <button onclick="selectCategory('특종보험')" class="bg-gray-200 hover:bg-blue-100 text-gray-700 p-6 rounded-lg text-center transition-all border-2 border-transparent">
+                        <div class="text-3xl mb-2">🚗</div>
+                        <div class="font-semibold">특종보험</div>
+                        <div class="text-sm text-gray-500 mt-1" id="category-count-특종보험">로딩 중...</div>
+                    </button>
+                    <button onclick="selectCategory('배상책임보험')" class="bg-gray-200 hover:bg-blue-100 text-gray-700 p-6 rounded-lg text-center transition-all border-2 border-transparent">
+                        <div class="text-3xl mb-2">⚖️</div>
+                        <div class="font-semibold">배상책임보험</div>
+                        <div class="text-sm text-gray-500 mt-1" id="category-count-배상책임보험">로딩 중...</div>
+                    </button>
+                    <button onclick="selectCategory('해상보험')" class="bg-gray-200 hover:bg-blue-100 text-gray-700 p-6 rounded-lg text-center transition-all border-2 border-transparent">
+                        <div class="text-3xl mb-2">🚢</div>
+                        <div class="font-semibold">해상보험</div>
+                        <div class="text-sm text-gray-500 mt-1" id="category-count-해상보험">로딩 중...</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 문제 표시 영역 -->
+            <div id="large-category-question-area" class="hidden">
+                <!-- 현재 선택된 카테고리 표시 및 카테고리 변경 버튼 -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-800">현재 카테고리: <span id="current-category-name" class="text-blue-600">재산보험</span></h3>
+                            <p class="text-sm text-blue-600 mt-1">진도: <span id="current-progress" class="font-semibold">1 / 169</span></p>
+                        </div>
+                        <button onclick="showCategorySelection()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                            카테고리 변경
+                        </button>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold mb-4">문제 풀이</h2>
+                
+                <!-- 문제 정보 -->
+                <div class="mb-4 p-4 bg-gray-50 rounded">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
+                        <span id="question-code" class="text-sm text-gray-600">Q001</span>
+                    </div>
+                    <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-600">진도</span>
+                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 100</span>
+                    </div>
+                    <div id="question-text" class="text-lg font-medium bg-red-100 p-4 rounded border-2 border-red-300">
+                        문제 텍스트가 여기에 표시됩니다.
+                    </div>
+                </div>
+
+                <!-- 답안 버튼 영역 -->
+                <div id="answer-buttons" class="mb-4">
+                    <!-- 동적으로 생성될 답안 버튼들 -->
+                </div>
+
+                <!-- 정답 표시 -->
+                <div id="correct-answer" class="hidden p-4 bg-green-100 rounded border border-green-300">
+                    <h3 class="font-semibold text-green-800">정답:</h3>
+                    <p id="correct-answer-text" class="text-green-700"></p>
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="flex justify-between mt-4">
+                    <button onclick="previousQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                        이전 문제
+                    </button>
+                    <button onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        정답 확인
+                    </button>
+                    <button onclick="nextQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        다음 문제
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 단순화된 JavaScript만 로드 -->
+    <script src="/static/js/large_category_main_simple.js"></script>
+    
+    <!-- 메뉴 관련 함수들 -->
+    <script>
+        // 홈으로 가기
+        function goHome() {
+            window.location.href = '/home';
+        }
+        
+        // 카테고리 선택 함수
+        function selectCategory(categoryName) {
+            console.log(`🎯 카테고리 선택: ${categoryName}`);
+            
+            // 메뉴 숨기고 문제 영역 표시
+            document.getElementById('category-selection').classList.add('hidden');
+            document.getElementById('large-category-question-area').classList.remove('hidden');
+            
+            // 현재 카테고리명 업데이트
+            document.getElementById('current-category-name').textContent = categoryName;
+            
+            // 카테고리별 문제 로딩 및 표시
+            if (typeof loadCategoryQuestions === 'function') {
+                loadCategoryQuestions(categoryName);
+            }
+        }
+        
+        // 카테고리 선택 화면으로 돌아가기
+        function showCategorySelection() {
+            console.log('🏠 카테고리 선택 화면으로 돌아가기');
+            document.getElementById('large-category-question-area').classList.add('hidden');
+            document.getElementById('category-selection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

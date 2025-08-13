@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>통계 시스템 테스트 - ACIU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">🧪 통계 시스템 테스트</h1>
+            <p class="text-gray-600">분산형 레고블록 개발 방법론 - Day 3 테스트</p>
+            <p class="text-sm text-blue-500 mt-2">테스트 페이지 - 통계 기능 검증</p>
+        </header>
+
+        <!-- 테스트 결과 표시 영역 -->
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-6">📊 테스트 결과</h2>
+            
+            <!-- 모듈 로드 상태 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-blue-800">ProgressManager</h3>
+                    <p id="progress-manager-status" class="text-sm text-blue-600">로딩 중...</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-green-800">StatsCalculator</h3>
+                    <p id="stats-calculator-status" class="text-sm text-green-600">로딩 중...</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-purple-800">UIUpdater</h3>
+                    <p id="ui-updater-status" class="text-sm text-purple-600">로딩 중...</p>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-orange-800">ProgressSystem</h3>
+                    <p id="progress-system-status" class="text-sm text-orange-600">로딩 중...</p>
+                </div>
+            </div>
+
+            <!-- 통계 데이터 표시 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- 기본학습 통계 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-semibold mb-3">📚 기본학습 통계</h3>
+                    <div id="basic-stats" class="space-y-2 text-sm">
+                        <p>로딩 중...</p>
+                    </div>
+                </div>
+                
+                <!-- 오늘 통계 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-semibold mb-3">📅 오늘 통계</h3>
+                    <div id="today-stats" class="space-y-2 text-sm">
+                        <p>로딩 중...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 테스트 버튼들 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <button onclick="testSaveProgress()" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg">
+                    💾 진도 저장 테스트
+                </button>
+                <button onclick="testGetNextQuestion()" class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg">
+                    🔄 다음 문제 조회 테스트
+                </button>
+                <button onclick="testUpdateStats()" class="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-lg">
+                    📊 통계 업데이트 테스트
+                </button>
+            </div>
+
+            <!-- 로그 출력 영역 -->
+            <div class="bg-black text-green-400 p-4 rounded-lg font-mono text-sm h-64 overflow-y-auto">
+                <div id="test-log">테스트 로그가 여기에 표시됩니다...</div>
+            </div>
+        </div>
+
+        <!-- 이어풀기 테스트 영역 -->
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-6">🔄 이어풀기 테스트</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 기본학습 이어풀기 -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-3">📚 기본학습 이어풀기</h3>
+                    <p class="text-sm text-blue-600 mb-3">현재 진도: <span id="basic-current-progress">로딩 중...</span></p>
+                    <p class="text-sm text-blue-600 mb-3">다음 문제: <span id="basic-next-question">로딩 중...</span></p>
+                    <button onclick="testBasicContinue()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                        이어풀기 시작
+                    </button>
+                </div>
+                
+                <!-- 카테고리별 이어풀기 -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-green-800 mb-3">🎯 카테고리별 이어풀기</h3>
+                    <select id="category-select" class="w-full p-2 border rounded mb-3">
+                        <option value="재산보험">재산보험</option>
+                        <option value="특종보험">특종보험</option>
+                        <option value="배상보험">배상보험</option>
+                        <option value="해상보험">해상보험</option>
+                    </select>
+                    <p class="text-sm text-green-600 mb-3">현재 진도: <span id="category-current-progress">로딩 중...</span></p>
+                    <p class="text-sm text-green-600 mb-3">다음 문제: <span id="category-next-question">로딩 중...</span></p>
+                    <button onclick="testCategoryContinue()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                        이어풀기 시작
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 시스템 리셋 영역 -->
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-semibold mb-6">🔄 시스템 관리</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-red-800 mb-3">⚠️ 시스템 리셋</h3>
+                    <p class="text-sm text-red-600 mb-3">모든 진도 데이터를 초기화합니다.</p>
+                    <button onclick="resetSystem()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+                        시스템 리셋
+                    </button>
+                </div>
+                
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-yellow-800 mb-3">📋 시스템 정보</h3>
+                    <p class="text-sm text-yellow-600 mb-3">현재 시스템 상태를 확인합니다.</p>
+                    <button onclick="showSystemInfo()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+                        시스템 정보
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 네비게이션 -->
+        <div class="text-center mt-8">
+            <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg">
+                🏠 홈으로 돌아가기
+            </button>
+        </div>
+    </div>
+
+    <!-- 통계 시스템 스크립트 로드 -->
+    <script src="/static/js/progress_manager.js"></script>
+    <script src="/static/js/stats_calculator.js"></script>
+    <script src="/static/js/ui_updater.js"></script>
+    <script src="/static/js/progress_system.js"></script>
+    
+    <!-- 테스트 스크립트 -->
+    <script>
+        // 로그 출력 함수
+        function log(message) {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 모듈 상태 업데이트
+        function updateModuleStatus() {
+            // ProgressManager 상태
+            if (typeof progressManager !== 'undefined') {
+                document.getElementById('progress-manager-status').textContent = '✅ 로드됨';
+                document.getElementById('progress-manager-status').className = 'text-sm text-green-600';
+            } else {
+                document.getElementById('progress-manager-status').textContent = '❌ 로드 실패';
+                document.getElementById('progress-manager-status').className = 'text-sm text-red-600';
+            }
+
+            // StatsCalculator 상태
+            if (typeof statsCalculator !== 'undefined') {
+                document.getElementById('stats-calculator-status').textContent = '✅ 로드됨';
+                document.getElementById('stats-calculator-status').className = 'text-sm text-green-600';
+            } else {
+                document.getElementById('stats-calculator-status').textContent = '❌ 로드 실패';
+                document.getElementById('stats-calculator-status').className = 'text-sm text-red-600';
+            }
+
+            // UIUpdater 상태
+            if (typeof uiUpdater !== 'undefined') {
+                document.getElementById('ui-updater-status').textContent = '✅ 로드됨';
+                document.getElementById('ui-updater-status').className = 'text-sm text-green-600';
+            } else {
+                document.getElementById('ui-updater-status').textContent = '❌ 로드 실패';
+                document.getElementById('ui-updater-status').className = 'text-sm text-red-600';
+            }
+
+            // ProgressSystem 상태
+            if (typeof progressSystem !== 'undefined') {
+                document.getElementById('progress-system-status').textContent = '✅ 로드됨';
+                document.getElementById('progress-system-status').className = 'text-sm text-green-600';
+            } else {
+                document.getElementById('progress-system-status').textContent = '❌ 로드 실패';
+                document.getElementById('progress-system-status').className = 'text-sm text-red-600';
+            }
+        }
+
+        // 통계 데이터 업데이트
+        function updateStatsDisplay() {
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                // 기본학습 통계
+                const basicStats = progressSystem.getStats('basic');
+                if (basicStats) {
+                    document.getElementById('basic-stats').innerHTML = `
+                        <p>진행률: ${basicStats.progressPercent}%</p>
+                        <p>정답률: ${basicStats.accuracy}%</p>
+                        <p>총 시도: ${basicStats.totalAttempted}문제</p>
+                        <p>총 정답: ${basicStats.totalCorrect}문제</p>
+                        <p>오늘 시도: ${basicStats.todayAttempted}문제</p>
+                        <p>오늘 정답: ${basicStats.todayCorrect}문제</p>
+                    `;
+                }
+
+                // 오늘 통계
+                const todayStats = progressSystem.getStats('today');
+                if (todayStats) {
+                    document.getElementById('today-stats').innerHTML = `
+                        <p>전체 시도: ${todayStats.total.attempted}문제</p>
+                        <p>전체 정답: ${todayStats.total.correct}문제</p>
+                        <p>전체 정답률: ${todayStats.total.accuracy}%</p>
+                        <p>기본학습 시도: ${todayStats.basic.attempted}문제</p>
+                        <p>기본학습 정답: ${todayStats.basic.correct}문제</p>
+                        <p>기본학습 정답률: ${todayStats.basic.accuracy}%</p>
+                    `;
+                }
+
+                // 이어풀기 정보 업데이트
+                const basicProgress = progressSystem.getProgress();
+                if (basicProgress) {
+                    document.getElementById('basic-current-progress').textContent = `${basicProgress.basicLearning.lastQuestion}번`;
+                    document.getElementById('basic-next-question').textContent = `${progressSystem.getNextQuestion('basic')}번`;
+                }
+
+                // 카테고리별 정보 업데이트
+                const selectedCategory = document.getElementById('category-select').value;
+                if (basicProgress && basicProgress.categories[selectedCategory]) {
+                    const categoryData = basicProgress.categories[selectedCategory];
+                    document.getElementById('category-current-progress').textContent = `${categoryData.lastQuestion}번`;
+                    document.getElementById('category-next-question').textContent = `${progressSystem.getNextQuestion(selectedCategory)}번`;
+                }
+            }
+        }
+
+        // 테스트 함수들
+        function testSaveProgress() {
+            log('🧪 진도 저장 테스트 시작...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                // 기본학습 진도 저장 테스트
+                const result1 = progressSystem.saveProgress('basic', 5, true);
+                log(`기본학습 진도 저장: ${result1 ? '✅ 성공' : '❌ 실패'}`);
+                
+                // 카테고리 진도 저장 테스트
+                const result2 = progressSystem.saveProgress('재산보험', 10, false);
+                log(`재산보험 진도 저장: ${result2 ? '✅ 성공' : '❌ 실패'}`);
+                
+                // 통계 업데이트
+                updateStatsDisplay();
+                log('📊 통계 업데이트 완료');
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function testGetNextQuestion() {
+            log('🔄 다음 문제 조회 테스트 시작...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                const nextBasic = progressSystem.getNextQuestion('basic');
+                const nextCategory = progressSystem.getNextQuestion('재산보험');
+                
+                log(`기본학습 다음 문제: ${nextBasic}번`);
+                log(`재산보험 다음 문제: ${nextCategory}번`);
+                
+                updateStatsDisplay();
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function testUpdateStats() {
+            log('📊 통계 업데이트 테스트 시작...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                const result = progressSystem.updateStats();
+                log(`통계 업데이트: ${result ? '✅ 성공' : '❌ 실패'}`);
+                
+                updateStatsDisplay();
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function testBasicContinue() {
+            log('🔄 기본학습 이어풀기 테스트...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                const nextQuestion = progressSystem.getNextQuestion('basic');
+                log(`기본학습 이어풀기: ${nextQuestion}번 문제부터 시작`);
+                
+                // 실제로는 기본학습 페이지로 이동
+                alert(`기본학습 ${nextQuestion}번 문제부터 시작합니다.`);
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function testCategoryContinue() {
+            log('🎯 카테고리별 이어풀기 테스트...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                const selectedCategory = document.getElementById('category-select').value;
+                const nextQuestion = progressSystem.getNextQuestion(selectedCategory);
+                log(`${selectedCategory} 이어풀기: ${nextQuestion}번 문제부터 시작`);
+                
+                // 실제로는 대분류 학습 페이지로 이동
+                alert(`${selectedCategory} ${nextQuestion}번 문제부터 시작합니다.`);
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function resetSystem() {
+            log('🔄 시스템 리셋 시작...');
+            
+            if (typeof progressSystem !== 'undefined' && progressSystem.isInitialized) {
+                const result = progressSystem.resetSystem();
+                log(`시스템 리셋: ${result ? '✅ 성공' : '❌ 실패'}`);
+                
+                updateStatsDisplay();
+            } else {
+                log('❌ ProgressSystem이 초기화되지 않았습니다.');
+            }
+        }
+
+        function showSystemInfo() {
+            log('📋 시스템 정보 조회...');
+            
+            if (typeof progressSystem !== 'undefined') {
+                const status = progressSystem.getSystemStatus();
+                log(`시스템 상태: ${JSON.stringify(status, null, 2)}`);
+                
+                if (progressSystem.isInitialized) {
+                    const progress = progressSystem.getProgress();
+                    log(`현재 진도: ${progress ? progress.basicLearning.lastQuestion : 'N/A'}번`);
+                }
+            } else {
+                log('❌ ProgressSystem을 찾을 수 없습니다.');
+            }
+        }
+
+        function goHome() {
+            window.location.href = '/home';
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🎯 통계 시스템 테스트 페이지 로드됨');
+            
+            // 모듈 상태 확인
+            setTimeout(() => {
+                updateModuleStatus();
+                
+                // ProgressSystem 초기화
+                if (typeof progressSystem !== 'undefined') {
+                    const initResult = progressSystem.initialize();
+                    log(`ProgressSystem 초기화: ${initResult ? '✅ 성공' : '❌ 실패'}`);
+                    
+                    if (initResult) {
+                        updateStatsDisplay();
+                        log('📊 초기 통계 데이터 로드 완료');
+                    }
+                } else {
+                    log('❌ ProgressSystem 모듈을 찾을 수 없습니다.');
+                }
+            }, 1000);
+        });
+
+        // 카테고리 선택 변경 시 정보 업데이트
+        document.getElementById('category-select').addEventListener('change', function() {
+            updateStatsDisplay();
+        });
+    </script>
+</body>
+</html>

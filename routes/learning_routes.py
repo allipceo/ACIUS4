@@ -1,159 +1,98 @@
-from flask import Blueprint, render_template
-from services.user_service import check_user_session
+# routes/learning_routes.py - 게스트 모드 지원 버전
+
+from flask import Blueprint, render_template, session, redirect, url_for, jsonify
 
 learning_bp = Blueprint('learning', __name__)
 
 @learning_bp.route('/basic-learning')
 def basic_learning():
-    """기본학습 페이지 - 기존 기능 보존"""
-    print("=== 기본학습 페이지 접속 ===")
-    current_user_id = check_user_session()
+    """기본학습 페이지 - 게스트 모드 완전 지원"""
     
-    # 임시: 기존 f-string HTML 사용 (STEP 3에서 템플릿으로 변경)
-    return render_existing_basic_learning_html(current_user_id)
+    # 게스트 세션이 있으면 바로 학습 페이지로 진행
+    if 'current_user_id' in session:
+        return render_template('basic_learning.html')
+    else:
+        # 세션이 없어도 게스트 모드로 자동 생성 (app.py의 before_request가 처리)
+        return render_template('basic_learning.html')
 
-@learning_bp.route('/category-learning') 
-def category_learning():
-    """대분류학습 페이지 - 기존 기능 보존"""
-    print("=== 대분류학습 페이지 접속 ===")
-    current_user_id = check_user_session()
+@learning_bp.route('/large-category-learning')  
+def large_category_learning():
+    """대분류학습 페이지 - 게스트 모드 완전 지원"""
     
-    return render_existing_category_learning_html(current_user_id)
+    # 게스트 세션이 있으면 바로 학습 페이지로 진행
+    if 'current_user_id' in session:
+        return render_template('large_category_learning.html')
+    else:
+        # 세션이 없어도 게스트 모드로 자동 생성
+        return render_template('large_category_learning.html')
 
-@learning_bp.route('/statistics')
-def statistics():
-    """통계 페이지 - 기존 기능 보존"""
-    print("=== 통계 페이지 접속 ===")
-    current_user_id = check_user_session()
+@learning_bp.route('/quiz')
+def quiz():
+    """퀴즈 페이지 - 게스트 모드 완전 지원"""
     
-    return render_existing_statistics_html(current_user_id)
+    # 게스트 세션이 있으면 바로 퀴즈 페이지로 진행
+    if 'current_user_id' in session:
+        return render_template('quiz.html')
+    else:
+        # 세션이 없어도 게스트 모드로 자동 생성
+        return render_template('quiz.html')
 
-# 임시 함수들 (STEP 3에서 템플릿으로 대체)
-def render_existing_basic_learning_html(current_user_id):
-    """임시 함수: 기존 기본학습 HTML 렌더링"""
-    return f"""
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>기본학습 - AICU S4</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-100 min-h-screen">
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-                <h1 class="text-2xl font-bold text-blue-600 mb-4">📚 기본학습</h1>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
-                    <p class="text-blue-700">사용자 ID: <strong>{current_user_id or 'guest_user'}</strong></p>
-                    <p class="text-sm text-blue-600 mt-2">전체 문제를 대상으로 한 학습 모드입니다.</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="border border-orange-200 bg-orange-50 rounded p-4">
-                        <h3 class="font-medium text-orange-800">🚧 개발 상태</h3>
-                        <p class="text-sm text-orange-700 mt-1">Step 3에서 구현 예정</p>
-                        <ul class="text-sm text-orange-600 mt-2 ml-4">
-                            <li>• 시즌1 퀴즈 로직 통합</li>
-                            <li>• 사용자별 진도 관리</li>
-                            <li>• 실시간 통계 업데이트</li>
-                        </ul>
-                    </div>
-                    
-                    <button onclick="location.href='/home'" 
-                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded">
-                        🏠 대문으로 돌아가기
-                    </button>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
+@learning_bp.route('/quiz-v1')
+def quiz_v1():
+    """Week2 퀴즈 페이지 - 게스트 모드 완전 지원"""
+    
+    # 게스트 세션이 있으면 바로 퀴즈 페이지로 진행
+    if 'current_user_id' in session:
+        return render_template('quiz_v1.0.html')
+    else:
+        # 세션이 없어도 게스트 모드로 자동 생성
+        return render_template('quiz_v1.0.html')
 
-def render_existing_category_learning_html(current_user_id):
-    """임시 함수: 기존 대분류학습 HTML 렌더링"""
-    return f"""
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>대분류학습 - AICU S4</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-100 min-h-screen">
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-                <h1 class="text-2xl font-bold text-green-600 mb-4">🎯 대분류학습</h1>
-                
-                <div class="bg-green-50 border border-green-200 rounded p-4 mb-6">
-                    <p class="text-green-700">사용자 ID: <strong>{current_user_id or 'guest_user'}</strong></p>
-                    <p class="text-sm text-green-600 mt-2">카테고리별 집중 학습 모드입니다.</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="border border-orange-200 bg-orange-50 rounded p-4">
-                        <h3 class="font-medium text-orange-800">🚧 개발 상태</h3>
-                        <p class="text-sm text-orange-700 mt-1">Step 3에서 구현 예정</p>
-                        <ul class="text-sm text-orange-600 mt-2 ml-4">
-                            <li>• 카테고리별 문제 분류</li>
-                            <li>• 개별 통계 관리</li>
-                            <li>• 과목별 점수 예측</li>
-                        </ul>
-                    </div>
-                    
-                    <button onclick="location.href='/home'" 
-                            class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded">
-                        🏠 대문으로 돌아가기
-                    </button>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
+# API 엔드포인트들도 게스트 모드 지원
+@learning_bp.route('/api/learning/current-user')
+def get_current_learning_user():
+    """현재 학습 사용자 정보 - 게스트 모드 지원"""
+    
+    if 'current_user_id' not in session:
+        return jsonify({'error': '세션 없음'}), 401
+    
+    return jsonify({
+        'user_id': session.get('current_user_id'),
+        'user_name': session.get('user_name', '게스트'),
+        'is_guest': session.get('is_guest', True),
+        'registration_date': session.get('registration_date'),
+        'exam_subject': session.get('exam_subject'),
+        'exam_date': session.get('exam_date')
+    })
 
-def render_existing_statistics_html(current_user_id):
-    """임시 함수: 기존 통계 HTML 렌더링"""
-    return f"""
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>통계 - AICU S4</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-100 min-h-screen">
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-                <h1 class="text-2xl font-bold text-purple-600 mb-4">📊 통계</h1>
-                
-                <div class="bg-purple-50 border border-purple-200 rounded p-4 mb-6">
-                    <p class="text-purple-700">사용자 ID: <strong>{current_user_id or 'guest_user'}</strong></p>
-                    <p class="text-sm text-purple-600 mt-2">학습 현황 및 성과 분석입니다.</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="border border-orange-200 bg-orange-50 rounded p-4">
-                        <h3 class="font-medium text-orange-800">🚧 개발 상태</h3>
-                        <p class="text-sm text-orange-700 mt-1">Step 3에서 구현 예정</p>
-                        <ul class="text-sm text-orange-600 mt-2 ml-4">
-                            <li>• 실시간 학습 통계</li>
-                            <li>• 과목별 성과 분석</li>
-                            <li>• 합격 예측 시스템</li>
-                        </ul>
-                    </div>
-                    
-                    <button onclick="location.href='/home'" 
-                            class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded">
-                        🏠 대문으로 돌아가기
-                    </button>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
+@learning_bp.route('/api/learning/stats')
+def get_learning_stats():
+    """학습 통계 - 게스트 모드 지원"""
+    
+    if 'current_user_id' not in session:
+        return jsonify({'error': '세션 없음'}), 401
+    
+    # 게스트 모드 vs 실제 사용자 구분하여 통계 제공
+    user_id = session.get('current_user_id')
+    is_guest = session.get('is_guest', True)
+    
+    if is_guest:
+        # 게스트 모드 통계 (체험용)
+        return jsonify({
+            'total_attempted': 0,
+            'total_correct': 0,
+            'accuracy_rate': 0.0,
+            'study_days': 1,
+            'mode': '체험 모드',
+            'message': '정식 등록 후 정확한 통계가 제공됩니다'
+        })
+    else:
+        # 실제 사용자 통계 (정식)
+        # 실제 통계 서비스에서 데이터 가져오기
+        return jsonify({
+            'total_attempted': 0,
+            'total_correct': 0,
+            'accuracy_rate': 0.0,
+            'study_days': 1,
+            'mode': '정식 모드'
+        })

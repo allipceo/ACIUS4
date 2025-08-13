@@ -1,6 +1,6 @@
 # services/quiz_data_service_v1.py
 # 문제풀이 기능 - 데이터 로드 서비스 (150줄 이하)
-# 파일명 수정: quiz_data_service_v1.0.py → quiz_data_service_v1.py
+# 파일명 수정: quiz_data_service_v1_0.py → quiz_data_service_v1.py
 
 import json
 import logging

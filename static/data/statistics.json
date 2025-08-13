@@ -1,0 +1,63 @@
+{
+  "user_info": {
+    "name": "홍길동",
+    "registration_date": "2025-08-01",
+    "exam_name": "ACIU",
+    "exam_date": "2025-09-13",
+    "phone": "010-1234-5678",
+    "is_registered": false,
+    "is_demo_mode": true
+  },
+  "progress_data": {
+    "basic_learning": {
+      "last_question": 0,
+      "total_attempted": 0,
+      "total_correct": 0,
+      "today_attempted": 0,
+      "today_correct": 0,
+      "last_study_date": null
+    },
+    "categories": {
+      "해상보험": {
+        "last_question": 0,
+        "total_attempted": 0,
+        "total_correct": 0,
+        "today_attempted": 0,
+        "today_correct": 0,
+        "last_study_date": null
+      },
+      "배상책임보험": {
+        "last_question": 0,
+        "total_attempted": 0,
+        "total_correct": 0,
+        "today_attempted": 0,
+        "today_correct": 0,
+        "last_study_date": null
+      },
+      "재산보험": {
+        "last_question": 0,
+        "total_attempted": 0,
+        "total_correct": 0,
+        "today_attempted": 0,
+        "today_correct": 0,
+        "last_study_date": null
+      },
+      "특종보험": {
+        "last_question": 0,
+        "total_attempted": 0,
+        "total_correct": 0,
+        "today_attempted": 0,
+        "today_correct": 0,
+        "last_study_date": null
+      }
+    }
+  },
+  "daily_logs": [],
+  "statistics": {
+    "total_questions_solved": 0,
+    "total_correct_answers": 0,
+    "overall_accuracy": 0,
+    "study_days": 0,
+    "current_streak": 0
+  }
+}

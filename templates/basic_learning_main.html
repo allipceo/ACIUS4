@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 기본학습</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">ACIU QUIZ</h1>
+            <p class="text-gray-600">보험중개사 자격증 학습 시스템 - Season 4</p>
+            <div id="status" class="text-center text-blue-600 mb-4 font-semibold">기본학습 모드</div>
+        </header>
+
+        <!-- 기본학습 화면 -->
+        <div id="basic-learning-screen" class="bg-white rounded-lg shadow-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">기본학습</h2>
+                
+                <!-- 조대표님 요구사항: 2줄 구조 통계 -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 min-w-[300px]">
+                    <!-- 누적현황 (1줄) -->
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">누적현황:</span>
+                        <span class="ml-2 text-sm">
+                            총 <span id="cumulative-total" class="font-bold text-blue-600">0</span>문제 | 
+                            정답 <span id="cumulative-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="cumulative-accuracy" class="font-bold text-purple-600">0</span>%
+                        </span>
+                    </div>
+                    <!-- 금일현황 (2줄) -->
+                    <div>
+                        <span class="text-sm font-medium text-gray-700">금일현황:</span>
+                        <span class="ml-2 text-sm">
+                            금일 <span id="today-total" class="font-bold text-orange-600">0</span>문제 | 
+                            정답 <span id="today-correct" class="font-bold text-green-600">0</span>개 | 
+                            정답률 <span id="today-accuracy" class="font-bold text-red-600">0</span>%
+                        </span>
+                    </div>
+                </div>
+                
+                <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                    홈으로
+                </button>
+            </div>
+            
+            <!-- 학습 방식 선택 -->
+            <div class="mb-8" id="mode-selection">
+                <h3 class="text-lg font-semibold mb-4">학습 방식 선택</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="selectBasicLearningMode('continue')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg text-center transition-all">
+                        <div class="text-2xl mb-2">🔄</div>
+                        <div class="font-semibold">이어풀기</div>
+                        <div class="text-sm opacity-90">이전 진행상황부터 계속</div>
+                    </button>
+                    <button onclick="selectBasicLearningMode('restart')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg text-center transition-all">
+                        <div class="text-2xl mb-2">🔄</div>
+                        <div class="font-semibold">처음풀기</div>
+                        <div class="text-sm opacity-90">처음부터 다시 시작</div>
+                    </button>
+                    <button onclick="selectBasicLearningMode('random')" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg text-center transition-all">
+                        <div class="text-2xl mb-2">🎲</div>
+                        <div class="font-semibold">랜덤풀기</div>
+                        <div class="text-sm opacity-90">무작위 순서로 학습</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 기본학습 문제 표시 영역 -->
+            <div id="basic-question-area" class="hidden">
+                <h3 class="text-lg font-semibold mb-4">문제 풀이</h3>
+                
+                <!-- 문제 정보 -->
+                <div class="mb-4 p-4 bg-gray-50 rounded">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
+                        <span id="question-code" class="text-sm text-gray-600">Q001</span>
+                    </div>
+                    <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-600">진도</span>
+                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 100</span>
+                    </div>
+                    <div id="question-text" class="text-lg font-medium">문제 텍스트가 여기에 표시됩니다.</div>
+                </div>
+                
+                <!-- 답안 버튼 영역 -->
+                <div id="answer-buttons" class="mb-4">
+                    <!-- 동적으로 생성될 답안 버튼들 -->
+                </div>
+                
+                <!-- 결과 표시 영역 -->
+                <div id="result-area" class="hidden">
+                    <div id="result-message" class="p-3 rounded font-medium"></div>
+                </div>
+                
+                <!-- 조작 버튼 -->
+                <div class="flex justify-between items-center mt-6">
+                    <button onclick="prevQuestion()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        이전 문제
+                    </button>
+                    
+                    <button id="check-button" onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        정답 확인
+                    </button>
+                    
+                    <button onclick="nextQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        다음 문제
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 상세 통계 -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h4 class="text-lg font-semibold mb-3">상세 통계</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="bg-white p-3 rounded shadow">
+                        <div class="text-2xl font-bold text-blue-600" id="total-questions">0</div>
+                        <div class="text-sm text-gray-600">전체 문제</div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow">
+                        <div class="text-2xl font-bold text-green-600" id="correct-answers">0</div>
+                        <div class="text-sm text-gray-600">정답</div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow">
+                        <div class="text-2xl font-bold text-red-600" id="wrong-answers">0</div>
+                        <div class="text-sm text-gray-600">오답</div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow">
+                        <div class="text-2xl font-bold text-purple-600" id="current-streak">0</div>
+                        <div class="text-sm text-gray-600">연속 정답</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 모듈 로드 -->
+    <script src="/static/js/basic_learning_core.js"></script>
+    <script src="/static/js/basic_learning_api.js"></script>
+    <script src="/static/js/basic_learning_ui.js"></script>
+    <script src="/static/js/basic_learning_stats.js"></script>
+    
+    <!-- 초기화 스크립트 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('=== 분할 구조 basic_learning 초기화 ===');
+            
+            // 기본학습 시스템 초기화
+            basicLearningSystem = new BasicLearningSystem();
+            
+            // 사용자 정보 로딩
+            await loadCurrentUser();
+            
+            // 🚀 자동으로 기본학습 데이터 로드 시작
+            console.log('🔄 자동 문제 로딩 시작...');
+            try {
+                await loadBasicLearningData('basic');
+                console.log('✅ 자동 문제 로딩 완료');
+            } catch (error) {
+                console.error('❌ 자동 문제 로딩 실패:', error);
+            }
+            
+            console.log('기본학습 시스템 로드 완료');
+            console.log('사용법:');
+            console.log('- debugCurrentState() : 현재 상태 확인');
+            console.log('- simulateCorrectAnswer() : 정답 자동 선택');
+            console.log('- simulateWrongAnswer() : 오답 자동 선택');
+            console.log('- 키보드: O/X 키로 답안 선택, Enter로 확인/다음');
+        });
+    </script>
+</body>
+</html>

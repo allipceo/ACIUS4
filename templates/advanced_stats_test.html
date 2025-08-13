@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고도화된 통계 시스템 테스트 - ACIU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">고도화된 통계 시스템 테스트</h1>
+            <p class="text-gray-600">077번 계획서 기반 AdvancedProgressManager 테스트</p>
+            <div class="mt-2 text-sm text-blue-600">Phase 3 Day 3: 통합 테스트 및 성능 최적화</div>
+        </div>
+
+        <!-- 통합 테스트 결과 표시 영역 -->
+        <div id="integration-test-results" class="mb-6">
+            <!-- 통합 테스트 결과가 여기에 표시됩니다 -->
+        </div>
+
+        <!-- 테스트 결과 표시 영역 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 테스트 결과</h2>
+            <div id="test-results" class="space-y-2">
+                <div class="text-gray-600">테스트를 시작하려면 아래 버튼을 클릭하세요.</div>
+            </div>
+        </div>
+
+        <!-- 모듈 상태 표시 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 모듈 상태</h2>
+            <div id="module-status" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-800">AdvancedProgressManager</h3>
+                    <div id="progress-manager-status" class="text-sm text-blue-600">로딩 중...</div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h3 class="font-semibold text-green-800">RealTimeStatsUpdater</h3>
+                    <div id="realtime-updater-status" class="text-sm text-green-600">로딩 중...</div>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h3 class="font-semibold text-purple-800">AdvancedStatisticsSystem</h3>
+                    <div id="system-status" class="text-sm text-purple-600">로딩 중...</div>
+                </div>
+                <div class="p-4 bg-pink-50 rounded-lg">
+                    <h3 class="font-semibold text-pink-800">NotificationSystem</h3>
+                    <div id="notification-status" class="text-sm text-pink-600">로딩 중...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 진도 데이터 표시 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📈 진도 데이터</h2>
+            <div id="progress-data" class="space-y-4">
+                <div class="text-gray-600">진도 데이터를 불러오는 중...</div>
+            </div>
+        </div>
+
+        <!-- 통계 데이터 표시 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 통계 데이터</h2>
+            <div id="statistics-data" class="space-y-4">
+                <div class="text-gray-600">통계 데이터를 불러오는 중...</div>
+            </div>
+        </div>
+
+        <!-- 테스트 버튼들 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">🧪 테스트 도구</h2>
+            
+            <!-- Phase 3 Day 3: 통합 테스트 섹션 -->
+            <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-800 mb-3">🎯 Phase 3 Day 3: 통합 테스트</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="runIntegrationTests()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                        🚀 전체 통합 테스트 실행
+                    </button>
+                    <button onclick="runPerformanceOptimization()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                        ⚡ 성능 최적화 테스트
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 기존 테스트 버튼들 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button onclick="runBasicTest()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                    🔍 기본 테스트
+                </button>
+                <button onclick="testContinueLearning()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                    🔄 이어풀기 테스트
+                </button>
+                <button onclick="testUserRegistration()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">
+                    👤 사용자 등록 테스트
+                </button>
+                <button onclick="testDataPersistence()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                    💾 데이터 지속성 테스트
+                </button>
+                <button onclick="clearAllData()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                    🗑️ 모든 데이터 초기화
+                </button>
+                <button onclick="testAdvancedSystem()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg">
+                    🚀 통합 시스템 테스트
+                </button>
+                <button onclick="testPerformance()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
+                    ⚡ 성능 테스트
+                </button>
+                <button onclick="showPerformanceStats()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg">
+                    📊 성능 통계
+                </button>
+                <button onclick="testNotificationSystem()" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">
+                    🔔 알림 시스템 테스트
+                </button>
+                <button onclick="refreshDisplay()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                    🔄 화면 새로고침
+                </button>
+            </div>
+        </div>
+
+        <!-- 로그 영역 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📝 로그</h2>
+            <div id="log-area" class="bg-gray-100 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                <div class="text-gray-600">로그가 여기에 표시됩니다...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 고도화된 통계 시스템 스크립트들 -->
+    <script src="/static/js/advanced_progress_manager.js"></script>
+    <script src="/static/js/real_time_stats_updater.js"></script>
+    <script src="/static/js/advanced_statistics_system.js"></script>
+    <script src="/static/js/notification_system.js"></script>
+    <script src="/static/js/integration_test_suite.js"></script>
+
+    <script>
+        // 로그 함수
+        function log(message) {
+            const logArea = document.getElementById('log-area');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${message}`;
+            logArea.appendChild(logEntry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // 모듈 상태 업데이트
+        function updateModuleStatus() {
+            const progressManagerStatus = document.getElementById('progress-manager-status');
+            const realtimeUpdaterStatus = document.getElementById('realtime-updater-status');
+            const systemStatus = document.getElementById('system-status');
+            const notificationStatus = document.getElementById('notification-status');
+
+            progressManagerStatus.innerHTML = window.advancedProgressManager ? '✅ 로드됨' : '❌ 로드 안됨';
+            realtimeUpdaterStatus.innerHTML = window.realTimeStatsUpdater ? '✅ 로드됨' : '❌ 로드 안됨';
+            systemStatus.innerHTML = window.advancedStatisticsSystem ? '✅ 로드됨' : '❌ 로드 안됨';
+            notificationStatus.innerHTML = window.notificationSystem ? '✅ 로드됨' : '❌ 로드 안됨';
+        }
+
+        // 진도 데이터 표시
+        function updateProgressData() {
+            const progressElement = document.getElementById('progress-data');
+            if (!window.advancedProgressManager) {
+                progressElement.innerHTML = '<div class="text-red-600">AdvancedProgressManager가 로드되지 않았습니다.</div>';
+                return;
+            }
+
+            const progressData = window.advancedProgressManager.progressData;
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+
+            // 기본학습 진도
+            const basicProgress = progressData.basic_learning;
+            html += `
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-800">기본학습</h3>
+                    <div class="text-sm">
+                        <div>마지막 문제: ${basicProgress.last_question}번</div>
+                        <div>총 풀이: ${basicProgress.total_attempted}개</div>
+                        <div>총 정답: ${basicProgress.total_correct}개</div>
+                        <div>오늘 풀이: ${basicProgress.today_attempted}개</div>
+                        <div>오늘 정답: ${basicProgress.today_correct}개</div>
+                    </div>
+                </div>
+            `;
+
+            // 카테고리별 진도
+            Object.entries(progressData.categories).forEach(([category, data]) => {
+                html += `
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h3 class="font-semibold text-green-800">${category}</h3>
+                        <div class="text-sm">
+                            <div>마지막 문제: ${data.last_question}번</div>
+                            <div>총 풀이: ${data.total_attempted}개</div>
+                            <div>총 정답: ${data.total_correct}개</div>
+                            <div>오늘 풀이: ${data.today_attempted}개</div>
+                            <div>오늘 정답: ${data.today_correct}개</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            progressElement.innerHTML = html;
+        }
+
+        // 통계 데이터 표시
+        function updateStatisticsData() {
+            const statsElement = document.getElementById('statistics-data');
+            if (!window.advancedProgressManager) {
+                statsElement.innerHTML = '<div class="text-red-600">AdvancedProgressManager가 로드되지 않았습니다.</div>';
+                return;
+            }
+
+            const stats = window.advancedProgressManager.statistics;
+            const userInfo = window.advancedProgressManager.userInfo;
+            
+            statsElement.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h3 class="font-semibold text-purple-800">사용자 정보</h3>
+                        <div class="text-sm">
+                            <div>이름: ${userInfo.name}</div>
+                            <div>등록일: ${userInfo.registration_date}</div>
+                            <div>시험명: ${userInfo.exam_name}</div>
+                            <div>시험일: ${userInfo.exam_date}</div>
+                            <div>상태: ${userInfo.is_demo_mode ? '데모 모드' : '실제 등록'}</div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg">
+                        <h3 class="font-semibold text-orange-800">전체 통계</h3>
+                        <div class="text-sm">
+                            <div>총 풀이: ${stats.total_questions_solved}개</div>
+                            <div>총 정답: ${stats.total_correct_answers}개</div>
+                            <div>전체 정답률: ${stats.overall_accuracy}%</div>
+                            <div>학습 일수: ${stats.study_days}일</div>
+                            <div>연속 학습: ${stats.current_streak}일</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Phase 3 Day 3: 성능 최적화 테스트
+        async function runPerformanceOptimization() {
+            log('=== Phase 3 Day 3: 성능 최적화 테스트 시작 ===');
+            
+            if (!window.advancedStatisticsSystem) {
+                log('❌ AdvancedStatisticsSystem이 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const system = window.advancedStatisticsSystem;
+                
+                // 1. 메모리 사용량 최적화 테스트
+                log('🔧 메모리 사용량 최적화 테스트 시작');
+                const initialMemory = performance.memory ? performance.memory.usedJSHeapSize : 0;
+                
+                // 대량 데이터 처리 시뮬레이션
+                for (let i = 1; i <= 100; i++) {
+                    system.updateOnQuestionSolved('basic_learning', i, Math.random() > 0.3);
+                }
+                
+                // 가비지 컬렉션 유도
+                if (window.gc) {
+                    window.gc();
+                }
+                
+                const finalMemory = performance.memory ? performance.memory.usedJSHeapSize : 0;
+                const memoryIncrease = finalMemory - initialMemory;
+                
+                log(`📊 메모리 사용량: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB 증가`);
+                
+                // 2. 응답 시간 최적화 테스트
+                log('⚡ 응답 시간 최적화 테스트 시작');
+                const startTime = performance.now();
+                
+                // 동시 업데이트 테스트
+                const promises = [];
+                for (let i = 1; i <= 50; i++) {
+                    promises.push(system.updateOnQuestionSolved('basic_learning', 100 + i, Math.random() > 0.3));
+                }
+                
+                await Promise.all(promises);
+                const endTime = performance.now();
+                const responseTime = endTime - startTime;
+                
+                log(`📊 응답 시간: ${responseTime.toFixed(2)}ms (50개 동시 업데이트)`);
+                
+                // 3. 성능 통계 확인
+                const perfStats = system.getPerformanceStats();
+                log(`📊 성능 통계:`);
+                log(`  - 큐 길이: ${perfStats.queueLength}`);
+                log(`  - 큐 처리 중: ${perfStats.isProcessingQueue ? '예' : '아니오'}`);
+                log(`  - 디바운싱 지연: ${perfStats.updateDebounceDelay}ms`);
+                
+                log('✅ 성능 최적화 테스트 완료');
+                updateModuleStatus();
+                updateProgressData();
+                updateStatisticsData();
+                
+            } catch (error) {
+                log(`❌ 성능 최적화 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 기본 테스트
+        function runBasicTest() {
+            log('=== 기본 테스트 시작 ===');
+            
+            if (!window.advancedProgressManager) {
+                log('❌ AdvancedProgressManager가 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const result = window.advancedProgressManager.testModule();
+                log('✅ 기본 테스트 완료');
+                updateProgressData();
+                updateStatisticsData();
+            } catch (error) {
+                log(`❌ 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 이어풀기 테스트
+        function testContinueLearning() {
+            log('=== 이어풀기 테스트 시작 ===');
+            
+            if (!window.advancedProgressManager) {
+                log('❌ AdvancedProgressManager가 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const manager = window.advancedProgressManager;
+                
+                // 해상보험 1-5번 풀이
+                log('해상보험 1-5번 풀이 시뮬레이션');
+                for (let i = 1; i <= 5; i++) {
+                    manager.updateProgress('해상보험', i, Math.random() > 0.3);
+                }
+                
+                // 기본학습 10-15번 풀이
+                log('기본학습 10-15번 풀이 시뮬레이션');
+                for (let i = 10; i <= 15; i++) {
+                    manager.updateProgress('basic_learning', i, Math.random() > 0.3);
+                }
+                
+                // 다시 해상보험 접속
+                const nextQuestion = manager.getNextQuestion('해상보험');
+                log(`해상보험 다음 문제: ${nextQuestion}번 (정확한 이어풀기)`);
+                
+                // 다시 기본학습 접속
+                const nextBasic = manager.getNextQuestion('basic_learning');
+                log(`기본학습 다음 문제: ${nextBasic}번 (정확한 이어풀기)`);
+                
+                log('✅ 이어풀기 테스트 완료');
+                updateProgressData();
+                updateStatisticsData();
+            } catch (error) {
+                log(`❌ 이어풀기 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 사용자 등록 테스트
+        function testUserRegistration() {
+            log('=== 사용자 등록 테스트 시작 ===');
+            
+            if (!window.advancedProgressManager) {
+                log('❌ AdvancedProgressManager가 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const manager = window.advancedProgressManager;
+                
+                // 실제 사용자 정보
+                const realUserInfo = {
+                    name: "김철수",
+                    exam_date: "2025-10-15",
+                    phone: "010-9876-5432"
+                };
+                
+                log('실제 사용자 등록 시뮬레이션');
+                manager.registerRealUser(realUserInfo);
+                
+                log('✅ 사용자 등록 테스트 완료');
+                updateModuleStatus();
+                updateStatisticsData();
+            } catch (error) {
+                log(`❌ 사용자 등록 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 데이터 지속성 테스트
+        function testDataPersistence() {
+            log('=== 데이터 지속성 테스트 시작 ===');
+            
+            if (!window.advancedProgressManager) {
+                log('❌ AdvancedProgressManager가 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const manager = window.advancedProgressManager;
+                
+                // 데이터 저장
+                log('데이터 저장 테스트');
+                const saveResult = manager.saveStatistics();
+                log(saveResult ? '✅ 저장 성공' : '❌ 저장 실패');
+                
+                // 데이터 로드
+                log('데이터 로드 테스트');
+                const loadResult = manager.loadStatistics();
+                log(loadResult ? '✅ 로드 성공' : '❌ 로드 실패');
+                
+                log('✅ 데이터 지속성 테스트 완료');
+            } catch (error) {
+                log(`❌ 데이터 지속성 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 모든 데이터 초기화
+        function clearAllData() {
+            log('=== 모든 데이터 초기화 ===');
+            
+            if (!window.advancedProgressManager) {
+                log('❌ AdvancedProgressManager가 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const manager = window.advancedProgressManager;
+                manager.clearAllData();
+                log('✅ 모든 데이터 초기화 완료');
+                
+                updateModuleStatus();
+                updateProgressData();
+                updateStatisticsData();
+            } catch (error) {
+                log(`❌ 데이터 초기화 실패: ${error.message}`);
+            }
+        }
+
+        // 통합 시스템 테스트
+        function testAdvancedSystem() {
+            log('=== 통합 시스템 테스트 시작 ===');
+            
+            if (!window.advancedStatisticsSystem) {
+                log('❌ AdvancedStatisticsSystem이 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                window.advancedStatisticsSystem.testSystem().then(result => {
+                    if (result) {
+                        log('✅ 통합 시스템 테스트 완료');
+                        updateModuleStatus();
+                        updateProgressData();
+                        updateStatisticsData();
+                    } else {
+                        log('❌ 통합 시스템 테스트 실패');
+                    }
+                });
+            } catch (error) {
+                log(`❌ 통합 시스템 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // Phase 3 Day 3: 성능 최적화 테스트
+        async function runPerformanceOptimization() {
+            log('=== Phase 3 Day 3: 성능 최적화 테스트 시작 ===');
+            
+            if (!window.advancedStatisticsSystem) {
+                log('❌ AdvancedStatisticsSystem이 로드되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const system = window.advancedStatisticsSystem;
+                
+                // 1. 메모리 사용량 최적화 테스트
+                log('🔧 메모리 사용량 최적화 테스트 시작');
+                const initialMemory = performance.memory ? performance.memory.usedJSHeapSize : 0;
+                
+                // 대량 데이터 처리 시뮬레이션
+                for (let i = 1; i <= 100; i++) {
+                    system.updateOnQuestionSolved('basic_learning', i, Math.random() > 0.3);
+                }
+                
+                // 가비지 컬렉션 유도
+                if (window.gc) {
+                    window.gc();
+                }
+                
+                const finalMemory = performance.memory ? performance.memory.usedJSHeapSize : 0;
+                const memoryIncrease = finalMemory - initialMemory;
+                
+                log(`📊 메모리 사용량: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB 증가`);
+                
+                // 2. 응답 시간 최적화 테스트
+                log('⚡ 응답 시간 최적화 테스트 시작');
+                const startTime = performance.now();
+                
+                // 동시 업데이트 테스트
+                const promises = [];
+                for (let i = 1; i <= 50; i++) {
+                    promises.push(system.updateOnQuestionSolved('basic_learning', 100 + i, Math.random() > 0.3));
+                }
+                
+                await Promise.all(promises);
+                const endTime = performance.now();
+                const responseTime = endTime - startTime;
+                
+                log(`📊 응답 시간: ${responseTime.toFixed(2)}ms (50개 동시 업데이트)`);
+                
+                // 3. 성능 통계 확인
+                const perfStats = system.getPerformanceStats();
+                log(`📊 성능 통계:`);
+                log(`  - 큐 길이: ${perfStats.queueLength}`);
+                log(`  - 큐 처리 중: ${perfStats.isProcessingQueue ? '예' : '아니오'}`);
+                log(`  - 디바운싱 지연: ${perfStats.updateDebounceDelay}ms`);
+                
+                log('✅ 성능 최적화 테스트 완료');
+                updateModuleStatus();
+                updateProgressData();
+                updateStatisticsData();
+                
+            } catch (error) {
+                log(`❌ 성능 최적화 테스트 실패: ${error.message}`);
+            }
+        }
+
+        // 성능 테스트
+        function testPerformance() {
+            log('=== 성능 테스트 시작 ===');
+            
+            if (!window.advancedStatisticsSystem) {
+                log('❌ AdvancedStatisticsSystem이 로드되지 않았습니다.');
+                return;
+            }
+            
+            try {
+                const startTime = performance.now();
+                
+                // 대량 업데이트 시뮬레이션
+                log('대량 업데이트 시뮬레이션 시작 (50개 항목)');
+                for (let i = 1; i <= 50; i++) {
+                    window.advancedStatisticsSystem.updateOnQuestionSolved('basic_learning', i, Math.random() > 0.3);
+                }
+                
+                // 큐 처리 대기
+                setTimeout(() => {
+                    const endTime = performance.now();
+                    const performanceTime = endTime - startTime;
+                    
+                    log(`✅ 성능 테스트 완료: ${performanceTime.toFixed(2)}ms`);
+                    
+                    const perfStats = window.advancedStatisticsSystem.getPerformanceStats();
+                    log(`📊 성능 통계: 큐 길이=${perfStats.queueLength}, 메모리=${perfStats.memoryUsage ? perfStats.memoryUsage.used + 'MB' : 'N/A'}`);
+                    
+                    updateModuleStatus();
+                    updateProgressData();
+                    updateStatisticsData();
+                }, 300);
+                
+            } catch (error) {
+                log(`❌ 성능 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 성능 통계 표시
+        function showPerformanceStats() {
+            log('=== 성능 통계 확인 ===');
+            
+            if (!window.advancedStatisticsSystem) {
+                log('❌ AdvancedStatisticsSystem이 로드되지 않았습니다.');
+                return;
+            }
+            
+            try {
+                const perfStats = window.advancedStatisticsSystem.getPerformanceStats();
+                const status = window.advancedStatisticsSystem.getSystemStatus();
+                
+                log(`📊 성능 통계:`);
+                log(`  - 큐 길이: ${perfStats.queueLength}`);
+                log(`  - 큐 처리 중: ${perfStats.isProcessingQueue ? '예' : '아니오'}`);
+                log(`  - 디바운싱 지연: ${perfStats.updateDebounceDelay}ms`);
+                
+                if (perfStats.memoryUsage) {
+                    log(`  - 메모리 사용량: ${perfStats.memoryUsage.used}MB / ${perfStats.memoryUsage.total}MB`);
+                    log(`  - 메모리 한계: ${perfStats.memoryUsage.limit}MB`);
+                }
+                
+                log(`📈 시스템 상태:`);
+                log(`  - 초기화 완료: ${status.isInitialized ? '예' : '아니오'}`);
+                log(`  - ProgressManager: ${status.progressManager ? '로드됨' : '로드 안됨'}`);
+                log(`  - RealTimeUpdater: ${status.realTimeUpdater ? '로드됨' : '로드 안됨'}`);
+                
+            } catch (error) {
+                log(`❌ 성능 통계 확인 실패: ${error.message}`);
+            }
+        }
+        
+        // 알림 시스템 테스트
+        function testNotificationSystem() {
+            log('=== 알림 시스템 테스트 시작 ===');
+            
+            if (!window.notificationSystem) {
+                log('❌ NotificationSystem이 로드되지 않았습니다.');
+                return;
+            }
+            
+            try {
+                // 알림 시스템 테스트 실행
+                const result = window.notificationSystem.testSystem();
+                
+                if (result) {
+                    log('✅ 알림 시스템 테스트 완료');
+                    
+                    // 알림 상태 확인
+                    const status = window.notificationSystem.getStatus();
+                    log(`📊 알림 시스템 상태:`);
+                    log(`  - 활성화: ${status.isEnabled ? '예' : '아니오'}`);
+                    log(`  - 알림 개수: ${status.notificationCount}`);
+                    log(`  - 최대 알림: ${status.maxNotifications}`);
+                    log(`  - 자동 숨김: ${status.autoHideDelay}ms`);
+                } else {
+                    log('❌ 알림 시스템 테스트 실패');
+                }
+            } catch (error) {
+                log(`❌ 알림 시스템 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 화면 새로고침
+        function refreshDisplay() {
+            log('화면 새로고침');
+            updateModuleStatus();
+            updateProgressData();
+            updateStatisticsData();
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            log('페이지 로드 완료');
+            log('Phase 3 Day 3: 통합 테스트 및 성능 최적화 페이지 초기화');
+            log('AdvancedProgressManager 초기화 대기 중...');
+            
+            // 모듈 로드 확인
+            setTimeout(() => {
+                if (window.advancedProgressManager && window.realTimeStatsUpdater && window.advancedStatisticsSystem && window.notificationSystem) {
+                    log('✅ 모든 모듈 로드 완료');
+                    updateModuleStatus();
+                    updateProgressData();
+                    updateStatisticsData();
+                } else {
+                    log('❌ 일부 모듈 로드 실패');
+                    log(`AdvancedProgressManager: ${!!window.advancedProgressManager}`);
+                    log(`RealTimeStatsUpdater: ${!!window.realTimeStatsUpdater}`);
+                    log(`AdvancedStatisticsSystem: ${!!window.advancedStatisticsSystem}`);
+                    log(`NotificationSystem: ${!!window.notificationSystem}`);
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
