@@ -1,13 +1,14 @@
-# app_v1.8_simple.py - 파일명 변경 후 간단 버전
+# app_v3.5.py - 문제 로딩 해결 완료 버전
+# v3.5의 변경사항을 우선으로 하여 충돌 해결
 
 from flask import Flask
 from datetime import timedelta
 
 def create_app():
-    """간단하고 확실한 Week2 API 통합"""
+    """v3.5 문제 로딩 해결 완료 버전"""
     app = Flask(__name__)
     
-    # 기본 설정 (app_v1.7.py 설정 완전 복사)
+    # 기본 설정 (v3.5 설정 유지)
     app.config['SECRET_KEY'] = 'aicu_season4_secret_key_2025_enhanced'
     app.config['SESSION_PERMANENT'] = True
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
@@ -21,23 +22,20 @@ def create_app():
     return app
 
 def register_blueprints(app):
-    """Blueprint 등록 - 간단하고 확실한 방법"""
+    """Blueprint 등록 - v3.5 문제 로딩 해결 완료"""
     
     # =============================================================
-    # Week2 퀴즈 API 추가 (V1_0을 메인으로 사용)
+    # v3.5 문제 로딩 해결된 API 등록
     # =============================================================
     try:
         from routes.quiz_routes import quiz_bp
         app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
-        print("✅ Week2 퀴즈 API 등록 성공 (V1_0 메인)")
+        print("✅ v3.5 퀴즈 API 등록 성공 (문제 로딩 해결 완료)")
     except ImportError as e:
-        print(f"❌ Week2 퀴즈 API 로드 실패: {e}")
-        print("📋 확인사항:")
-        print("   1. routes/quiz_routes.py 파일 존재하는가?")
-        print("   2. 파일 내에 quiz_bp가 정의되어 있는가?")
+        print(f"❌ v3.5 퀴즈 API 로드 실패: {e}")
     
     # =============================================================
-    # 기존 사용자 관리 Blueprint (v1.7 유지)
+    # 기존 사용자 관리 Blueprint (v3.5 유지)
     # =============================================================
     try:
         from routes.user_registration_v2 import user_registration_bp
@@ -54,7 +52,7 @@ def register_blueprints(app):
         print("⚠️ user_routes 없음")
     
     # =============================================================
-    # 페이지 Blueprint (v1.7 유지)
+    # 페이지 Blueprint (v3.5 유지)
     # =============================================================
     try:
         from routes.home_routes import home_bp
@@ -91,12 +89,12 @@ def register_error_handlers(app):
 if __name__ == '__main__':
     app = create_app()
     print("="*60)
-    print("🚀 AICU S4 v1.8 SIMPLE (파일명 수정 버전)")
+    print("🚀 AICU S4 v3.5 (문제 로딩 해결 완료)")
     print("📍 URL: http://localhost:5000")
-    print("📋 v1.8 Simple 특징:")
-    print("   ✅ 파일명 변경: quiz_routes_V1.0.py → quiz_routes_V1_0.py")
-    print("   ✅ 간단하고 확실한 import 방식")
-    print("   ✅ 복잡한 동적 로딩 제거")
-    print("   ✅ Week2 API 직접 연결")
+    print("📋 v3.5 특징:")
+    print("   ✅ 기본학습 문제 로딩 완전 해결")
+    print("   ✅ 대분류 학습 문제 로딩 완전 해결")
+    print("   ✅ UI/UX 개선 완료")
+    print("   ✅ 안정적인 베이스라인 확보")
     print("="*60)
     app.run(host='0.0.0.0', port=5000, debug=True)
