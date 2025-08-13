@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제 로딩 테스트 - ACIU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">문제 로딩 테스트</h1>
+            <p class="text-gray-600">ACIU S4 문제 로딩 기능 전용 테스트</p>
+        </header>
+
+        <!-- 테스트 컨트롤 -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">테스트 컨트롤</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="loadFirstQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg">
+                    🔢 첫 번째 문제 로드
+                </button>
+                <button onclick="loadRandomQuestion()" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg">
+                    🎲 랜덤 문제 로드
+                </button>
+                <button onclick="loadNextQuestion()" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg">
+                    ➡️ 다음 문제 로드
+                </button>
+            </div>
+        </div>
+
+        <!-- 문제 표시 영역 -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">문제 표시</h2>
+            
+            <!-- 문제 정보 -->
+            <div class="mb-4 p-4 bg-gray-50 rounded">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
+                    <span id="question-code" class="text-sm text-gray-600">Q001</span>
+                </div>
+                <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm text-gray-600">진도</span>
+                    <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 789</span>
+                </div>
+                <div id="question-text" class="text-lg font-medium bg-red-100 p-4 rounded border-2 border-red-300">
+                    문제 텍스트가 여기에 표시됩니다.
+                </div>
+            </div>
+
+            <!-- 답안 버튼 영역 -->
+            <div id="answer-buttons" class="mb-4">
+                <!-- 동적으로 생성될 답안 버튼들 -->
+            </div>
+
+            <!-- 정답 표시 -->
+            <div id="correct-answer" class="hidden p-4 bg-green-100 rounded border border-green-300">
+                <h3 class="font-semibold text-green-800">정답:</h3>
+                <p id="correct-answer-text" class="text-green-700"></p>
+            </div>
+        </div>
+
+        <!-- 로그 출력 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4">테스트 로그</h2>
+            <div id="test-log" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-64 overflow-y-auto">
+                테스트 로그가 여기에 표시됩니다...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let questionsData = [];
+        let currentQuestionIndex = 0;
+
+        // 로그 출력 함수
+        function log(message) {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        // JSON 파일 로드
+        async function loadQuestions() {
+            try {
+                log('📁 JSON 파일 로딩 시작...');
+                const response = await fetch('/static/questions.json');
+                
+                if (!response.ok) {
+                    throw new Error(`JSON 파일 로드 실패: ${response.status}`);
+                }
+                
+                const jsonData = await response.json();
+                log(`✅ JSON 데이터 로드 완료: ${jsonData.questions.length}개 문제`);
+                
+                // 데이터 필터링
+                questionsData = jsonData.questions.filter(question =>
+                    question.qcode && question.question && question.answer && question.qcode.trim() !== ''
+                );
+                
+                log(`✅ 필터링 완료: ${questionsData.length}개 문제`);
+                log('🎯 문제 로딩 준비 완료!');
+                
+                return true;
+            } catch (error) {
+                log(`❌ 문제 로딩 실패: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 문제 표시 함수
+        function displayQuestion(index) {
+            if (!questionsData || questionsData.length === 0) {
+                log('❌ 문제 데이터가 없습니다.');
+                return;
+            }
+            
+            if (index >= questionsData.length) {
+                log('❌ 문제 인덱스가 범위를 벗어났습니다.');
+                return;
+            }
+            
+            const question = questionsData[index];
+            log(`📋 문제 ${index + 1} 표시: ${question.qcode}`);
+            
+            // 문제 정보 표시
+            document.getElementById('question-code').textContent = question.qcode || 'Q???';
+            document.getElementById('question-type').textContent = question.type || '진위형';
+            document.getElementById('layer-info').textContent = `${question.layer1 || ''} > ${question.layer2 || ''}`;
+            document.getElementById('question-text').textContent = question.question || '문제를 불러올 수 없습니다.';
+            document.getElementById('progress-info').textContent = `${index + 1} / ${questionsData.length}`;
+            
+            // 답안 버튼 생성
+            createAnswerButtons(question);
+            
+            // 정답 숨기기
+            document.getElementById('correct-answer').classList.add('hidden');
+            
+            log(`✅ 문제 ${index + 1} 표시 완료`);
+        }
+
+        // 답안 버튼 생성
+        function createAnswerButtons(question) {
+            const buttonsContainer = document.getElementById('answer-buttons');
+            buttonsContainer.innerHTML = '';
+            
+            if (question.type === '진위형') {
+                // O/X 버튼
+                ['O', 'X'].forEach(answer => {
+                    const button = document.createElement('button');
+                    button.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg mr-4 transition-all';
+                    button.textContent = answer === 'O' ? '⭕ 맞다 (O)' : '❌ 틀리다 (X)';
+                    button.onclick = () => showCorrectAnswer(question.answer);
+                    buttonsContainer.appendChild(button);
+                });
+            } else {
+                // 선택형 버튼 (1, 2, 3, 4)
+                for (let i = 1; i <= 4; i++) {
+                    const button = document.createElement('button');
+                    button.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg mr-2 mb-2 transition-all';
+                    button.textContent = `${i}번`;
+                    button.onclick = () => showCorrectAnswer(question.answer);
+                    buttonsContainer.appendChild(button);
+                }
+            }
+            
+            log(`✅ 답안 버튼 생성 완료 (${question.type})`);
+        }
+
+        // 정답 표시
+        function showCorrectAnswer(correctAnswer) {
+            document.getElementById('correct-answer-text').textContent = correctAnswer;
+            document.getElementById('correct-answer').classList.remove('hidden');
+            log(`✅ 정답 표시: ${correctAnswer}`);
+        }
+
+        // 첫 번째 문제 로드
+        function loadFirstQuestion() {
+            currentQuestionIndex = 0;
+            displayQuestion(currentQuestionIndex);
+        }
+
+        // 랜덤 문제 로드
+        function loadRandomQuestion() {
+            if (questionsData.length > 0) {
+                currentQuestionIndex = Math.floor(Math.random() * questionsData.length);
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+
+        // 다음 문제 로드
+        function loadNextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+            } else {
+                log('🎉 마지막 문제입니다!');
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', async function() {
+            log('🚀 문제 로딩 테스트 시작');
+            const success = await loadQuestions();
+            
+            if (success) {
+                log('✅ 초기화 완료 - 첫 번째 문제를 로드해보세요!');
+            } else {
+                log('❌ 초기화 실패');
+            }
+        });
+    </script>
+</body>
+</html>

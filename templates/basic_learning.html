@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 기본학습</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -73,9 +72,9 @@
                 </div>
             </div>
             
-            <!-- 기본학습 문제 표시 영역 -->
+            <!-- 문제 표시 영역 -->
             <div id="basic-question-area" class="hidden">
-                <h3 class="text-lg font-semibold mb-4">문제 풀이</h3>
+                <h2 class="text-2xl font-semibold mb-4">문제 풀이</h2>
                 
                 <!-- 문제 정보 -->
                 <div class="mb-4 p-4 bg-gray-50 rounded">
@@ -86,231 +85,90 @@
                     <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm text-gray-600">진도</span>
-                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 100</span>
+                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 789</span>
                     </div>
-                    <div id="question-text" class="text-lg font-medium">문제 텍스트가 여기에 표시됩니다.</div>
+                    <div id="question-text" class="text-lg font-medium bg-red-100 p-4 rounded border-2 border-red-300">
+                        문제 텍스트가 여기에 표시됩니다.
+                    </div>
                 </div>
-                
+
                 <!-- 답안 버튼 영역 -->
                 <div id="answer-buttons" class="mb-4">
                     <!-- 동적으로 생성될 답안 버튼들 -->
                 </div>
-                
-                <!-- 결과 표시 영역 -->
-                <div id="result-area" class="hidden">
-                    <div id="result-message" class="p-3 rounded font-medium"></div>
+
+                <!-- 정답 표시 -->
+                <div id="correct-answer" class="hidden p-4 bg-green-100 rounded border border-green-300">
+                    <h3 class="font-semibold text-green-800">정답:</h3>
+                    <p id="correct-answer-text" class="text-green-700"></p>
                 </div>
-                
+
                 <!-- 네비게이션 버튼 -->
                 <div class="flex justify-between mt-4">
-                    <button id="prev-button" onclick="prevQuestion('basic')" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
-                        이전 문제
+                    <button onclick="goBackToMenu()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                        메뉴로 돌아가기
                     </button>
-                    <button id="check-button" onclick="checkAnswer('basic')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                    <button onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
                         정답 확인
                     </button>
-                    <button id="next-button" onclick="nextQuestion('basic')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                    <button onclick="nextQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
                         다음 문제
                     </button>
-                </div>
-                
-                <!-- 상세 통계 확장 영역 -->
-                <div class="mt-6 bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-semibold mb-3">상세 통계</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div class="bg-white p-3 rounded">
-                            <div class="text-2xl font-bold text-blue-600" id="total-questions">0</div>
-                            <div class="text-xs text-gray-600">전체 문제</div>
-                        </div>
-                        <div class="bg-white p-3 rounded">
-                            <div class="text-2xl font-bold text-green-600" id="correct-answers">0</div>
-                            <div class="text-xs text-gray-600">정답</div>
-                        </div>
-                        <div class="bg-white p-3 rounded">
-                            <div class="text-2xl font-bold text-red-600" id="wrong-answers">0</div>
-                            <div class="text-xs text-gray-600">오답</div>
-                        </div>
-                        <div class="bg-white p-3 rounded">
-                            <div class="text-2xl font-bold text-purple-600" id="current-streak">0</div>
-                            <div class="text-xs text-gray-600">연속 정답</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 통계 시스템 스크립트 로드 -->
-    <script src="/static/js/progress_manager.js"></script>
-    <script src="/static/js/stats_calculator.js"></script>
-    <script src="/static/js/ui_updater.js"></script>
-    <script src="/static/js/progress_system.js"></script>
-    
-    <!-- JavaScript 모듈 로드 (순서 중요) -->
-    <script src="/static/js/basic_learning_core.js"></script>
-    <script src="/static/js/basic_learning_ui.js"></script>
-    <script src="/static/js/basic_learning_stats.js"></script>
+    <!-- 단순화된 JavaScript만 로드 -->
     <script src="/static/js/basic_learning_main.js"></script>
     
-    <!-- 고도화된 통계 시스템 스크립트들 -->
-    <script src="/static/js/advanced_progress_manager.js"></script>
-    <script src="/static/js/real_time_stats_updater.js"></script>
-    <script src="/static/js/advanced_statistics_system.js"></script>
-    
-    <!-- 고도화된 통계 시스템 초기화 스크립트 -->
+    <!-- 메뉴 관련 함수들 -->
     <script>
-        // 고도화된 통계 시스템 초기화 및 업데이트
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎯 기본학습 페이지 고도화된 통계 시스템 초기화 시작...');
-            
-            // AdvancedStatisticsSystem 초기화 대기
-            setTimeout(async () => {
-                if (typeof window.advancedStatisticsSystem !== 'undefined') {
-                    try {
-                        // 시스템 초기화
-                        const initResult = await window.advancedStatisticsSystem.initialize();
-                        if (initResult) {
-                            console.log('✅ 기본학습 페이지 고도화된 통계 시스템 초기화 완료');
-                            
-                            // 기본학습 통계 업데이트
-                            window.advancedStatisticsSystem.refreshAllStats();
-                            
-                            // 다음 문제 안내 업데이트
-                            const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
-                            const nextQuestionText = document.getElementById('next-question-text');
-                            if (nextQuestionText) {
-                                nextQuestionText.textContent = `다음 문제: ${nextQuestion}번`;
-                            }
-                            
-                            // 통계 박스 업데이트
-                            updateBasicLearningStats();
-                            
-                            console.log('✅ 기본학습 페이지 통계 업데이트 완료');
-                        } else {
-                            console.error('❌ 기본학습 페이지 고도화된 통계 시스템 초기화 실패');
-                        }
-                    } catch (error) {
-                        console.error('❌ 고도화된 통계 시스템 초기화 중 오류:', error);
-                    }
-                } else {
-                    console.error('❌ AdvancedStatisticsSystem 모듈을 찾을 수 없습니다.');
-                }
-            }, 2000);
-        });
-        
-        // 기본학습 통계 업데이트 함수
-        function updateBasicLearningStats() {
-            if (window.advancedProgressManager) {
-                const progress = window.advancedProgressManager.getProgressForCategory('basic_learning');
-                const stats = window.advancedProgressManager.statistics;
-                
-                // 진행률 업데이트
-                const progressText = document.getElementById('basic-progress-text');
-                if (progressText) {
-                    progressText.textContent = `${progress.total_attempted} / 789`;
-                }
-                
-                // 정답률 업데이트
-                const accuracyText = document.getElementById('basic-accuracy-text');
-                if (accuracyText) {
-                    const accuracy = progress.total_attempted > 0 ? 
-                        Math.round((progress.total_correct / progress.total_attempted) * 100) : 0;
-                    accuracyText.textContent = `${accuracy}%`;
-                }
-                
-                // 오늘 정답률 업데이트
-                const todayAccuracy = document.getElementById('basic-today-accuracy');
-                if (todayAccuracy) {
-                    const todayAccuracyValue = progress.today_attempted > 0 ? 
-                        Math.round((progress.today_correct / progress.today_attempted) * 100) : 0;
-                    todayAccuracy.textContent = `${todayAccuracyValue}%`;
-                }
-            }
+        // 메뉴로 돌아가기
+        function goBackToMenu() {
+            console.log('🏠 메뉴로 돌아가기');
+            document.getElementById('basic-question-area').classList.add('hidden');
+            document.getElementById('mode-selection').classList.remove('hidden');
         }
         
-        // 이어풀기 기능 구현 (고도화된 통계 시스템 연동)
+        // 홈으로 가기
+        function goHome() {
+            window.location.href = '/home';
+        }
+        
+        // 모드 선택 함수들
         function selectBasicLearningMode(mode) {
             console.log(`🎯 기본학습 모드 선택: ${mode}`);
             
-            if (mode === 'continue') {
-                // 이어풀기: AdvancedStatisticsSystem에서 다음 문제 조회
-                if (typeof window.advancedStatisticsSystem !== 'undefined' && window.advancedStatisticsSystem.isInitialized) {
-                    const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
-                    console.log(`🔄 이어풀기: ${nextQuestion}번 문제부터 시작`);
-                    
-                    // 기존 기본학습 로직과 통합
-                    if (typeof startBasicLearning === 'function') {
-                        startBasicLearning(nextQuestion);
-                    } else {
-                        console.log('⚠️ 기본학습 시작 함수를 찾을 수 없습니다.');
-                    }
-                } else {
-                    console.log('⚠️ 고도화된 통계 시스템이 초기화되지 않았습니다. 처음부터 시작합니다.');
-                    if (typeof startBasicLearning === 'function') {
-                        startBasicLearning(1);
-                    }
-                }
-            } else if (mode === 'restart') {
-                // 처음풀기: 1번 문제부터 시작
-                console.log('🔄 처음풀기: 1번 문제부터 시작');
-                if (typeof startBasicLearning === 'function') {
-                    startBasicLearning(1);
-                }
-            } else if (mode === 'random') {
-                // 랜덤풀기: 무작위 문제 선택
-                const randomQuestion = Math.floor(Math.random() * 789) + 1;
-                console.log(`🎲 랜덤풀기: ${randomQuestion}번 문제부터 시작`);
-                if (typeof startBasicLearning === 'function') {
-                    startBasicLearning(randomQuestion);
-                }
-            }
-            
-            // 모드 선택 화면 숨기기
+            // 메뉴 숨기고 문제 영역 표시
             document.getElementById('mode-selection').classList.add('hidden');
             document.getElementById('basic-question-area').classList.remove('hidden');
-        }
-        
-        // 정답 확인 시 통계 업데이트 (고도화된 통계 시스템 연동)
-        function checkAnswerWithStats(mode, questionNumber, isCorrect) {
-            console.log(`✅ 정답 확인: ${mode} - Q${questionNumber} - ${isCorrect ? '정답' : '오답'}`);
             
-            // AdvancedStatisticsSystem에 진도 저장
-            if (typeof window.advancedStatisticsSystem !== 'undefined' && window.advancedStatisticsSystem.isInitialized) {
-                const updateResult = window.advancedStatisticsSystem.updateOnQuestionSolved('basic_learning', questionNumber, isCorrect);
-                if (updateResult) {
-                    console.log('✅ 고도화된 통계 시스템 업데이트 완료');
-                    
-                    // 통계 박스 업데이트
-                    updateBasicLearningStats();
-                    
-                    // 다음 문제 안내 업데이트
-                    const nextQuestion = window.advancedStatisticsSystem.getNextQuestion('basic_learning');
-                    const nextQuestionText = document.getElementById('next-question-text');
-                    if (nextQuestionText) {
-                        nextQuestionText.textContent = `다음 문제: ${nextQuestion}번`;
-                    }
-                } else {
-                    console.error('❌ 고도화된 통계 시스템 업데이트 실패');
+            // 모드에 따른 시작 인덱스 설정
+            let startIndex = 0;
+            
+            if (mode === 'continue') {
+                // 이어풀기: 저장된 진행상황부터 시작 (현재는 0번부터)
+                startIndex = 0;
+                console.log('🔄 이어풀기: 0번 문제부터 시작');
+            } else if (mode === 'restart') {
+                // 처음풀기: 0번 문제부터 시작
+                startIndex = 0;
+                console.log('🔄 처음풀기: 0번 문제부터 시작');
+            } else if (mode === 'random') {
+                // 랜덤풀기: 무작위 문제 선택
+                startIndex = Math.floor(Math.random() * 789);
+                console.log(`🎲 랜덤풀기: ${startIndex}번 문제부터 시작`);
+            }
+            
+            // 문제 로딩 및 표시
+            if (typeof displayQuestion === 'function') {
+                // 전역 변수 업데이트
+                if (typeof window.currentQuestionIndex !== 'undefined') {
+                    window.currentQuestionIndex = startIndex;
                 }
+                displayQuestion(startIndex);
             }
-            
-            // 기존 정답 확인 로직 실행
-            if (typeof checkAnswer === 'function') {
-                checkAnswer(mode);
-            }
-        }
-        
-        // 기존 checkAnswer 함수를 새로운 함수로 교체
-        if (typeof checkAnswer === 'function') {
-            const originalCheckAnswer = checkAnswer;
-            window.checkAnswer = function(mode) {
-                // 현재 문제 번호와 정답 여부를 가져와서 통계 업데이트
-                // (실제 구현에서는 현재 문제 정보를 가져와야 함)
-                const currentQuestion = getCurrentQuestionNumber(); // 이 함수는 기존 코드에서 구현 필요
-                const isCorrect = getCurrentAnswerResult(); // 이 함수는 기존 코드에서 구현 필요
-                
-                checkAnswerWithStats(mode, currentQuestion, isCorrect);
-            };
         }
     </script>
 </body>

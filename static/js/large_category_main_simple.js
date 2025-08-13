@@ -1,9 +1,10 @@
-// ===== ACIU S4 기본학습 시스템 - 완전 단순화 버전 =====
+// ===== ACIU S4 대분류 학습 시스템 - 완전 단순화 버전 =====
 
 // 전역 변수
 let questionsData = [];
 let currentQuestionIndex = 0;
 let selectedAnswer = null; // 선택한 답안 저장
+let selectedCategory = null; // 선택된 카테고리
 
 // 로그 출력 함수
 function log(message) {
@@ -31,11 +32,77 @@ async function loadQuestions() {
         log(`✅ 필터링 완료: ${questionsData.length}개 문제`);
         log('🎯 문제 로딩 준비 완료!');
         
+        // 카테고리별 문제 수 업데이트
+        updateCategoryQuestionCounts();
+        
         return true;
     } catch (error) {
         log(`❌ 문제 로딩 실패: ${error.message}`);
         return false;
     }
+}
+
+// 카테고리별 문제 수 업데이트
+function updateCategoryQuestionCounts() {
+    const categories = ['재산보험', '특종보험', '배상책임보험', '해상보험'];
+    
+    // 카테고리명 매핑
+    const categoryMapping = {
+        '재산보험': '06재산보험',
+        '특종보험': '07특종보험',
+        '배상책임보험': '08배상책임보험',
+        '해상보험': '09해상보험'
+    };
+    
+    categories.forEach(category => {
+        const mappedCategoryName = categoryMapping[category];
+        const count = questionsData.filter(q => 
+            q.layer1 === mappedCategoryName
+        ).length;
+        
+        const element = document.getElementById(`category-count-${category}`);
+        if (element) {
+            element.textContent = `${count}개 문제`;
+        }
+    });
+    
+    log('✅ 카테고리별 문제 수 업데이트 완료');
+}
+
+// 카테고리별 문제 로드
+async function loadCategoryQuestions(categoryName) {
+    log(`🎯 카테고리 문제 로딩: ${categoryName}`);
+    
+    selectedCategory = categoryName;
+    
+    // 카테고리명 매핑
+    const categoryMapping = {
+        '재산보험': '06재산보험',
+        '특종보험': '07특종보험',
+        '배상책임보험': '08배상책임보험',
+        '해상보험': '09해상보험'
+    };
+    
+    const mappedCategoryName = categoryMapping[categoryName];
+    
+    // 해당 카테고리의 문제만 필터링
+    const categoryQuestions = questionsData.filter(question =>
+        question.layer1 === mappedCategoryName
+    );
+    
+    log(`✅ ${categoryName} 카테고리 문제 필터링 완료: ${categoryQuestions.length}개`);
+    
+    if (categoryQuestions.length === 0) {
+        log('❌ 해당 카테고리에 문제가 없습니다.');
+        return;
+    }
+    
+    // 전역 변수 업데이트
+    questionsData = categoryQuestions;
+    currentQuestionIndex = 0;
+    
+    // 첫 번째 문제 표시
+    displayQuestion(0);
 }
 
 // 문제 표시 함수
@@ -186,19 +253,19 @@ window.previousQuestion = previousQuestion;
 window.checkAnswer = checkAnswer;
 window.selectAnswer = selectAnswer;
 window.displayQuestion = displayQuestion;
+window.loadCategoryQuestions = loadCategoryQuestions;
 
-// 페이지 로드 시 초기화 (문제 자동 표시하지 않음)
+// 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', async function() {
-    log('🚀 기본학습 시스템 시작');
+    log('🚀 대분류 학습 시스템 시작');
     
     const success = await loadQuestions();
     
     if (success) {
-        log('✅ 초기화 완료 - 문제 풀기 버튼을 클릭하세요!');
-        // 문제는 자동으로 표시하지 않고, 사용자가 "문제 풀기" 버튼을 클릭할 때 표시
+        log('✅ 초기화 완료 - 카테고리를 선택하세요!');
     } else {
         log('❌ 초기화 실패');
     }
 });
 
-console.log('✅ 완전 단순화된 기본학습 시스템 로드 완료');
+console.log('✅ 완전 단순화된 대분류 학습 시스템 로드 완료');

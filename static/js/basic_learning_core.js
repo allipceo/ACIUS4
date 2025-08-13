@@ -43,17 +43,25 @@ class BasicLearningSystem {
     async loadCurrentUser() {
         try {
             if (isFlaskMode) {
-                // Flask 서버에서 현재 사용자 정보 로드
+                // Flask 서버에서 현재 사용자 정보 로드 (v3.5 API 사용)
                 const response = await fetch('/user/api/users/current');
                 if (response.ok) {
                     const result = await response.json();
                     if (result.success) {
-                        currentUser = result.userData;
+                        // v3.5 API 응답 형식에 맞게 수정
+                        currentUser = {
+                            userId: result.userId,
+                            userName: result.userName,
+                            is_guest: result.is_guest,
+                            exam_subject: result.exam_subject,
+                            exam_date: result.exam_date
+                        };
                         await this.loadUserStatistics();
                         this.updateStatus(`환영합니다, ${currentUser.userName}님!`);
                         return;
                     }
                 }
+                console.log('⚠️ Flask API 호출 실패, 로컬 모드로 전환');
             }
             
             // 로컬 모드 또는 Flask 실패 시
@@ -63,30 +71,47 @@ class BasicLearningSystem {
                 await this.loadUserStatistics();
                 this.updateStatus(`환영합니다, ${currentUser.userName}님! (로컬 모드)`);
             } else {
-                this.updateStatus('사용자 정보를 찾을 수 없습니다. 등록 페이지로 이동합니다.');
-                setTimeout(() => {
-                    window.location.href = isFlaskMode ? '/user/register' : 'user_registration.html';
-                }, 2000);
+                // 기본 사용자 정보 설정
+                currentUser = {
+                    userId: 'user_jo_ceo_default',
+                    userName: '조대표',
+                    is_guest: true,
+                    exam_subject: '보험중개사',
+                    exam_date: '2025-11-12'
+                };
+                await this.loadUserStatistics();
+                this.updateStatus(`환영합니다, ${currentUser.userName}님! (기본 모드)`);
             }
         } catch (error) {
             console.error('사용자 정보 로드 실패:', error);
-            this.updateStatus('사용자 정보 로드 중 오류가 발생했습니다.');
+            // 기본 사용자 정보로 설정
+            currentUser = {
+                userId: 'user_jo_ceo_default',
+                userName: '조대표',
+                is_guest: true,
+                exam_subject: '보험중개사',
+                exam_date: '2025-11-12'
+            };
+            await this.loadUserStatistics();
+            this.updateStatus(`환영합니다, ${currentUser.userName}님! (오류 복구 모드)`);
         }
     }
     
     async loadUserStatistics() {
         try {
             if (isFlaskMode && currentUser) {
-                // Flask 서버에서 통계 로드
+                // Flask 서버에서 통계 로드 (v3.5 API 사용)
                 const response = await fetch(`/user/api/users/${currentUser.userId}/statistics`);
                 if (response.ok) {
                     const result = await response.json();
                     if (result.success) {
-                        userStatistics = result.statistics;
+                        // v3.5 API 응답 형식에 맞게 변환
+                        userStatistics = this.convertV35Statistics(result.statistics);
                         this.updateStatisticsDisplay();
                         return;
                     }
                 }
+                console.log('⚠️ Flask 통계 API 호출 실패, 로컬 모드로 전환');
             }
             
             // 로컬 모드 또는 Flask 실패 시
@@ -102,7 +127,39 @@ class BasicLearningSystem {
             this.updateStatisticsDisplay();
         } catch (error) {
             console.error('통계 로드 실패:', error);
+            // 기본 통계 생성
+            userStatistics = this.createInitialStatistics();
+            this.updateStatisticsDisplay();
         }
+    }
+    
+    // v3.5 API 통계 형식을 기존 형식으로 변환
+    convertV35Statistics(v35Stats) {
+        return {
+            userId: currentUser.userId,
+            registeredAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            
+            // 기본학습 통계
+            basicLearning: {
+                cumulative: {
+                    totalAttempted: v35Stats.basic_learning?.total_attempted || 0,
+                    totalCorrect: v35Stats.basic_learning?.total_correct || 0,
+                    totalWrong: (v35Stats.basic_learning?.total_attempted || 0) - (v35Stats.basic_learning?.total_correct || 0),
+                    accuracy: v35Stats.basic_learning?.accuracy || 0.0
+                },
+                today: {
+                    date: new Date().toISOString().split('T')[0],
+                    todayAttempted: 0,
+                    todayCorrect: 0,
+                    todayWrong: 0,
+                    accuracy: 0.0
+                },
+                currentIndex: 0,
+                mode: 'continue',
+                streak: 0
+            }
+        };
     }
     
     createInitialStatistics() {

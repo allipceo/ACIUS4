@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제 로딩 테스트 - AICU S4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .container { max-width: 800px; }
+        .loading { animation: pulse 1.5s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="container bg-white rounded-xl shadow-lg p-8 w-full">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">문제 로딩 테스트</h1>
+            <p class="text-gray-600">`questions.json` 파일에서 직접 문제를 불러옵니다.</p>
+        </header>
+
+        <!-- 테스트 결과 영역 -->
+        <div id="test-results" class="space-y-4">
+            <div id="status" class="py-3 px-4 rounded-md text-center font-bold text-white bg-gray-500 loading">
+                테스트를 시작합니다...
+            </div>
+            
+            <div id="question-info" class="bg-gray-100 p-4 rounded-md hidden">
+                <h3 class="text-lg font-medium text-gray-800 mb-2">✅ 문제 로딩 성공!</h3>
+                <p>총 문제 수: <strong id="total-questions"></strong></p>
+                <p>카테고리 수: <strong id="total-categories"></strong></p>
+                <p>첫 번째 문제 코드: <strong id="first-qcode"></strong></p>
+                <p>첫 번째 문제 내용: <strong id="first-question"></strong></p>
+            </div>
+            
+            <div id="error-info" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md hidden">
+                <h3 class="font-bold">❌ 오류 발생</h3>
+                <p id="error-message" class="text-sm mt-1"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('status');
+            const successEl = document.getElementById('question-info');
+            const errorEl = document.getElementById('error-info');
+            const errorMessageEl = document.getElementById('error-message');
+
+            statusEl.textContent = '`questions.json` 파일 로딩 중...';
+            statusEl.classList.remove('bg-gray-500');
+            statusEl.classList.add('bg-blue-500');
+
+            try {
+                // 이 부분은 서버 API를 사용할 때 활성화
+                // const response = await fetch('/api/quiz/questions');
+                // if (!response.ok) {
+                //     throw new Error(`파일을 찾을 수 없습니다: ${response.statusText}`);
+                // }
+                // const jsonData = await response.json();
+
+                // Canvas 환경에서 테스트를 위해 가상(Mock) 데이터를 직접 정의
+                const jsonData = {
+                    "metadata": {
+                        "categories": {
+                            "재산보험": {},
+                            "해상보험": {},
+                            "배상책임보험": {}
+                        }
+                    },
+                    "questions": [
+                        {
+                            "qcode": "Q-001",
+                            "question": "다음 중 보험심사역 시험의 특징으로 옳지 않은 것은?",
+                            "answer": "정답은 나중에 입력됩니다."
+                        },
+                        {
+                            "qcode": "Q-002",
+                            "question": "ACIU QUIZ 앱의 목표는 효율적인 학습 지원입니다.",
+                            "answer": "정답은 나중에 입력됩니다."
+                        }
+                    ]
+                };
+
+                if (!jsonData.questions || !Array.isArray(jsonData.questions)) {
+                    throw new Error('JSON 파일 구조가 올바르지 않습니다. `questions` 키가 없습니다.');
+                }
+
+                const questions = jsonData.questions;
+                const totalQuestions = questions.length;
+                
+                if (totalQuestions === 0) {
+                    throw new Error('문제 데이터가 비어 있습니다.');
+                }
+                
+                const firstQuestion = questions[0];
+                const totalCategories = Object.keys(jsonData.metadata.categories).length;
+
+                document.getElementById('total-questions').textContent = totalQuestions;
+                document.getElementById('total-categories').textContent = totalCategories;
+                document.getElementById('first-qcode').textContent = firstQuestion.qcode;
+                document.getElementById('first-question').textContent = firstQuestion.question.substring(0, 50) + '...';
+
+                statusEl.textContent = '✅ 문제 로딩 테스트 성공!';
+                statusEl.classList.remove('loading', 'bg-blue-500');
+                statusEl.classList.add('bg-green-500');
+                successEl.classList.remove('hidden');
+
+            } catch (error) {
+                statusEl.textContent = '❌ 문제 로딩 테스트 실패!';
+                statusEl.classList.remove('loading', 'bg-blue-500');
+                statusEl.classList.add('bg-red-500');
+                errorEl.classList.remove('hidden');
+                errorMessageEl.textContent = error.message;
+                console.error('문제 로딩 테스트 실패:', error);
+            }
+        });
+    </script>
+</body>
+</html>
