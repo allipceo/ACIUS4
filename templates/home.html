@@ -6,6 +6,7 @@
     <title>ACIU S4 - 대문</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/dday_counter.css">
+    <link rel="stylesheet" href="/static/css/predicted_scores.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -41,6 +42,26 @@
 
         <!-- 주요 학습 현황 카드들 -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+        <!-- 예상 점수 및 합격 확률 섹션 -->
+        <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 예상 점수 및 합격 확률</h3>
+            
+            <!-- 전체 상태 -->
+            <div id="overall-status-container" class="mb-6">
+                <!-- 전체 상태가 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 합격 확률 -->
+            <div id="pass-probability-container" class="mb-6">
+                <!-- 합격 확률이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 과목별 예상 점수 -->
+            <div id="predicted-scores-container">
+                <!-- 과목별 예상 점수가 여기에 표시됩니다 -->
+            </div>
+        </div>
             <!-- 학습 진도 -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex items-center justify-between">
@@ -371,5 +392,6 @@
     <script src="/static/js/rollback_manager.js"></script>
     <script src="/static/js/guest_mode_defaults.js"></script>
     <script src="/static/js/dday_counter.js"></script>
+    <script src="/static/js/predicted_scores.js"></script>
 </body>
 </html>
