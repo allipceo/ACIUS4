@@ -1,4 +1,4 @@
-# app_v4.0.py - AICU S4 대분류 통계 시스템 구현 (98번 문서 기반)
+# app_v4.1.py - AICU S4 고급통계 Week1 구현 (게스트 모드 + D-day 카운터)
 
 from flask import Flask, render_template, redirect, url_for, jsonify, request
 from datetime import datetime
@@ -6,11 +6,11 @@ import os
 import json
 
 def create_app():
-    """AICU S4 v4.0 - 대분류 통계 시스템 구현 (98번 문서 기반)"""
+    """AICU S4 v4.1 - 고급통계 Week1 구현 (게스트 모드 + D-day 카운터)"""
     app = Flask(__name__)
     
     # 앱 설정 (세션 제거, 단순화)
-    app.config['SECRET_KEY'] = 'aicu_season4_v4_0_category_statistics'
+    app.config['SECRET_KEY'] = 'aicu_season4_v4_1_advanced_statistics'
     
     # 메인 라우트 - 등록 상태 확인 후 적절한 페이지로 리다이렉트
     @app.route('/')
@@ -316,9 +316,9 @@ if __name__ == '__main__':
     app = create_app()
     port = int(os.environ.get('PORT', 5000))
     print("============================================================")
-    print("🚀 AICU S4 v4.0 - 대분류 통계 시스템 구현 (98번 문서 기반)")
+    print("🚀 AICU S4 v4.1 - 고급통계 Week1 구현 (게스트 모드 + D-day 카운터)")
     print("📍 URL: http://localhost:5000")
-    print("📋 v4.0 개선 사항:")
+    print("📋 v4.1 Week1 개선 사항:")
     print("   ✅ 98번 문서 기반 대분류 통계 시스템 구현")
     print("   ✅ 올바른 4대 분류 기준 적용 (06재산보험, 07특종보험, 08배상책임보험, 09해상보험)")
     print("   ✅ 카테고리별 문제 필터링 API 구현")
@@ -326,5 +326,10 @@ if __name__ == '__main__':
     print("   ✅ JSON 파일의 실제 layer1 필드 기반 분류")
     print("   ✅ 등록시점기반 통계 시스템 확장")
     print("   ✅ LocalStorage 기반 데이터 보존")
+    print("   ✅ 게스트 모드 자동 설정 (GuestModeManager)")
+    print("   ✅ D-day 카운터 구현 (DDayCounter)")
+    print("   ✅ 성능 모니터링 시스템 (PerformanceMonitor)")
+    print("   ✅ 롤백 시스템 (RollbackManager)")
+    print("   ✅ 101번 요구사항 Week1 완료")
     print("============================================================")
     app.run(host='0.0.0.0', port=port, debug=True)
