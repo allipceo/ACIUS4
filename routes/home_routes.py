@@ -133,11 +133,19 @@ def render_home_with_stats_html(current_user_id, ceo_info):
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="location.href='/statistics'">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="location.href='/advanced-statistics'">
                     <div class="text-center">
                         <div class="text-4xl mb-4">📊</div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">통계</h3>
-                        <p class="text-sm text-gray-600">학습 현황 분석</p>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">고급 통계</h3>
+                        <p class="text-sm text-gray-600">상세 분석 및 패턴</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="location.href='/collaboration'">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🤝</div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">협업 학습</h3>
+                        <p class="text-sm text-gray-600">실시간 협업 및 매칭</p>
                     </div>
                 </div>
                 
@@ -175,87 +183,109 @@ def render_home_with_stats_html(current_user_id, ceo_info):
             </div>
         </div>
         
-        <!-- 통계 시스템 스크립트 로드 -->
+        <!-- 기본 통계 시스템 스크립트 로드 -->
+        <script src="/static/js/basic_statistics_system.js"></script>
+        
+        <!-- 기존 통계 시스템 스크립트들 (호환성 유지) -->
         <script src="/static/js/progress_manager.js"></script>
         <script src="/static/js/stats_calculator.js"></script>
         <script src="/static/js/ui_updater.js"></script>
         <script src="/static/js/progress_system.js"></script>
         
-        <!-- 고도화된 통계 시스템 스크립트들 -->
+        <!-- 고도화된 통계 시스템 스크립트들 (선택적) -->
         <script src="/static/js/advanced_progress_manager.js"></script>
         <script src="/static/js/real_time_stats_updater.js"></script>
         <script src="/static/js/advanced_statistics_system.js"></script>
         
-        <!-- JavaScript - 고도화된 통계 업데이트 및 세션 모니터링 -->
+        <!-- JavaScript - 기본 통계 시스템 초기화 및 업데이트 -->
         <script>
-            // 고도화된 통계 시스템 초기화 및 업데이트
-            document.addEventListener('DOMContentLoaded', function() {{
-                console.log('🎯 홈페이지 고도화된 통계 시스템 초기화 시작...');
+            // 기본 통계 시스템 초기화 및 업데이트
+            document.addEventListener('DOMContentLoaded', async function() {{
+                console.log('🎯 홈페이지 기본 통계 시스템 초기화 시작...');
                 
-                // AdvancedStatisticsSystem 초기화 대기
-                setTimeout(async () => {{
-                    if (typeof window.advancedStatisticsSystem !== 'undefined') {{
-                        try {{
-                            // 시스템 초기화
-                            const initResult = await window.advancedStatisticsSystem.initialize();
-                            if (initResult) {{
-                                document.getElementById('stats-status').textContent = '고도화된 통계 시스템 활성';
-                                document.getElementById('stats-status').className = 'text-sm text-green-600 mt-1';
-                                
-                                // 홈페이지 통계 업데이트
-                                window.advancedStatisticsSystem.refreshAllStats();
-                                updateHomeStats();
-                                console.log('✅ 홈페이지 고도화된 통계 업데이트 완료');
-                            }} else {{
-                                document.getElementById('stats-status').textContent = '고도화된 통계 초기화 실패';
-                                document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
-                            }}
-                        }} catch (error) {{
-                            console.error('❌ 고도화된 통계 시스템 초기화 중 오류:', error);
-                            document.getElementById('stats-status').textContent = '초기화 오류';
+                try {{
+                    // 기본 통계 시스템 초기화
+                    if (window.basicStatisticsSystem) {{
+                        const initResult = await window.basicStatisticsSystem.initialize();
+                        
+                        if (initResult.success) {{
+                            document.getElementById('stats-status').textContent = '기본 통계 시스템 활성';
+                            document.getElementById('stats-status').className = 'text-sm text-green-600 mt-1';
+                            
+                            // 홈페이지 통계 업데이트
+                            updateHomeStats();
+                            console.log('✅ 홈페이지 기본 통계 업데이트 완료');
+                        }} else {{
+                            document.getElementById('stats-status').textContent = '기본 통계 초기화 실패';
                             document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
+                            console.error('❌ 기본 통계 시스템 초기화 실패:', initResult.message);
                         }}
                     }} else {{
-                        document.getElementById('stats-status').textContent = '고도화된 통계 모듈 로드 실패';
+                        document.getElementById('stats-status').textContent = '기본 통계 모듈 로드 실패';
                         document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
+                        console.error('❌ 기본 통계 시스템 모듈을 찾을 수 없습니다.');
                     }}
-                }}, 2000);
+                    
+                    // 고도화된 통계 시스템도 시도 (선택적)
+                    setTimeout(async () => {{
+                        if (typeof window.advancedStatisticsSystem !== 'undefined') {{
+                            try {{
+                                const advInitResult = await window.advancedStatisticsSystem.initialize();
+                                if (advInitResult) {{
+                                    console.log('✅ 고도화된 통계 시스템도 활성화됨');
+                                }}
+                            }} catch (error) {{
+                                console.log('고도화된 통계 시스템 초기화 실패 (정상)');
+                            }}
+                        }}
+                    }}, 1000);
+                    
+                }} catch (error) {{
+                    console.error('❌ 통계 시스템 초기화 중 오류:', error);
+                    document.getElementById('stats-status').textContent = '초기화 오류';
+                    document.getElementById('stats-status').className = 'text-sm text-red-600 mt-1';
+                }}
             }});
             
             // 홈페이지 통계 업데이트 함수
             function updateHomeStats() {{
-                if (window.advancedProgressManager) {{
-                    const stats = window.advancedProgressManager.statistics;
-                    const userInfo = window.advancedProgressManager.userInfo;
+                if (window.basicStatisticsSystem && window.basicStatisticsSystem.isInitialized) {{
+                    const stats = window.basicStatisticsSystem.statistics;
+                    const userInfo = window.basicStatisticsSystem.userInfo;
                     
                     // 진행률 업데이트
                     const progressText = document.getElementById('home-progress-text');
                     if (progressText) {{
-                        progressText.textContent = `${{stats.total_questions_solved}} / 1,370`;
+                        const progressRate = ((stats.totalAttempted / 789) * 100).toFixed(1);
+                        progressText.textContent = `${{progressRate}}% (${{stats.totalAttempted}}/789)`;
                     }}
                     
                     // 정답률 업데이트
                     const accuracyText = document.getElementById('home-accuracy-text');
                     if (accuracyText) {{
-                        accuracyText.textContent = `정답률: ${{stats.overall_accuracy}}%`;
+                        accuracyText.textContent = `정답률: ${{stats.totalAccuracy}}%`;
                     }}
                     
                     // 총 시도/정답 업데이트
                     const totalAttempted = document.getElementById('home-total-attempted');
                     if (totalAttempted) {{
-                        totalAttempted.textContent = `시도: ${{stats.total_questions_solved}}`;
+                        totalAttempted.textContent = `시도: ${{stats.totalAttempted}}`;
                     }}
                     
                     const totalCorrect = document.getElementById('home-total-correct');
                     if (totalCorrect) {{
-                        totalCorrect.textContent = `정답: ${{stats.total_correct_answers}}`;
+                        totalCorrect.textContent = `정답: ${{stats.totalCorrect}}`;
                     }}
                     
                     // 사용자 정보 업데이트
                     const userStatusElement = document.getElementById('user-status');
                     if (userStatusElement) {{
-                        userStatusElement.textContent = userInfo.is_demo_mode ? '데모 모드' : '실제 등록';
+                        userStatusElement.textContent = userInfo.isDemoMode ? '데모 모드' : '실제 등록';
                     }}
+                    
+                    console.log('✅ 홈페이지 통계 업데이트 완료:', stats);
+                }} else {{
+                    console.log('기본 통계 시스템이 초기화되지 않았습니다.');
                 }}
             }}
             

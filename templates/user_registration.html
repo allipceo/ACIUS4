@@ -5,618 +5,284 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 사용자 등록</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
         <!-- 헤더 -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-blue-600 mb-2">ACIU QUIZ</h1>
-            <p class="text-gray-600">보험중개사 자격증 학습 시스템 - Season 4</p>
-            <div id="status" class="text-center text-blue-600 mb-4 font-semibold">사용자 등록을 완료해주세요</div>
-        </header>
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">ACIU S4</h1>
+                <p class="text-gray-600">사용자 등록을 진행해주세요</p>
+            </div>
 
-        <!-- 사용자 등록 화면 -->
-        <div id="user-registration-screen" class="bg-white rounded-lg shadow-md p-8 max-w-md mx-auto">
-            <h2 class="text-2xl font-semibold mb-6 text-center">사용자 등록</h2>
-            <p class="text-gray-600 mb-6 text-center">학습 데이터 수집을 시작하려면 사용자 정보를 입력해주세요.</p>
-            
-            <form id="user-registration-form">
-                <div class="space-y-4">
+            <!-- 등록 옵션 선택 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- 게스트 등록 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-blue-200 hover:border-blue-400 transition-colors">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">👤</div>
+                        <h2 class="text-xl font-bold text-blue-800 mb-2">게스트로 등록</h2>
+                        <p class="text-gray-600 mb-4">간단한 정보로 빠르게 시작</p>
+                        <button onclick="showGuestRegistration()" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            게스트 등록
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 실제 사용자 등록 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-green-200 hover:border-green-400 transition-colors">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🎯</div>
+                        <h2 class="text-xl font-bold text-green-800 mb-2">실제 사용자 등록</h2>
+                        <p class="text-gray-600 mb-4">개인화된 학습을 위한 상세 등록</p>
+                        <button onclick="showUserRegistration()" 
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            사용자 등록
+                        </button>
+                    </div>
+                </div>
+                    </div>
+                    
+            <!-- 게스트 등록 폼 -->
+            <div id="guest-registration-form" class="hidden bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">게스트 등록</h3>
+                <form id="guest-form" class="space-y-4">
                     <div>
-                        <label for="user-name" class="block text-sm font-medium text-gray-700 mb-2">사용자 이름 *</label>
-                        <input type="text" id="user-name" name="userName" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="홍길동">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">성명</label>
+                        <input type="text" id="guest-name" value="게스트" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     
                     <div>
-                        <label for="user-phone" class="block text-sm font-medium text-gray-700 mb-2">휴대폰 번호 *</label>
-                        <input type="tel" id="user-phone" name="userPhone" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                               placeholder="010-1234-5678">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">시험</label>
+                        <input type="text" id="guest-exam" value="ACIU" readonly
+                               class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md">
                     </div>
                     
                     <div>
-                        <label for="exam-subject" class="block text-sm font-medium text-gray-700 mb-2">응시 과목</label>
-                        <input type="text" id="exam-subject" name="examSubject" value="보험중개사" readonly 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
-                    </div>
-                    
-                    <div>
-                        <label for="exam-date" class="block text-sm font-medium text-gray-700 mb-2">목표 응시일</label>
-                        <input type="date" id="exam-date" name="examDate" 
+                        <label class="block text-sm font-medium text-gray-700 mb-2">시험일</label>
+                        <input type="date" id="guest-exam-date" value="2025-09-13" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
-                    <!-- 추가 옵션 -->
-                    <div class="border-t pt-4 mt-4">
-                        <h4 class="text-md font-semibold text-gray-800 mb-3">학습 설정</h4>
-                        
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="sync-enabled" name="syncEnabled" checked 
-                                       class="rounded text-blue-500 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">크로스 플랫폼 동기화 활성화</span>
-                            </label>
-                            
-                            <label class="flex items-center">
-                                <input type="checkbox" id="notifications-enabled" name="notificationsEnabled" checked 
-                                       class="rounded text-blue-500 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">학습 알림 활성화</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex space-x-3 mt-6">
-                    <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-md font-semibold">
-                        등록하고 학습 시작
+                    <div class="flex space-x-4">
+                        <button type="button" onclick="hideGuestRegistration()" 
+                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            취소
+                        </button>
+                        <button type="submit" 
+                                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            게스트 등록
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- 사용자 정보 표시 영역 (등록 후) -->
-        <div id="user-info-display" class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto hidden">
-            <h3 class="text-lg font-semibold mb-4 text-center">등록된 사용자 정보</h3>
-            
-            <div id="user-info-content" class="space-y-3">
-                <!-- 동적으로 채워집니다 -->
+            <!-- 실제 사용자 등록 폼 -->
+            <div id="user-registration-form" class="hidden bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-green-800 mb-4">실제 사용자 등록</h3>
+                <form id="user-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">이름 *</label>
+                        <input type="text" id="user-name" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                               placeholder="이름을 입력하세요">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">전화번호 *</label>
+                        <input type="tel" id="user-phone" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                               placeholder="010-1234-5678">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">시험</label>
+                        <input type="text" id="user-exam" value="ACIU" readonly
+                               class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">시험일 *</label>
+                        <input type="date" id="user-exam-date" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
             </div>
             
-            <div class="flex space-x-3 mt-6">
-                <button onclick="startLearning()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-md font-semibold">
-                    학습 시작
+                    <div class="flex space-x-4">
+                        <button type="button" onclick="hideUserRegistration()" 
+                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            취소
                 </button>
-                <button onclick="editUserInfo()" class="bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-md">
-                    정보 수정
+                        <button type="submit" 
+                                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            사용자 등록
                 </button>
             </div>
+                </form>
+            </div>
+
+            <!-- 상태 메시지 -->
+            <div id="status-message" class="hidden mt-4 p-4 rounded-lg"></div>
         </div>
     </div>
 
     <script>
-        // ===== ACIU S4 사용자 등록 시스템 (Flask 연동) =====
-        
-        // 전역 변수
-        let currentUser = null;
-        let userStats = {};
-        let isFlaskMode = window.location.protocol !== 'file:'; // Flask 서버인지 확인
-        
-        // 사용자 등록 시스템 클래스
-        class UserRegistrationSystem {
-            constructor() {
-                this.initializeEventListeners();
-                this.checkExistingUser();
-            }
-            
-            initializeEventListeners() {
-                // 등록 폼 이벤트
-                const form = document.getElementById('user-registration-form');
-                if (form) {
-                    form.addEventListener('submit', this.handleRegistration.bind(this));
-                }
+        // 게스트 등록 폼 표시
+        function showGuestRegistration() {
+            document.getElementById('guest-registration-form').classList.remove('hidden');
+            document.getElementById('user-registration-form').classList.add('hidden');
+        }
+
+        // 게스트 등록 폼 숨기기
+        function hideGuestRegistration() {
+            document.getElementById('guest-registration-form').classList.add('hidden');
+        }
+
+        // 실제 사용자 등록 폼 표시
+        function showUserRegistration() {
+            document.getElementById('user-registration-form').classList.remove('hidden');
+            document.getElementById('guest-registration-form').classList.add('hidden');
+        }
+
+        // 실제 사용자 등록 폼 숨기기
+        function hideUserRegistration() {
+            document.getElementById('user-registration-form').classList.add('hidden');
+        }
+
+        // 상태 메시지 표시
+        function showStatusMessage(message, type = 'info') {
+            const statusElement = document.getElementById('status-message');
+            statusElement.textContent = message;
+            statusElement.className = `mt-4 p-4 rounded-lg ${type === 'error' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`;
+            statusElement.classList.remove('hidden');
+        }
+
+        // 등록 시점 기반 통계 초기화
+        function initializeUserStatistics(userData) {
+            try {
+                console.log('=== 등록 시점 기반 통계 초기화 시작 ===');
                 
-                // 전화번호 자동 포맷팅
-                const phoneInput = document.getElementById('user-phone');
-                if (phoneInput) {
-                    phoneInput.addEventListener('input', this.formatPhoneNumber);
-                }
+                const registrationTimestamp = userData.created_at || new Date().toISOString();
+                const today = new Date().toISOString().split('T')[0];
                 
-                // 시험일 기본값 설정
-                this.setDefaultExamDate();
-            }
-            
-            formatPhoneNumber(event) {
-                let value = event.target.value.replace(/\D/g, '');
-                if (value.length >= 3) {
-                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-                } else if (value.length >= 3) {
-                    value = value.replace(/(\d{3})(\d{0,4})/, '$1-$2');
-                }
-                event.target.value = value;
-            }
-            
-            setDefaultExamDate() {
-                const examDateInput = document.getElementById('exam-date');
-                if (examDateInput) {
-                    // 3개월 후 날짜를 기본값으로 설정
-                    const futureDate = new Date();
-                    futureDate.setMonth(futureDate.getMonth() + 3);
-                    examDateInput.value = futureDate.toISOString().split('T')[0];
-                }
-            }
-            
-            async handleRegistration(event) {
-                event.preventDefault();
-                
-                try {
-                    const formData = new FormData(event.target);
-                    const userData = {
-                        userName: formData.get('userName'),
-                        userPhone: formData.get('userPhone'),
-                        examSubject: formData.get('examSubject'),
-                        examDate: formData.get('examDate'),
-                        syncEnabled: formData.get('syncEnabled') === 'on',
-                        notificationsEnabled: formData.get('notificationsEnabled') === 'on'
-                    };
-                    
-                    if (isFlaskMode) {
-                        // Flask 서버로 등록 요청
-                        await this.registerWithFlask(userData);
-                    } else {
-                        // 로컬 모드 (기존 방식)
-                        await this.registerLocally(userData);
-                    }
-                    
-                } catch (error) {
-                    console.error('사용자 등록 실패:', error);
-                    this.updateStatus('등록 중 오류가 발생했습니다. 다시 시도해주세요.', 'red');
-                }
-            }
-            
-            async registerWithFlask(userData) {
-                try {
-                    console.log('Flask 등록 시도:', userData);
-                    
-                    const response = await fetch('/user/api/users/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'same-origin', // 세션 쿠키 포함
-                        body: JSON.stringify(userData)
-                    });
-                    
-                    console.log('등록 응답 상태:', response.status);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    console.log('등록 응답 데이터:', result);
-                    
-                    if (result.success) {
-                        currentUser = result.userData;
-                        userStats = result.statistics;
-                        
-                        // localStorage에도 백업 저장
-                        localStorage.setItem('aciu_current_user', JSON.stringify(currentUser));
-                        localStorage.setItem(`aciu_stats_${currentUser.userId}`, JSON.stringify(userStats));
-                        
-                        // UI 업데이트
-                        this.showUserInfo(currentUser);
-                        this.updateStatus('Flask 서버에 등록이 완료되었습니다! 🎉', 'green');
-                        
-                        // 세션 확인
-                        setTimeout(async () => {
-                            const sessionCheck = await fetch('/user/api/users/current', {
-                                credentials: 'same-origin'
-                            });
-                            const sessionResult = await sessionCheck.json();
-                            console.log('세션 확인 결과:', sessionResult);
-                        }, 1000);
-                        
-                    } else {
-                        throw new Error(result.error || '서버 등록 실패');
-                    }
-                    
-                } catch (error) {
-                    console.error('Flask 등록 실패:', error);
-                    this.updateStatus(`등록 실패: ${error.message}`, 'red');
-                    
-                    // 로컬 모드로 폴백하지 않고 에러 표시
-                    throw error;
-                }
-            }
-            
-            async registerLocally(userData) {
-                // 기존 로컬 등록 로직
-                const registrationMoment = new Date().toISOString();
-                const userId = this.generateUserId(userData.userName, userData.userPhone);
-                
-                const completeUserData = {
-                    userId: userId,
-                    userName: userData.userName,
-                    userPhone: userData.userPhone,
-                    examSubject: userData.examSubject,
-                    examDate: userData.examDate,
-                    syncEnabled: userData.syncEnabled,
-                    notificationsEnabled: userData.notificationsEnabled,
-                    registeredAt: registrationMoment,
-                    lastLoginAt: registrationMoment
-                };
-                
-                // 로컬 저장
-                await this.saveUserData(completeUserData);
-                await this.initializeUserStatistics(completeUserData.userId);
-                
-                // UI 업데이트
-                this.showUserInfo(completeUserData);
-                this.updateStatus('로컬 모드로 등록이 완료되었습니다! 🎉', 'green');
-            }
-            
-            generateUserId(userName, userPhone) {
-                // 이름과 전화번호를 조합해서 고유 ID 생성
-                const nameHash = userName.split('').reduce((a, b) => {
-                    a = ((a << 5) - a) + b.charCodeAt(0);
-                    return a & a;
-                }, 0);
-                
-                const phoneNumbers = userPhone.replace(/\D/g, '');
-                const phoneHash = phoneNumbers.slice(-4);
-                
-                return `user_${Math.abs(nameHash)}_${phoneHash}`;
-            }
-            
-            async saveUserData(userData) {
-                try {
-                    // localStorage에 저장
-                    localStorage.setItem('aciu_current_user', JSON.stringify(userData));
-                    
-                    // 사용자 목록에 추가
-                    const existingUsers = JSON.parse(localStorage.getItem('aciu_users') || '{}');
-                    existingUsers[userData.userId] = userData;
-                    localStorage.setItem('aciu_users', JSON.stringify(existingUsers));
-                    
-                    currentUser = userData;
-                    
-                    console.log('사용자 데이터 저장 완료:', userData);
-                    
-                } catch (error) {
-                    throw new Error('사용자 데이터 저장 실패: ' + error.message);
-                }
-            }
-            
-            async initializeUserStatistics(userId) {
-                try {
-                    const initialStats = {
-                        userId: userId,
-                        registeredAt: new Date().toISOString(),
-                        lastUpdated: new Date().toISOString(),
-                        
-                        // 전체 통계
-                        overall: {
-                            totalAttempted: 0,
-                            totalCorrect: 0,
-                            totalWrong: 0,
-                            accuracy: 0,
-                            studyDays: 0,
-                            totalStudyTime: 0
-                        },
-                        
-                        // 일별 통계
-                        daily: {
-                            today: new Date().toISOString().split('T')[0],
-                            todayAttempted: 0,
-                            todayCorrect: 0,
-                            todayWrong: 0,
-                            todayAccuracy: 0,
-                            todayStudyTime: 0
-                        },
-                        
-                        // 기본학습 통계
-                        basicLearning: {
+                // 기본 통계 구조 생성
+                const statistics = {
+                    registration_timestamp: registrationTimestamp,
+                    total_questions_attempted: 0,
+                    total_correct_answers: 0,
+                    total_study_time: 0,
+                    accuracy_rate: 0,
+                    daily_progress: {
+                        [today]: {
                             attempted: 0,
                             correct: 0,
-                            wrong: 0,
-                            accuracy: 0,
-                            currentIndex: 0,
-                            mode: 'continue'
-                        },
-                        
-                        // 대분류학습 통계
-                        categoryLearning: {
-                            '재산보험': { attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
-                            '특종보험': { attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
-                            '배상책임보험': { attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
-                            '해상보험': { attempted: 0, correct: 0, wrong: 0, accuracy: 0 }
-                        },
-                        
-                        // 시험 점수 예측
-                        examPrediction: {
-                            overallScore: 0,
-                            subjectScores: {
-                                '재산보험': 0,
-                                '특종보험': 0,
-                                '배상책임보험': 0,
-                                '해상보험': 0
-                            },
-                            passLikelihood: 0,
-                            estimatedPassDate: null
+                            time: 0,
+                            accuracy: 0
                         }
-                    };
-                    
-                    // 통계 저장
-                    localStorage.setItem(`aciu_stats_${userId}`, JSON.stringify(initialStats));
-                    userStats = initialStats;
-                    
-                    console.log('사용자 초기 통계 생성 완료:', initialStats);
-                    
-                } catch (error) {
-                    throw new Error('통계 초기화 실패: ' + error.message);
-                }
-            }
-            
-            showUserInfo(userData) {
-                // 등록 폼 숨기기
-                document.getElementById('user-registration-screen').classList.add('hidden');
-                
-                // 사용자 정보 표시
-                const infoDisplay = document.getElementById('user-info-display');
-                const infoContent = document.getElementById('user-info-content');
-                
-                infoContent.innerHTML = `
-                    <div class="bg-blue-50 p-4 rounded-md">
-                        <h4 class="font-semibold text-blue-800 mb-2">기본 정보</h4>
-                        <p><strong>이름:</strong> ${userData.userName}</p>
-                        <p><strong>전화번호:</strong> ${userData.userPhone}</p>
-                        <p><strong>응시 과목:</strong> ${userData.examSubject}</p>
-                        <p><strong>목표 응시일:</strong> ${userData.examDate ? new Date(userData.examDate).toLocaleDateString('ko-KR') : '미설정'}</p>
-                    </div>
-                    
-                    <div class="bg-green-50 p-4 rounded-md">
-                        <h4 class="font-semibold text-green-800 mb-2">학습 설정</h4>
-                        <p><strong>크로스 플랫폼 동기화:</strong> ${userData.syncEnabled ? '활성화' : '비활성화'}</p>
-                        <p><strong>학습 알림:</strong> ${userData.notificationsEnabled ? '활성화' : '비활성화'}</p>
-                    </div>
-                    
-                    <div class="bg-yellow-50 p-4 rounded-md">
-                        <h4 class="font-semibold text-yellow-800 mb-2">등록 정보</h4>
-                        <p><strong>사용자 ID:</strong> ${userData.userId}</p>
-                        <p><strong>등록일:</strong> ${new Date(userData.registeredAt).toLocaleDateString('ko-KR')} ${new Date(userData.registeredAt).toLocaleTimeString('ko-KR')}</p>
-                    </div>
-                `;
-                
-                infoDisplay.classList.remove('hidden');
-            }
-            
-            checkExistingUser() {
-                try {
-                    if (isFlaskMode) {
-                        // Flask 모드에서는 서버에서 사용자 정보 확인
-                        this.checkUserWithFlask();
-                    } else {
-                        // 로컬 모드 (기존 방식)
-                        const existingUser = localStorage.getItem('aciu_current_user');
-                        if (existingUser) {
-                            currentUser = JSON.parse(existingUser);
-                            
-                            // 기존 사용자 통계 로드
-                            const existingStats = localStorage.getItem(`aciu_stats_${currentUser.userId}`);
-                            if (existingStats) {
-                                userStats = JSON.parse(existingStats);
-                            }
-                            
-                            this.showUserInfo(currentUser);
-                            this.updateStatus(`환영합니다, ${currentUser.userName}님! 저장된 정보를 불러왔습니다.`, 'blue');
-                        }
-                    }
-                } catch (error) {
-                    console.error('기존 사용자 정보 로드 실패:', error);
-                }
-            }
-            
-            async checkUserWithFlask() {
-                try {
-                    const response = await fetch('/user/api/users/current');
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.success) {
-                            currentUser = result.userData;
-                            
-                            // 통계도 함께 로드
-                            const statsResponse = await fetch(`/user/api/users/${currentUser.userId}/statistics`);
-                            if (statsResponse.ok) {
-                                const statsResult = await statsResponse.json();
-                                if (statsResult.success) {
-                                    userStats = statsResult.statistics;
-                                }
-                            }
-                            
-                            this.showUserInfo(currentUser);
-                            this.updateStatus(`환영합니다, ${currentUser.userName}님! 서버에서 정보를 불러왔습니다.`, 'blue');
-                        }
-                    }
-                } catch (error) {
-                    console.log('서버 사용자 확인 실패, 로컬 모드로 전환');
-                    isFlaskMode = false;
-                    this.checkExistingUser();
-                }
-            }
-            
-            updateStatus(message, color = 'blue') {
-                const statusElement = document.getElementById('status');
-                if (statusElement) {
-                    statusElement.textContent = message;
-                    statusElement.className = `text-center text-${color}-600 mb-4 font-semibold`;
-                }
-            }
-        }
-        
-        // 전역 함수들
-        function startLearning() {
-            if (!currentUser) {
-                alert('사용자 정보를 찾을 수 없습니다. 등록을 다시 시도해주세요.');
-                return;
-            }
-            
-            console.log('=== 학습 시작 버튼 클릭 ===');
-            console.log('현재 사용자:', currentUser);
-            console.log('Flask 모드:', isFlaskMode);
-            
-            // 세션 확인 후 이동
-            if (isFlaskMode) {
-                // 세션 상태 확인
-                fetch('/user/api/users/current', {
-                    credentials: 'same-origin'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('세션 확인 결과:', data);
-                    if (data.success) {
-                        console.log('세션 확인 성공 - 기본학습으로 이동');
-                        window.location.href = '/basic-learning';
-                    } else {
-                        console.error('세션 없음 - 재등록 필요');
-                        alert('세션이 만료되었습니다. 다시 등록해주세요.');
-                    }
-                })
-                .catch(error => {
-                    console.error('세션 확인 실패:', error);
-                    alert('세션 확인 중 오류가 발생했습니다.');
-                });
-            } else {
-                // 로컬 모드
-                alert(`${currentUser.userName}님의 학습이 시작됩니다!\n\nbasic_learning.html을 직접 여세요.`);
-            }
-        }
-        
-        function editUserInfo() {
-            // 편집 모드로 전환
-            document.getElementById('user-info-display').classList.add('hidden');
-            document.getElementById('user-registration-screen').classList.remove('hidden');
-            
-            // 기존 정보로 폼 채우기
-            if (currentUser) {
-                document.getElementById('user-name').value = currentUser.userName;
-                document.getElementById('user-phone').value = currentUser.userPhone;
-                document.getElementById('exam-subject').value = currentUser.examSubject;
-                document.getElementById('exam-date').value = currentUser.examDate;
-                document.getElementById('sync-enabled').checked = currentUser.syncEnabled;
-                document.getElementById('notifications-enabled').checked = currentUser.notificationsEnabled;
-            }
-        }
-        
-        // 디버깅 함수
-        function debugUserInfo() {
-            console.log('Current User:', currentUser);
-            console.log('User Stats:', userStats);
-            console.log('Flask Mode:', isFlaskMode);
-            if (!isFlaskMode) {
-                console.log('All Users:', JSON.parse(localStorage.getItem('aciu_users') || '{}'));
-            }
-        }
-        
-        // 테스트 함수들
-        function testRegistration() {
-            // 테스트 데이터로 자동 입력
-            document.getElementById('user-name').value = '조대표';
-            document.getElementById('user-phone').value = '010-1111-2222';
-            document.getElementById('exam-date').value = '2025-11-15';
-            
-            console.log('테스트 데이터 입력 완료. 등록 버튼을 클릭하세요.');
-        }
-        
-        // 직접 API 테스트 함수
-        async function testDirectAPI() {
-            try {
-                console.log('=== 직접 API 테스트 시작 ===');
-                
-                const testData = {
-                    userName: '직접테스트',
-                    userPhone: '010-9999-8888',
-                    examSubject: '보험중개사',
-                    examDate: '2025-12-01',
-                    syncEnabled: true,
-                    notificationsEnabled: true
+                    },
+                    last_updated: registrationTimestamp
                 };
                 
-                console.log('테스트 데이터:', testData);
+                // 학습 로그 초기화
+                const learningLog = [];
                 
-                const response = await fetch('/user/api/users/register', {
+                // LocalStorage에 저장
+                localStorage.setItem('aicu_statistics', JSON.stringify(statistics));
+                localStorage.setItem('aicu_learning_log', JSON.stringify(learningLog));
+                
+                console.log('✅ 등록 시점 기반 통계 초기화 완료:', statistics);
+                console.log('📅 등록 시점:', registrationTimestamp);
+                    
+                } catch (error) {
+                console.error('❌ 통계 초기화 실패:', error);
+            }
+        }
+
+        // 게스트 등록 처리
+        document.getElementById('guest-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const guestData = {
+                name: document.getElementById('guest-name').value,
+                exam_date: document.getElementById('guest-exam-date').value
+            };
+
+            try {
+                const response = await fetch('/api/register/guest', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(guestData)
+                });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                    // LocalStorage에 사용자 정보 저장
+                    localStorage.setItem('aicu_user_data', JSON.stringify(result.user_data));
+                    
+                    // 등록 시점 기반 통계 초기화
+                    initializeUserStatistics(result.user_data);
+                    
+                    showStatusMessage('게스트 등록이 완료되었습니다!', 'success');
+                    
+                    // 2초 후 대문으로 이동
+                    setTimeout(() => {
+                        window.location.href = '/home';
+                    }, 2000);
+                    } else {
+                    showStatusMessage(result.message, 'error');
+                    }
+                } catch (error) {
+                console.error('게스트 등록 실패:', error);
+                showStatusMessage('게스트 등록에 실패했습니다.', 'error');
+            }
+        });
+
+        // 실제 사용자 등록 처리
+        document.getElementById('user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userData = {
+                name: document.getElementById('user-name').value,
+                phone: document.getElementById('user-phone').value,
+                exam_date: document.getElementById('user-exam-date').value
+            };
+
+            try {
+                const response = await fetch('/api/register/user', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    credentials: 'same-origin',
-                    body: JSON.stringify(testData)
+                    body: JSON.stringify(userData)
                 });
                 
-                console.log('응답 상태:', response.status);
-                console.log('응답 헤더:', [...response.headers.entries()]);
-                
                 const result = await response.json();
-                console.log('응답 데이터:', result);
                 
                 if (result.success) {
-                    console.log('✅ API 테스트 성공!');
-                    console.log('사용자 ID:', result.userId);
+                    // LocalStorage에 사용자 정보 저장
+                    localStorage.setItem('aicu_user_data', JSON.stringify(result.user_data));
                     
-                    // 세션 확인
-                    const sessionResponse = await fetch('/user/api/users/current', {
-                        credentials: 'same-origin'
-                    });
-                    const sessionResult = await sessionResponse.json();
-                    console.log('세션 확인:', sessionResult);
+                    // 등록 시점 기반 통계 초기화
+                    initializeUserStatistics(result.user_data);
                     
-                    alert('API 테스트 성공! Console을 확인하세요.');
+                    showStatusMessage('사용자 등록이 완료되었습니다!', 'success');
+                    
+                    // 2초 후 대문으로 이동
+                    setTimeout(() => {
+                        window.location.href = '/home';
+                    }, 2000);
                 } else {
-                    console.error('❌ API 테스트 실패:', result.error);
-                    alert(`API 테스트 실패: ${result.error}`);
+                    showStatusMessage(result.message, 'error');
                 }
-                
             } catch (error) {
-                console.error('❌ API 테스트 예외:', error);
-                alert(`API 테스트 예외: ${error.message}`);
+                console.error('사용자 등록 실패:', error);
+                showStatusMessage('사용자 등록에 실패했습니다.', 'error');
             }
-        }
-        
-        function clearAllData() {
-            // 모든 데이터 삭제 (개발/테스트용)
-            localStorage.clear();
-            
-            if (isFlaskMode) {
-                fetch('/user/api/users/logout', { method: 'POST' })
-                    .then(() => {
-                        window.location.reload();
-                    });
-            } else {
-                window.location.reload();
-            }
-        }
-        
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('ACIU S4 사용자 등록 시스템 초기화 시작');
-            console.log('Flask 모드:', isFlaskMode);
-            new UserRegistrationSystem();
         });
-        
-        // 개발자 도구에서 사용할 수 있도록 전역으로 노출
-        window.debugUserInfo = debugUserInfo;
-        window.testRegistration = testRegistration;
-        window.testDirectAPI = testDirectAPI;
-        window.clearAllData = clearAllData;
-        
-        console.log('ACIU S4 사용자 등록 시스템 로드 완료');
-        console.log('사용법:');
-        console.log('- debugUserInfo() : 현재 사용자 정보 확인');
-        console.log('- testRegistration() : 테스트 데이터 자동 입력');
-        console.log('- testDirectAPI() : 직접 API 호출 테스트');
-        console.log('- clearAllData() : 모든 데이터 삭제');
     </script>
 </body>
 </html>
