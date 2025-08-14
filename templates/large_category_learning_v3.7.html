@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 v3.7 - 대분류 학습</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🎯 대분류 학습</h1>
+            <p class="text-gray-600">카테고리별 학습을 통해 체계적으로 준비하세요</p>
+        </div>
+
+
+        
+        <!-- 카테고리 선택 -->
+        <div class="max-w-4xl mx-auto mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📚 카테고리 선택</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 재산보험 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🏢</div>
+                        <h4 class="text-lg font-bold text-blue-800 mb-2">재산보험</h4>
+                        <p class="text-gray-600 mb-4">일반재산보험</p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <div>총 문제: <span class="font-medium">169문제</span></div>
+                            <div>진도: <span id="progress-06재산보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-06재산보험">0%</span></div>
+                        </div>
+                        <button onclick="startCategoryLearning('06재산보험')" 
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            학습 시작
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 특종보험 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🚗</div>
+                        <h4 class="text-lg font-bold text-green-800 mb-2">특종보험</h4>
+                        <p class="text-gray-600 mb-4">자동차보험</p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <div>총 문제: <span class="font-medium">182문제</span></div>
+                            <div>진도: <span id="progress-07특종보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-07특종보험">0%</span></div>
+                        </div>
+                        <button onclick="startCategoryLearning('07특종보험')" 
+                                class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            학습 시작
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 배상책임보험 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">⚖️</div>
+                        <h4 class="text-lg font-bold text-yellow-800 mb-2">배상책임보험</h4>
+                        <p class="text-gray-600 mb-4">책임보험</p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <div>총 문제: <span class="font-medium">268문제</span></div>
+                            <div>진도: <span id="progress-08배상책임보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-08배상책임보험">0%</span></div>
+                        </div>
+                        <button onclick="startCategoryLearning('08배상책임보험')" 
+                                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            학습 시작
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 해상보험 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🚢</div>
+                        <h4 class="text-lg font-bold text-purple-800 mb-2">해상보험</h4>
+                        <p class="text-gray-600 mb-4">해상보험</p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <div>총 문제: <span class="font-medium">170문제</span></div>
+                            <div>진도: <span id="progress-09해상보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-09해상보험">0%</span></div>
+                        </div>
+                        <button onclick="startCategoryLearning('09해상보험')" 
+                                class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            학습 시작
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학습 통계 -->
+        <div class="max-w-6xl mx-auto mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📊 카테고리별 학습 통계</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="category-stats">
+                <!-- 카테고리별 통계가 여기에 동적으로 표시됩니다 -->
+            </div>
+        </div>
+
+        <!-- 액션 버튼들 -->
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">🚀 액션</h3>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button onclick="resetCategoryProgress()" 
+                        class="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <span class="text-lg">📊</span>
+                    <span class="ml-2 font-semibold">카테고리 진도 초기화</span>
+                </button>
+                <a href="/home" 
+                   class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center">
+                    <span class="text-lg">🏠</span>
+                    <span class="ml-2 font-semibold">홈으로 돌아가기</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 통계 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 대분류 학습 페이지 v3.7 로드 ===');
+            loadCategoryStatistics();
+        });
+
+        // 카테고리별 통계 로드 (98번 문서 기반)
+        function loadCategoryStatistics() {
+            try {
+                console.log('=== 대분류 학습 통계 로드 시작 ===');
+                const statsData = localStorage.getItem('aicu_statistics') || '{}';
+                const stats = JSON.parse(statsData);
+                
+                // 4개 카테고리만 처리 (JSON 파일 기준)
+                const categories = ['06재산보험', '07특종보험', '08배상책임보험', '09해상보험'];
+                const categoryTotals = {
+                    '06재산보험': 169,
+                    '07특종보험': 182,
+                    '08배상책임보험': 268,
+                    '09해상보험': 170
+                };
+                
+                // 각 카테고리별 통계 표시
+                categories.forEach(category => {
+                    const categoryStats = stats.categories && stats.categories[category] 
+                        ? stats.categories[category] 
+                        : { solved: 0, correct: 0, total: categoryTotals[category] };
+                    
+                    const progress = categoryStats.total > 0 
+                        ? Math.round((categoryStats.solved / categoryStats.total) * 100) 
+                        : 0;
+                    const accuracy = categoryStats.solved > 0 
+                        ? Math.round((categoryStats.correct / categoryStats.solved) * 100) 
+                        : 0;
+                    
+                    // 카드 업데이트
+                    const progressElement = document.getElementById(`progress-${category}`);
+                    const accuracyElement = document.getElementById(`accuracy-${category}`);
+                    
+                    if (progressElement) progressElement.textContent = `${progress}%`;
+                    if (accuracyElement) accuracyElement.textContent = `${accuracy}%`;
+                    
+                    console.log(`📊 ${category}: 진행률 ${progress}%, 정답률 ${accuracy}%`);
+                });
+                
+                // 상세 통계 표시
+                displayCategoryStats(stats.categories || {});
+                
+            } catch (error) {
+                console.error('❌ 카테고리 통계 로드 실패:', error);
+            }
+        }
+
+        // 카테고리별 상세 통계 표시
+        function displayCategoryStats(categories) {
+            const statsContainer = document.getElementById('category-stats');
+            
+            // 4개 카테고리만 필터링
+            const validCategories = ['06재산보험', '07특종보험', '08배상책임보험', '09해상보험'];
+            const categoryNames = {
+                '06재산보험': '재산보험',
+                '07특종보험': '특종보험',
+                '08배상책임보험': '배상책임보험',
+                '09해상보험': '해상보험'
+            };
+            
+            const filteredCategories = {};
+            
+            for (const category of validCategories) {
+                if (categories[category]) {
+                    filteredCategories[category] = categories[category];
+                }
+            }
+            
+            if (Object.keys(filteredCategories).length === 0) {
+                statsContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center">아직 카테고리별 데이터가 없습니다.</p>';
+                return;
+            }
+            
+            let html = '';
+            for (const [category, data] of Object.entries(filteredCategories)) {
+                const progress = data.total > 0 ? Math.round((data.solved / data.total) * 100) : 0;
+                const accuracy = data.solved > 0 ? Math.round((data.correct / data.solved) * 100) : 0;
+                
+                html += `
+                    <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                        <h4 class="font-bold text-gray-800 mb-4 text-center text-lg">${categoryNames[category]}</h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between items-center p-2 bg-blue-50 rounded">
+                                <span class="font-medium">진도:</span>
+                                <span class="font-bold text-blue-600">${progress}% (${data.solved}/${data.total})</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                <span class="font-medium">정답률:</span>
+                                <span class="font-bold text-green-600">${accuracy}%</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-purple-50 rounded">
+                                <span class="font-medium">정답:</span>
+                                <span class="font-bold text-purple-600">${data.correct}문제</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            statsContainer.innerHTML = html;
+        }
+
+        // 카테고리별 학습 시작
+        function startCategoryLearning(category) {
+            try {
+                console.log(`=== ${category} 카테고리 학습 시작 ===`);
+                
+                // 현재 카테고리 정보 저장
+                localStorage.setItem('aicu_current_category', category);
+                
+                // 카테고리별 진행상황 초기화 (없는 경우)
+                const progressData = localStorage.getItem('aicu_category_progress') || '{}';
+                const progress = JSON.parse(progressData);
+                
+                if (!progress[category]) {
+                    progress[category] = {
+                        currentQuestionIndex: 0,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    localStorage.setItem('aicu_category_progress', JSON.stringify(progress));
+                }
+                
+                // 기본학습 페이지로 이동 (카테고리 모드)
+                window.location.href = `/basic-learning?category=${category}`;
+                
+            } catch (error) {
+                console.error(`❌ ${category} 카테고리 학습 시작 실패:`, error);
+                alert('학습을 시작하는데 실패했습니다.');
+            }
+        }
+
+        // 카테고리 진도 초기화
+        function resetCategoryProgress() {
+            try {
+                if (confirm('모든 카테고리의 진도를 초기화하시겠습니까?')) {
+                    console.log('=== 카테고리 진도 초기화 ===');
+                    
+                    // 카테고리별 진행상황 초기화
+                    localStorage.removeItem('aicu_category_progress');
+                    
+                    // 통계 데이터에서 카테고리별 데이터 초기화
+                    const statsData = localStorage.getItem('aicu_statistics') || '{}';
+                    const stats = JSON.parse(statsData);
+                    
+                    if (stats.categories) {
+                        const categories = ['06재산보험', '07특종보험', '08배상책임보험', '09해상보험'];
+                        categories.forEach(category => {
+                            if (stats.categories[category]) {
+                                stats.categories[category].solved = 0;
+                                stats.categories[category].correct = 0;
+                                stats.categories[category].accuracy = 0;
+                                stats.categories[category].current_question_index = 0;
+                                stats.categories[category].daily_progress = {};
+                            }
+                        });
+                        
+                        localStorage.setItem('aicu_statistics', JSON.stringify(stats));
+                    }
+                    
+                    alert('카테고리 진도가 초기화되었습니다.');
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('❌ 카테고리 진도 초기화 실패:', error);
+                alert('초기화에 실패했습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 대문</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 및 사용자 정보 -->
+        <div class="flex justify-between items-center mb-8">
+            <!-- 좌측: 사용자 정보 -->
+            <div id="user-info" class="bg-white rounded-lg shadow-lg p-4">
+                <div id="user-details" class="text-sm">
+                    <!-- 사용자 정보가 여기에 동적으로 표시됩니다 -->
+                </div>
+            </div>
+            
+            <!-- 중앙: 제목 -->
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎓 AICU Season 4</h1>
+                <p class="text-gray-600">보험중개사 시험 준비 플랫폼</p>
+            </div>
+            
+            <!-- 우측: 빈 공간 (균형을 위해) -->
+            <div class="w-48"></div>
+        </div>
+
+        <!-- 주요 학습 현황 카드들 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- 학습 진도 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">학습 진도</p>
+                        <p class="text-2xl font-bold text-blue-600" id="progress-rate">0.0% (0/789)</p>
+                        <p class="text-sm text-gray-500">정답률: <span id="accuracy-rate">0%</span></p>
+                    </div>
+                    <div class="text-3xl">📚</div>
+                </div>
+            </div>
+
+            <!-- 총 학습 현황 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">총 학습 현황</p>
+                        <p class="text-2xl font-bold text-green-600" id="total-attempts">시도: 0</p>
+                        <p class="text-sm text-gray-500">정답: <span id="total-correct">0</span></p>
+                    </div>
+                    <div class="text-3xl">📊</div>
+                </div>
+            </div>
+
+            <!-- 오늘 학습 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">오늘 학습</p>
+                        <p class="text-2xl font-bold text-purple-600" id="today-progress">로딩 중...</p>
+                        <p class="text-sm text-gray-500">정답률: <span id="today-accuracy">로딩 중...</span></p>
+                    </div>
+                    <div class="text-3xl">🎯</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 주요 기능 섹션 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- 기본학습 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">기본학습</h3>
+                    <p class="text-gray-600 mb-4">전체 문제 학습</p>
+                    <a href="/basic-learning" 
+                       class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        학습 시작
+                    </a>
+                </div>
+            </div>
+
+            <!-- 대분류학습 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold text-green-800 mb-2">대분류학습</h3>
+                    <p class="text-gray-600 mb-4">카테고리별 학습</p>
+                    <a href="/large-category-learning" 
+                       class="inline-block bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        학습 시작
+                    </a>
+                </div>
+            </div>
+
+            <!-- 고급 통계 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold text-purple-800 mb-2">고급 통계</h3>
+                    <p class="text-gray-600 mb-4">상세 분석 및 패턴</p>
+                    <a href="/statistics" 
+                       class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        통계 보기
+                    </a>
+                </div>
+            </div>
+
+
+
+            <!-- 설정 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">설정</h3>
+                    <p class="text-gray-600 mb-4">사용자 정보 관리</p>
+                    <a href="/settings" 
+                       class="inline-block bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        설정
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 개발자 도구 섹션 -->
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">🔧 개발자 도구</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="testStatisticsSystem()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🚀 통계 시스템 테스트
+                </button>
+                <button onclick="debugSession()" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔍 세션 디버그
+                </button>
+                <button onclick="testAdvancedStatistics()" 
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    📊 고도화된 통계 테스트
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 사용자 정보 표시 및 통계 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 대문 페이지 로드 ===');
+            loadUserInfo();
+            loadStatistics();
+        });
+
+        // 사용자 정보 로드 및 표시
+        function loadUserInfo() {
+            try {
+                const userData = localStorage.getItem('aicu_user_data');
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    displayUserInfo(user);
+                    console.log('✅ 사용자 정보 로드 완료:', user);
+                } else {
+                    console.log('❌ 사용자 정보 없음');
+                    // 사용자 정보가 없으면 등록 페이지로 이동
+                    window.location.href = '/register';
+                }
+                
+            } catch (error) {
+                console.error('❌ 사용자 정보 로드 실패:', error);
+                // 에러 발생 시 등록 페이지로 이동
+                window.location.href = '/register';
+            }
+        }
+
+        // 사용자 정보 표시
+        function displayUserInfo(user) {
+            const userDetailsElement = document.getElementById('user-details');
+            
+            // D-Day 계산
+            const examDate = new Date(user.exam_date);
+            const today = new Date();
+            const timeDiff = examDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            const dDayText = daysDiff > 0 ? `D-${daysDiff}` : `D+${Math.abs(daysDiff)}`;
+            
+            userDetailsElement.innerHTML = `
+                <div class="font-medium text-gray-800">👤 ${user.name}</div>
+                <div class="text-gray-600">📅 ${user.exam_date} (${dDayText})</div>
+            `;
+        }
+
+        // 통계 데이터 로드
+        function loadStatistics() {
+            try {
+                console.log('=== 대문 페이지 통계 로드 시작 ===');
+                
+                // LocalStorage에서 통계 데이터 로드
+                const statsData = localStorage.getItem('aicu_statistics') || '{}';
+                const stats = JSON.parse(statsData);
+                
+                // 사용자 정보 로드
+                const userData = localStorage.getItem('aicu_user_data') || '{}';
+                const user = JSON.parse(userData);
+                
+                console.log('📊 로드된 통계:', stats);
+                console.log('👤 사용자 정보:', user);
+                
+                // 등록 시점 기반 통계 표시
+                displayRegistrationBasedStatistics(stats, user);
+                
+            } catch (error) {
+                console.error('❌ 통계 로드 실패:', error);
+                displayRegistrationBasedStatistics({}, {});
+            }
+        }
+
+        // 등록 시점 기반 통계 표시 (새로운 시스템과 일치하도록 업데이트)
+                            function displayRegistrationBasedStatistics(stats, user) {
+                        console.log('=== 새로운 통계 시스템 - 홈페이지 통계 표시 시작 ===');
+                        console.log('📊 받은 통계 데이터:', stats);
+                        
+                        // 이어풀기 데이터와 동기화 확인
+                        const progressData = localStorage.getItem('aicu_quiz_progress');
+                        if (progressData) {
+                            const progress = JSON.parse(progressData);
+                            const currentQuestionIndex = progress.currentQuestionIndex || 0;
+                            
+                            // 통계가 이어풀기보다 적으면 이어풀기에 맞춤
+                            if (stats.total_questions_attempted < currentQuestionIndex) {
+                                console.log(`⚠️ 홈페이지: 통계(${stats.total_questions_attempted}) < 이어풀기(${currentQuestionIndex}). 이어풀기에 맞춤`);
+                                stats.total_questions_attempted = currentQuestionIndex;
+                                stats.accuracy_rate = stats.total_correct_answers > 0 
+                                    ? Math.round((stats.total_correct_answers / currentQuestionIndex) * 100)
+                                    : 0;
+                            }
+                        }
+            
+            // 등록 시점 정보 표시
+            const registrationInfo = document.getElementById('registration-info');
+            if (registrationInfo && user.registration_date) {
+                const registrationDate = new Date(user.registration_date);
+                const daysSinceRegistration = Math.floor((new Date() - registrationDate) / (1000 * 60 * 60 * 24));
+                registrationInfo.textContent = `등록일: ${user.registration_date} (${daysSinceRegistration}일째)`;
+            }
+            
+            // 1. 학습 진도 (전체 문제 중 풀이한 문제 비율)
+            const progressRateElement = document.getElementById('progress-rate');
+            if (progressRateElement) {
+                const totalQuestions = 789; // 전체 문제 수
+                const totalAttempted = stats.total_questions_attempted || 0;
+                const progressRate = totalQuestions > 0 
+                    ? ((totalAttempted / totalQuestions) * 100).toFixed(1) 
+                    : 0;
+                progressRateElement.textContent = `${progressRate}% (${totalAttempted}/${totalQuestions})`;
+                console.log(`📊 학습 진도: ${progressRate}% (${totalAttempted}/${totalQuestions})`);
+            }
+            
+            // 2. 총 학습 현황 (전체 풀이 문제 중 정답률)
+            const totalAttemptsElement = document.getElementById('total-attempts');
+            const totalCorrectElement = document.getElementById('total-correct');
+            if (totalAttemptsElement && totalCorrectElement) {
+                const totalAttempted = stats.total_questions_attempted || 0;
+                const totalCorrect = stats.total_correct_answers || 0;
+                totalAttemptsElement.textContent = `시도: ${totalAttempted}`;
+                totalCorrectElement.textContent = totalCorrect;
+                console.log(`📊 총 학습 현황: 시도 ${totalAttempted}, 정답 ${totalCorrect}`);
+            }
+            
+            // 3. 오늘 학습 (오늘 풀이한 총 문제수와 정답률)
+            const todayProgressElement = document.getElementById('today-progress');
+            const todayAccuracyElement = document.getElementById('today-accuracy');
+            if (todayProgressElement && todayAccuracyElement) {
+                const today = new Date().toISOString().split('T')[0];
+                const todayStats = stats.daily_progress?.[today] || { attempted: 0, correct: 0, accuracy: 0 };
+                const todayAttempted = todayStats.attempted || 0;
+                const todayAccuracy = todayStats.accuracy || 0;
+                todayProgressElement.textContent = `${todayAttempted}문제`;
+                todayAccuracyElement.textContent = `${todayAccuracy}%`;
+                console.log(`📊 오늘 학습: ${todayAttempted}문제, 정답률 ${todayAccuracy}%`);
+            }
+            
+            // 4. 전체 정답률 표시 (학습 진도 카드의 정답률)
+            const accuracyRateElement = document.getElementById('accuracy-rate');
+            if (accuracyRateElement) {
+                const accuracyRate = stats.accuracy_rate || 0;
+                accuracyRateElement.textContent = `${accuracyRate}%`;
+                console.log(`📊 전체 정답률: ${accuracyRate}%`);
+            }
+            
+            console.log('✅ 새로운 통계 시스템 - 홈페이지 통계 표시 완료');
+            console.log('📊 최종 표시된 통계:', {
+                total_questions_attempted: stats.total_questions_attempted || 0,
+                total_correct_answers: stats.total_correct_answers || 0,
+                accuracy_rate: stats.accuracy_rate || 0,
+                today_stats: stats.daily_progress?.[new Date().toISOString().split('T')[0]] || { attempted: 0, correct: 0, accuracy: 0 }
+            });
+        }
+
+        // 개발자 도구 함수들
+        function testStatisticsSystem() {
+            console.log('=== 통계 시스템 테스트 시작 ===');
+            const userData = localStorage.getItem('aicu_user_data');
+            const statsData = localStorage.getItem('aicu_statistics');
+            
+            console.log('사용자 데이터:', userData ? JSON.parse(userData) : '없음');
+            console.log('통계 데이터:', statsData ? JSON.parse(statsData) : '없음');
+            
+            alert('통계 시스템 테스트가 콘솔에 출력되었습니다. (F12로 확인)');
+        }
+
+        function debugSession() {
+            console.log('=== 세션 디버그 시작 ===');
+            console.log('LocalStorage 전체 내용:');
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`${key}:`, value);
+            }
+            
+            alert('세션 디버그 정보가 콘솔에 출력되었습니다. (F12로 확인)');
+        }
+
+        function testAdvancedStatistics() {
+            console.log('=== 고도화된 통계 테스트 시작 ===');
+            
+            // 테스트 데이터 생성
+            const testStats = {
+                totalQuestions: 789,
+                solvedQuestions: 150,
+                correctAnswers: 120,
+                totalAttempts: 200,
+                todayAttempts: 25,
+                todayCorrect: 20,
+                categories: {
+                    '보험법': { solved: 50, correct: 40 },
+                    '보험상품': { solved: 30, correct: 25 },
+                    '보험영업': { solved: 40, correct: 35 },
+                    '보험계리': { solved: 30, correct: 20 }
+                },
+                lastUpdated: new Date().toISOString()
+            };
+            
+            // LocalStorage에 테스트 데이터 저장
+            localStorage.setItem('aicu_statistics', JSON.stringify(testStats));
+            
+            // 화면 새로고침
+            location.reload();
+            
+            alert('고도화된 통계 테스트 데이터가 생성되었습니다.');
+        }
+
+
+    </script>
+</body>
+</html>

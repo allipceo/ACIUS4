@@ -411,6 +411,20 @@ def register_blueprints_v3_5(app):
     except ImportError:
         print("❌ 설정 라우트 없음")
     
+        try:
+            from routes.advanced_stats_routes import advanced_stats_bp
+            app.register_blueprint(advanced_stats_bp)
+            print("✅ 고급 통계 라우트 등록")
+        except ImportError:
+            print("❌ 고급 통계 라우트 없음")
+            
+        try:
+            from routes.collaboration_routes import collaboration_bp
+            app.register_blueprint(collaboration_bp)
+            print("✅ 협업 학습 라우트 등록")
+        except ImportError:
+            print("❌ 협업 학습 라우트 없음")
+    
     @app.route('/large-category-learning')
     def large_category_learning():
         return render_template('large_category_learning.html')

@@ -15,6 +15,7 @@
 - ✅ 대분류학습 이어풀기 (4개 카테고리 독립)
 - ✅ 대문 3개 기본 통계 (진도율, 정답률, 금일현황)
 - ✅ 간단한 진도 저장/복원
+- ✅ **사용자 등록 및 관리 시스템**
 
 ### **구현 방식**
 - LocalStorage 기반 (복잡한 statistics.json 없이)
@@ -23,11 +24,430 @@
 
 ---
 
+## 👤 **사용자 등록 해결방안**
+
+### **시작화면 설계 원칙**
+1. **"3초 등록"**: 최소한의 정보로 즉시 시작
+2. **"기존 사용자 우선"**: 등록된 사용자는 바로 홈화면
+3. **"게스트 모드 제공"**: 즉시 체험 가능한 진입 장벽 제거
+4. **"수정 가능"**: 언제든지 정보 변경 가능
+
+### **시작화면 플로우**
+```
+앱 시작 → 사용자 등록 여부 확인 → 분기
+    ↓
+기존 사용자: 바로 대문
+신규 사용자: 등록 선택 화면
+    ↓
+게스트 등록: 기본값으로 즉시 대문
+사용자 등록: 정보 입력 후 대문
+```
+
+### **등록 선택 화면 설계**
+```html
+<!-- 등록 선택 화면 HTML 구조 -->
+<div id="registration-choice-screen" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+        <!-- 로고 및 제목 -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">ACIU S4</h1>
+            <p class="text-gray-600">보험계리사 학습 도우미</p>
+        </div>
+        
+        <!-- 환영 메시지 -->
+        <div class="text-center mb-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">환영합니다!</h2>
+            <p class="text-sm text-gray-600">학습을 시작하기 위해 등록 방법을 선택해주세요.</p>
+        </div>
+        
+        <!-- 등록 선택 버튼들 -->
+        <div class="space-y-4">
+            <!-- 게스트 등록 버튼 -->
+            <button id="guest-registration-btn" 
+                    class="w-full p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                <div class="text-left">
+                    <h3 class="font-semibold text-gray-800">게스트로 시작하기</h3>
+                    <p class="text-sm text-gray-600">기본 설정으로 즉시 학습 시작</p>
+                    <p class="text-xs text-gray-500 mt-1">• 성명: 게스트</p>
+                    <p class="text-xs text-gray-500">• 시험일: 2025년 9월 13일</p>
+                </div>
+            </button>
+            
+            <!-- 사용자 등록 버튼 -->
+            <button id="user-registration-btn" 
+                    class="w-full p-4 border-2 border-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <div class="text-left">
+                    <h3 class="font-semibold text-blue-800">사용자 등록하기</h3>
+                    <p class="text-sm text-blue-600">개인 정보를 입력하여 맞춤 학습</p>
+                    <p class="text-xs text-blue-500 mt-1">• 이름과 시험일 설정</p>
+                    <p class="text-xs text-blue-500">• 개인화된 학습 경험</p>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+```
+
+### **사용자 등록 폼 설계**
+```html
+<!-- 사용자 등록 폼 HTML 구조 -->
+<div id="user-registration-screen" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+        <!-- 헤더 -->
+        <div class="text-center mb-6">
+            <button id="back-to-choice-btn" class="absolute top-4 left-4 text-gray-600 hover:text-gray-800">
+                ← 뒤로가기
+            </button>
+            <h1 class="text-2xl font-bold text-gray-800">사용자 등록</h1>
+            <p class="text-gray-600">개인 정보를 입력해주세요</p>
+        </div>
+        
+        <!-- 사용자 등록 폼 -->
+        <form id="user-registration-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">이름</label>
+                <input type="text" id="userName" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="홍길동">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">시험일</label>
+                <input type="date" id="examDate" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       min="2025-01-01">
+            </div>
+            
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                학습 시작하기
+            </button>
+        </form>
+    </div>
+</div>
+```
+
+### **업데이트된 JavaScript 로직**
+```javascript
+// 앱 시작 시 실행 함수
+function initializeApp() {
+    const existingUser = checkExistingUser();
+    
+    if (existingUser) {
+        // 기존 사용자는 바로 홈화면
+        showHomeScreen();
+    } else {
+        // 신규 사용자는 등록 선택 화면
+        showRegistrationChoiceScreen();
+    }
+}
+
+// 등록 선택 화면 표시
+function showRegistrationChoiceScreen() {
+    hideAllScreens();
+    document.getElementById('registration-choice-screen').style.display = 'flex';
+    
+    // 이벤트 리스너 등록
+    document.getElementById('guest-registration-btn').addEventListener('click', handleGuestRegistration);
+    document.getElementById('user-registration-btn').addEventListener('click', showUserRegistrationScreen);
+}
+
+// 사용자 등록 화면 표시
+function showUserRegistrationScreen() {
+    hideAllScreens();
+    document.getElementById('user-registration-screen').style.display = 'flex';
+    
+    // 이벤트 리스너 등록
+    document.getElementById('back-to-choice-btn').addEventListener('click', showRegistrationChoiceScreen);
+    document.getElementById('user-registration-form').addEventListener('submit', handleUserRegistration);
+}
+
+// 게스트 등록 처리
+function handleGuestRegistration() {
+    const guestData = {
+        userInfo: {
+            registrationDate: '2025-08-12T00:00:00.000Z',
+            userName: '게스트',
+            examDate: '2025-09-13',
+            userType: 'guest'
+        },
+        basicLearning: {
+            lastQuestion: 0,
+            totalAttempted: 0,
+            totalCorrect: 0,
+            todayAttempted: 0,
+            todayCorrect: 0,
+            lastStudyDate: new Date().toISOString().split('T')[0]
+        },
+        largeCategory: {
+            재산보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 197 },
+            특종보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 263 },
+            배상보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 197 },
+            해상보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 132 }
+        }
+    };
+    
+    localStorage.setItem('aicu_progress', JSON.stringify(guestData));
+    showHomeScreen();
+}
+
+// 사용자 등록 처리 함수 (업데이트)
+function handleUserRegistration(event) {
+    event.preventDefault();
+    
+    const userName = document.getElementById('userName').value.trim();
+    const examDate = document.getElementById('examDate').value;
+    
+    // 입력값 검증
+    if (!userName || userName.length < 2) {
+        alert('이름을 2글자 이상 입력해주세요.');
+        return;
+    }
+    
+    if (!examDate) {
+        alert('시험일을 선택해주세요.');
+        return;
+    }
+    
+    // 시험일 유효성 검증 (오늘 이후)
+    const today = new Date();
+    const selectedDate = new Date(examDate);
+    if (selectedDate <= today) {
+        alert('시험일은 오늘 이후로 설정해주세요.');
+        return;
+    }
+    
+    // 사용자 정보 저장
+    const userData = {
+        userInfo: {
+            registrationDate: new Date().toISOString(),
+            userName: userName,
+            examDate: examDate,
+            userType: 'registered'
+        },
+        basicLearning: {
+            lastQuestion: 0,
+            totalAttempted: 0,
+            totalCorrect: 0,
+            todayAttempted: 0,
+            todayCorrect: 0,
+            lastStudyDate: new Date().toISOString().split('T')[0]
+        },
+        largeCategory: {
+            재산보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 197 },
+            특종보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 263 },
+            배상보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 197 },
+            해상보험: { lastQuestion: 0, totalAttempted: 0, totalCorrect: 0, todayAttempted: 0, todayCorrect: 0, totalQuestions: 132 }
+        }
+    };
+    
+    localStorage.setItem('aicu_progress', JSON.stringify(userData));
+    showHomeScreen();
+}
+
+// 기존 사용자 확인 함수 (업데이트)
+function checkExistingUser() {
+    const progress = localStorage.getItem('aicu_progress');
+    if (progress) {
+        const data = JSON.parse(progress);
+        if (data.userInfo && data.userInfo.userName) {
+            return data.userInfo;
+        }
+    }
+    return null;
+}
+
+// 모든 화면 숨기기
+function hideAllScreens() {
+    const screens = [
+        'registration-choice-screen',
+        'user-registration-screen',
+        'home-screen'
+    ];
+    
+    screens.forEach(screenId => {
+        const screen = document.getElementById(screenId);
+        if (screen) screen.style.display = 'none';
+    });
+}
+
+// 홈화면 표시 (업데이트)
+function showHomeScreen() {
+    hideAllScreens();
+    document.getElementById('home-screen').style.display = 'block';
+    
+    // 홈화면 초기화
+    displayUserInfo();
+    updateHomeStatistics();
+    updateContinueButtons();
+}
+
+// 홈화면 사용자 정보 표시 (업데이트)
+function displayUserInfo() {
+    const progress = getProgressData();
+    const user = progress.userInfo;
+    
+    const userTypeBadge = user.userType === 'guest' 
+        ? '<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">게스트</span>'
+        : '<span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs">등록 사용자</span>';
+    
+    const userInfoHTML = `
+        <div class="bg-white p-4 rounded-lg shadow mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="font-bold text-gray-800">${user.userName}님</h3>
+                        ${userTypeBadge}
+                    </div>
+                    <p class="text-sm text-gray-600">시험일: ${user.examDate}</p>
+                    <p class="text-xs text-gray-500">등록일: ${new Date(user.registrationDate).toLocaleDateString()}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="showUserEditModal()" class="text-blue-600 hover:underline text-sm">
+                        정보 수정
+                    </button>
+                    <button onclick="showDataResetModal()" class="text-red-600 hover:underline text-sm">
+                        데이터 초기화
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('user-info-section').innerHTML = userInfoHTML;
+}
+
+// 데이터 초기화 모달
+function showDataResetModal() {
+    const modal = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg max-w-sm w-full mx-4">
+                <h3 class="text-lg font-bold mb-4 text-red-600">데이터 초기화</h3>
+                <p class="text-gray-600 mb-4">모든 학습 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+                <div class="flex space-x-3">
+                    <button onclick="resetAllData()" class="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">
+                        초기화
+                    </button>
+                    <button onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+// 모든 데이터 초기화
+function resetAllData() {
+    localStorage.removeItem('aicu_progress');
+    closeModal();
+    showRegistrationChoiceScreen();
+}
+```
+
+### **사용자 정보 수정 기능**
+```javascript
+// 홈화면에 사용자 정보 표시 및 수정 기능
+function displayUserInfo() {
+    const progress = getProgressData();
+    const user = progress.userInfo;
+    
+    const userInfoHTML = `
+        <div class="bg-white p-4 rounded-lg shadow mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-gray-800">${user.userName}님</h3>
+                    <p class="text-sm text-gray-600">시험일: ${user.examDate}</p>
+                    <p class="text-xs text-gray-500">등록일: ${new Date(user.registrationDate).toLocaleDateString()}</p>
+                </div>
+                <button onclick="showUserEditModal()" class="text-blue-600 hover:underline text-sm">
+                    정보 수정
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('user-info-section').innerHTML = userInfoHTML;
+}
+
+// 사용자 정보 수정 모달
+function showUserEditModal() {
+    const progress = getProgressData();
+    const user = progress.userInfo;
+    
+    const modal = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg max-w-sm w-full mx-4">
+                <h3 class="text-lg font-bold mb-4">사용자 정보 수정</h3>
+                <form id="user-edit-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">이름</label>
+                        <input type="text" id="editUserName" value="${user.userName}" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">시험일</label>
+                        <input type="date" id="editExamDate" value="${user.examDate}" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                            저장
+                        </button>
+                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
+                            취소
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modal);
+    
+    // 수정 폼 이벤트 리스너
+    document.getElementById('user-edit-form').addEventListener('submit', handleUserEdit);
+}
+
+// 사용자 정보 수정 처리
+function handleUserEdit(event) {
+    event.preventDefault();
+    
+    const userName = document.getElementById('editUserName').value.trim();
+    const examDate = document.getElementById('editExamDate').value;
+    
+    // 검증 로직 (등록과 동일)
+    if (!userName || userName.length < 2) {
+        alert('이름을 2글자 이상 입력해주세요.');
+        return;
+    }
+    
+    if (!examDate) {
+        alert('시험일을 선택해주세요.');
+        return;
+    }
+    
+    // 데이터 업데이트
+    const progress = getProgressData();
+    progress.userInfo.userName = userName;
+    progress.userInfo.examDate = examDate;
+    
+    localStorage.setItem('aicu_progress', JSON.stringify(progress));
+    
+    // UI 업데이트
+    closeModal();
+    displayUserInfo();
+}
+```
+
+---
+
 ## 📅 **3일 개발 일정**
 
-### **Day 1: 이어풀기 핵심 로직 (8시간)**
+### **Day 1: 사용자 등록 + 이어풀기 핵심 로직 (8시간)**
 
-#### **오전 (4시간): 데이터 구조 설계**
+#### **오전 (4시간): 사용자 등록 시스템 + 데이터 구조 설계**
 ```javascript
 // localStorage 기반 단순 진도 추적 스키마
 const progressTracker = {
@@ -86,7 +506,7 @@ const progressTracker = {
 };
 ```
 
-#### **오후 (4시간): 핵심 함수 구현**
+#### **오후 (4시간): 사용자 등록 UI + 핵심 함수 구현**
 ```javascript
 // 1. 진도 저장 함수
 function saveProgress(mode, questionId, isCorrect) {
@@ -289,7 +709,7 @@ function updateLargeCategoryStats() {
 
 ### **Day 3: 완성 및 테스트 (8시간)**
 
-#### **오전 (4시간): 이어풀기 UI 완성**
+#### **오전 (4시간): 사용자 정보 표시 + 이어풀기 UI 완성**
 ```javascript
 // 이어풀기 버튼 표시 로직
 function updateContinueButtons() {
@@ -320,6 +740,29 @@ function updateContinueButtons() {
         }
     });
 }
+
+// 홈화면 사용자 정보 표시
+function displayUserInfo() {
+    const progress = getProgressData();
+    const user = progress.userInfo;
+    
+    const userInfoHTML = `
+        <div class="bg-white p-4 rounded-lg shadow mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-gray-800">${user.userName}님</h3>
+                    <p class="text-sm text-gray-600">시험일: ${user.examDate}</p>
+                    <p class="text-xs text-gray-500">등록일: ${new Date(user.registrationDate).toLocaleDateString()}</p>
+                </div>
+                <button onclick="showUserEditModal()" class="text-blue-600 hover:underline text-sm">
+                    정보 수정
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('user-info-section').innerHTML = userInfoHTML;
+}
 ```
 
 #### **오후 (4시간): 통합 테스트 및 버그 수정**
@@ -329,6 +772,7 @@ function updateContinueButtons() {
 ## 🎯 **Level 1 성공 기준**
 
 ### **필수 기능 체크리스트**
+- [ ] 사용자 등록 및 정보 수정 기능
 - [ ] 기본학습 1번부터 789번까지 순차적 이어풀기
 - [ ] 대분류 4개 카테고리별 독립적 이어풀기
 - [ ] 대문 3개 통계 박스 실시간 업데이트
@@ -336,10 +780,13 @@ function updateContinueButtons() {
 - [ ] 날짜 변경 시 오늘 통계 자동 초기화
 
 ### **사용자 시나리오 테스트**
-1. **신규 사용자**: 설정 등록 → 기본학습 1번부터 시작
-2. **기존 사용자**: 앱 시작 → 21번부터 이어풀기
-3. **다음날 접속**: 오늘 통계 0으로 초기화, 누적 통계 유지
-4. **카테고리 전환**: 재산보험 10번까지 → 특종보험 1번부터
+1. **신규 사용자 - 게스트**: 앱 시작 → 등록 선택 화면 → 게스트 등록 → 바로 대문
+2. **신규 사용자 - 등록**: 앱 시작 → 등록 선택 화면 → 사용자 등록 → 정보 입력 → 대문
+3. **기존 사용자**: 앱 시작 → 바로 대문 → 21번부터 이어풀기
+4. **정보 수정**: 대문 → 정보 수정 → 변경사항 반영
+5. **데이터 초기화**: 대문 → 데이터 초기화 → 등록 선택 화면으로 복귀
+6. **다음날 접속**: 오늘 통계 0으로 초기화, 누적 통계 유지
+7. **카테고리 전환**: 재산보험 10번까지 → 특종보험 1번부터
 
 ---
 
