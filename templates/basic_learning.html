@@ -47,8 +47,8 @@
                     </div>
                 </div>
                 
-                <button onclick="goToLargeCategoryMenu()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
-                    대분류메뉴로
+                <button id="navigation-button" onclick="goToHome()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                    홈으로
                 </button>
             </div>
             
@@ -139,6 +139,9 @@
             // 카테고리 정보 확인 및 제목 업데이트
             updateLearningTitle();
             
+            // 레이어별 조건부 버튼 업데이트
+            updateNavigationButton();
+            
             // URL 파라미터 확인 (이어풀기)
             const urlParams = new URLSearchParams(window.location.search);
             const continueMode = urlParams.get('continue');
@@ -185,6 +188,9 @@
             document.getElementById('mode-selection').classList.add('hidden');
             document.getElementById('basic-question-area').classList.remove('hidden');
             
+            // 레이어별 조건부 버튼 업데이트
+            updateNavigationButton();
+            
             // 문제 로딩 및 표시
             if (typeof displayQuestion === 'function') {
                 // 전역 변수 업데이트
@@ -206,11 +212,63 @@
             console.log('🏠 메뉴로 돌아가기');
             document.getElementById('basic-question-area').classList.add('hidden');
             document.getElementById('mode-selection').classList.remove('hidden');
+            
+            // 레이어별 조건부 버튼 업데이트
+            updateNavigationButton();
+        }
+        
+        // 홈으로 가기
+        function goToHome() {
+            window.location.href = '/home';
+        }
+        
+        // 기본학습 메뉴로 가기
+        function goToBasicLearningMenu() {
+            window.location.href = '/basic-learning';
         }
         
         // 대분류 메뉴로 가기
         function goToLargeCategoryMenu() {
             window.location.href = '/large-category-learning';
+        }
+        
+        // 레이어별 조건부 버튼 업데이트
+        function updateNavigationButton() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            const isQuestionMode = !document.getElementById('basic-question-area').classList.contains('hidden');
+            
+            const button = document.getElementById('navigation-button');
+            
+            if (category) {
+                // 대분류학습 모드
+                if (isQuestionMode) {
+                    // 레이어2/3 (문제풀이): 대분류메뉴로
+                    button.textContent = '대분류메뉴로';
+                    button.onclick = goToLargeCategoryMenu;
+                    button.className = 'bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg';
+                } else {
+                    // 레이어1 (대분류 초기): 홈으로
+                    button.textContent = '홈으로';
+                    button.onclick = goToHome;
+                    button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg';
+                }
+            } else {
+                // 기본학습 모드
+                if (isQuestionMode) {
+                    // 레이어2 (문제풀이): 기본학습메뉴로
+                    button.textContent = '기본학습메뉴로';
+                    button.onclick = goToBasicLearningMenu;
+                    button.className = 'bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg';
+                } else {
+                    // 레이어1 (기본학습 초기): 홈으로
+                    button.textContent = '홈으로';
+                    button.onclick = goToHome;
+                    button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg';
+                }
+            }
+            
+            console.log(`🔄 네비게이션 버튼 업데이트: ${button.textContent} (${category ? '대분류학습' : '기본학습'} ${isQuestionMode ? '레이어2/3' : '레이어1'})`);
         }
         
         // 모드 선택 함수들
@@ -220,6 +278,9 @@
             // 메뉴 숨기고 문제 영역 표시
             document.getElementById('mode-selection').classList.add('hidden');
             document.getElementById('basic-question-area').classList.remove('hidden');
+            
+            // 레이어별 조건부 버튼 업데이트
+            updateNavigationButton();
             
             // 모드에 따른 시작 인덱스 설정
             let startIndex = 0;

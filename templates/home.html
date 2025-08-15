@@ -42,26 +42,6 @@
 
         <!-- 주요 학습 현황 카드들 -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            
-        <!-- 예상 점수 및 합격 확률 섹션 -->
-        <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 예상 점수 및 합격 확률</h3>
-            
-            <!-- 전체 상태 -->
-            <div id="overall-status-container" class="mb-6">
-                <!-- 전체 상태가 여기에 표시됩니다 -->
-            </div>
-            
-            <!-- 합격 확률 -->
-            <div id="pass-probability-container" class="mb-6">
-                <!-- 합격 확률이 여기에 표시됩니다 -->
-            </div>
-            
-            <!-- 과목별 예상 점수 -->
-            <div id="predicted-scores-container">
-                <!-- 과목별 예상 점수가 여기에 표시됩니다 -->
-            </div>
-        </div>
             <!-- 학습 진도 -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex items-center justify-between">
@@ -153,6 +133,29 @@
                         설정
                     </a>
                 </div>
+            </div>
+        </div>
+
+        <!-- 예상 점수 및 합격 확률 섹션 (페이지 하단) -->
+        <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 예상 점수 및 합격 확률</h3>
+            
+            <!-- 전체 상태 및 합격 확률 (가로 배치) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 전체 상태 -->
+                <div id="overall-status-container">
+                    <!-- 전체 상태가 여기에 표시됩니다 -->
+                </div>
+                
+                <!-- 합격 확률 -->
+                <div id="pass-probability-container">
+                    <!-- 합격 확률이 여기에 표시됩니다 -->
+                </div>
+            </div>
+            
+            <!-- 과목별 예상 점수 (가로 배치) -->
+            <div id="predicted-scores-container">
+                <!-- 과목별 예상 점수가 여기에 표시됩니다 -->
             </div>
         </div>
 

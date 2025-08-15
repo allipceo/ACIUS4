@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 통계</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/incorrect_analysis.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -73,6 +74,36 @@
                 <div id="recent-activity" class="space-y-3">
                     <!-- 최근 활동이 여기에 동적으로 표시됩니다 -->
                 </div>
+            </div>
+        </div>
+
+        <!-- 오답 분석 섹션 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">🔍 오답 분석 및 개인 맞춤 인사이트</h2>
+            
+            <!-- 오답 분석 요약 -->
+            <div id="incorrect-summary-container" class="mb-6">
+                <!-- 오답 분석 요약이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 위험도별 문제 목록 -->
+            <div id="critical-questions-container" class="mb-6">
+                <!-- 위험도별 문제 목록이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 과목별 분석 -->
+            <div id="subject-analysis-container" class="mb-6">
+                <!-- 과목별 분석이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 개인 맞춤 인사이트 -->
+            <div id="insights-container" class="mb-6">
+                <!-- 개인 맞춤 인사이트가 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 학습 권장사항 -->
+            <div id="recommendations-container" class="mb-6">
+                <!-- 학습 권장사항이 여기에 표시됩니다 -->
             </div>
         </div>
 
@@ -291,5 +322,8 @@
             }
         }
     </script>
+    
+    <!-- Week3 오답 분석 스크립트 -->
+    <script src="/static/js/incorrect_analysis.js"></script>
 </body>
 </html>

@@ -744,3 +744,4 @@ window.predictiveAnalytics = new PredictiveAnalytics();
 console.log('🎯 예측 분석 시스템 모듈 로드 완료');
 
 
+

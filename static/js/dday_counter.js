@@ -29,14 +29,25 @@ class DDayCounter {
             ddayElement.className = `dday-${dday.status}`;
         }
         
-        // 사용자 정보 영역에 표시
+        // D-day 정보만 표시 (사용자 이름 제거)
         const userInfoElement = document.getElementById('user-exam-info');
         if (userInfoElement) {
-            const userData = JSON.parse(localStorage.getItem('aicu_user_data') || '{}');
+            // aicu_user_info에서 시험일 데이터만 가져오기
+            const userInfo = localStorage.getItem('aicu_user_info');
+            let examDate = '2025-09-13';
+            
+            if (userInfo) {
+                try {
+                    const userData = JSON.parse(userInfo);
+                    examDate = userData.exam_date || '2025-09-13';
+                } catch (e) {
+                    console.error('사용자 정보 파싱 오류:', e);
+                }
+            }
+            
             userInfoElement.innerHTML = `
                 <div class="user-info">
-                    <span>👤 ${userData.name || '게스트'}</span>
-                    <span>📅 시험일: ${userData.exam_date || '2025-09-13'} (${dday.display})</span>
+                    <span>📅 시험일: ${examDate} (${dday.display})</span>
                 </div>
             `;
         }

@@ -568,3 +568,4 @@ class RealTimeCommunication {
 window.realTimeCommunication = new RealTimeCommunication();
 
 
+

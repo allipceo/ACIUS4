@@ -377,3 +377,4 @@ def generate_collaboration_report(group_id):
     return jsonify({"success": True, "report": report})
 
 
+
