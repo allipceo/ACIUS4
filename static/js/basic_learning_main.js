@@ -823,3 +823,553 @@ function updateCategoryUI() {
 }
 
 console.log('✅ 완전히 새로 작성된 기본학습 시스템 로드 완료');
+        const jsonData = await response.json();
+
+        log(`✅ JSON 데이터 로드 완료: ${jsonData.questions.length}개 문제`);
+
+        
+
+        // 기본 데이터 필터링
+
+        let filteredQuestions = jsonData.questions.filter(question =>
+
+            question.qcode && question.question && question.answer && question.qcode.trim() !== ''
+
+        );
+
+        
+
+        // 카테고리별 필터링 (카테고리 모드일 때)
+
+        if (isCategoryMode && currentCategory) {
+
+            log(`🔍 ${currentCategory} 카테고리 필터링 시작...`);
+
+            
+
+            // 카테고리별 필터링 로직 (JSON 파일의 layer1 필드 기준)
+
+            filteredQuestions = filteredQuestions.filter(question => {
+
+                const layer1 = question.layer1 || '';
+
+                
+
+                // 정확한 layer1 값으로 필터링
+
+                switch (currentCategory) {
+
+                    case '06재산보험':
+
+                        return layer1 === '06재산보험';
+
+                    case '07특종보험':
+
+                        return layer1 === '07특종보험';
+
+                    case '08배상책임보험':
+
+                        return layer1 === '08배상책임보험';
+
+                    case '09해상보험':
+
+                        return layer1 === '09해상보험';
+
+                    default:
+
+                        return true;
+
+                }
+
+            });
+
+            
+
+            log(`✅ ${currentCategory} 카테고리 필터링 완료: ${filteredQuestions.length}개 문제`);
+
+        }
+
+        
+
+        questionsData = filteredQuestions;
+
+        log(`✅ 최종 필터링 완료: ${questionsData.length}개 문제`);
+
+        log('🎯 문제 로딩 준비 완료!');
+
+        
+
+        return true;
+
+    } catch (error) {
+
+        log(`❌ 문제 로딩 실패: ${error.message}`);
+
+        return false;
+
+    }
+
+}
+
+// 정답 표시 함수 (중복 제거 후 정리)
+function showCorrectAnswer(correctAnswer) {
+    // 선택한 답안과 정답 비교하여 친근한 메시지 생성
+    let message = '';
+    if (selectedAnswer === correctAnswer) {
+        message = `🎉 네, 정답입니다! 정답은 "${correctAnswer}"입니다.`;
+    } else {
+        message = `😅 틀렸습니다... 정답은 "${correctAnswer}"입니다.`;
+    }
+    
+    document.getElementById('correct-answer-text').textContent = message;
+    document.getElementById('correct-answer').classList.remove('hidden');
+    
+    log(`✅ 정답 표시: ${message}`);
+    
+    // 선택한 답안과 정답 비교하여 색상 표시
+    if (selectedAnswer !== null) {
+        const allButtons = document.querySelectorAll('#answer-buttons button');
+        allButtons.forEach(btn => {
+            const btnAnswer = btn.dataset.answer;
+            if (btnAnswer === correctAnswer) {
+                // 정답 버튼을 초록색으로 표시
+                btn.className = btn.className.replace('bg-yellow-400 text-gray-800', 'bg-green-500 text-white');
+                btn.className = btn.className.replace('bg-blue-500 text-white', 'bg-green-500 text-white');
+                btn.className = btn.className.replace('hover:bg-yellow-500', 'hover:bg-green-600');
+                btn.className = btn.className.replace('hover:bg-blue-600', 'hover:bg-green-600');
+            } else if (btnAnswer === selectedAnswer && selectedAnswer !== correctAnswer) {
+                // 오답 선택한 버튼을 빨간색으로 표시
+                btn.className = btn.className.replace('bg-yellow-400 text-gray-800', 'bg-red-500 text-white');
+                btn.className = btn.className.replace('bg-blue-500 text-white', 'bg-red-500 text-white');
+                btn.className = btn.className.replace('hover:bg-yellow-500', 'hover:bg-red-600');
+                btn.className = btn.className.replace('hover:bg-blue-600', 'hover:bg-red-600');
+            }
+        });
+    }
+}
+
+
+
+// 다음 문제 로드
+
+function nextQuestion() {
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+
+        currentQuestionIndex++;
+
+        displayQuestion(currentQuestionIndex);
+
+        
+
+        // 진행상황 저장
+
+        saveProgress();
+
+    } else {
+
+        log('🎉 마지막 문제입니다!');
+
+    }
+
+}
+
+
+
+// 진행상황 저장
+
+function saveProgress() {
+
+    try {
+
+        const progressData = {
+
+            currentQuestionIndex: currentQuestionIndex,
+
+            lastUpdated: new Date().toISOString()
+
+        };
+
+        
+
+        localStorage.setItem('aicu_quiz_progress', JSON.stringify(progressData));
+
+        log(`💾 진행상황 저장: ${currentQuestionIndex + 1}번 문제`);
+
+        
+
+        // 카테고리별 진행상황 저장 (카테고리 모드일 때)
+
+        if (isCategoryMode && currentCategory) {
+
+            const categoryProgressData = localStorage.getItem('aicu_category_progress') || '{}';
+
+            const categoryProgress = JSON.parse(categoryProgressData);
+
+            
+
+            categoryProgress[currentCategory] = {
+
+                currentQuestionIndex: currentQuestionIndex,
+
+                lastUpdated: new Date().toISOString()
+
+            };
+
+            
+
+            localStorage.setItem('aicu_category_progress', JSON.stringify(categoryProgress));
+
+            log(`💾 ${currentCategory} 카테고리 진행상황 저장: ${currentQuestionIndex + 1}번 문제`);
+
+        }
+
+    } catch (error) {
+
+        log(`❌ 진행상황 저장 실패: ${error.message}`);
+
+    }
+
+}
+
+
+
+// 진행상황 복원
+
+function restoreProgress() {
+
+    try {
+
+        if (isCategoryMode && currentCategory) {
+
+            // 카테고리별 진행상황 복원
+
+            const categoryProgressData = localStorage.getItem('aicu_category_progress');
+
+            if (categoryProgressData) {
+
+                const categoryProgress = JSON.parse(categoryProgressData);
+
+                if (categoryProgress[currentCategory]) {
+
+                    currentQuestionIndex = categoryProgress[currentCategory].currentQuestionIndex || 0;
+
+                    log(`🔄 ${currentCategory} 카테고리 진행상황 복원: ${currentQuestionIndex + 1}번 문제`);
+
+                    return;
+
+                }
+
+            }
+
+        }
+
+        
+
+        // 일반 진행상황 복원
+
+        const progressData = localStorage.getItem('aicu_quiz_progress');
+
+        if (progressData) {
+
+            const progress = JSON.parse(progressData);
+
+            currentQuestionIndex = progress.currentQuestionIndex || 0;
+
+            log(`🔄 진행상황 복원: ${currentQuestionIndex + 1}번 문제`);
+
+        } else {
+
+            log('🔄 저장된 진행상황 없음, 1번 문제부터 시작');
+
+        }
+
+    } catch (error) {
+
+        log(`❌ 진행상황 복원 실패: ${error.message}`);
+
+        currentQuestionIndex = 0;
+
+    }
+
+}
+
+
+
+// 이전 문제 로드
+
+function previousQuestion() {
+
+    if (currentQuestionIndex > 0) {
+
+        currentQuestionIndex--;
+
+        displayQuestion(currentQuestionIndex);
+
+    } else {
+
+        log('📌 첫 번째 문제입니다.');
+
+    }
+
+}
+
+
+
+// 정답 확인
+
+function checkAnswer() {
+
+    if (questionsData && questionsData.length > 0 && currentQuestionIndex < questionsData.length) {
+
+        if (selectedAnswer === null) {
+
+            alert('답안을 먼저 선택해주세요!');
+
+            return;
+
+        }
+
+        
+
+        const currentQuestion = questionsData[currentQuestionIndex];
+
+        const isCorrect = selectedAnswer === currentQuestion.answer;
+
+        
+
+        // 새로운 통계 업데이트 함수 호출
+
+        updateStatistics(currentQuestion, selectedAnswer, isCorrect);
+
+        
+
+        showCorrectAnswer(currentQuestion.answer);
+
+        
+
+        // 정답 확인 시 진행상황 저장
+
+        saveProgress();
+
+    }
+
+}
+
+
+
+// 전역 함수로 노출
+
+window.nextQuestion = nextQuestion;
+
+window.previousQuestion = previousQuestion;
+
+window.checkAnswer = checkAnswer;
+
+window.selectAnswer = selectAnswer;
+
+window.displayQuestion = displayQuestion;
+
+
+
+// 페이지 로드 시 초기화 (문제 자동 표시하지 않음)
+
+document.addEventListener('DOMContentLoaded', async function() {
+
+    log('🚀 기본학습 시스템 시작');
+
+    
+
+    // 카테고리 모드 초기화
+
+    initializeCategoryMode();
+
+    
+
+    const success = await loadQuestions();
+
+    
+
+    if (success) {
+
+        log('✅ 초기화 완료 - 문제 풀기 버튼을 클릭하세요!');
+
+        
+
+        // 저장된 진행상황 복원
+
+        restoreProgress();
+
+        
+
+        // 새로운 통계 시스템으로 데이터 로드 및 표시
+
+        loadAndDisplayStatistics();
+
+        // 문제는 자동으로 표시하지 않고, 사용자가 "문제 풀기" 버튼을 클릭할 때 표시
+
+    } else {
+
+        log('❌ 초기화 실패');
+
+    }
+
+});
+
+
+
+// 카테고리 모드 초기화
+
+function initializeCategoryMode() {
+
+    try {
+
+        console.log('🔍 카테고리 모드 초기화...');
+
+        
+
+        // URL 파라미터에서 카테고리 정보 확인
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const categoryFromURL = urlParams.get('category');
+
+        
+
+        if (categoryFromURL) {
+
+            currentCategory = categoryFromURL;
+
+            isCategoryMode = true;
+
+            console.log(`✅ 카테고리 모드 활성화: ${currentCategory}`);
+
+            
+
+            // LocalStorage에도 저장
+
+            localStorage.setItem('aicu_current_category', currentCategory);
+
+            
+
+            // UI 업데이트
+
+            updateCategoryUI();
+
+        } else {
+
+            // LocalStorage에서 카테고리 정보 확인 (이전 방식 호환성)
+
+            const categoryData = localStorage.getItem('aicu_current_category');
+
+            if (categoryData) {
+
+                currentCategory = categoryData;
+
+                isCategoryMode = true;
+
+                console.log(`✅ 카테고리 모드 활성화 (LocalStorage): ${currentCategory}`);
+
+                
+
+                // UI 업데이트
+
+                updateCategoryUI();
+
+            } else {
+
+                console.log('📝 일반 기본학습 모드');
+
+                isCategoryMode = false;
+
+            }
+
+        }
+
+        
+
+    } catch (error) {
+
+        console.error('❌ 카테고리 모드 초기화 실패:', error);
+
+        isCategoryMode = false;
+
+    }
+
+}
+
+
+
+// 카테고리 UI 업데이트
+
+function updateCategoryUI() {
+
+    try {
+
+        // 카테고리 정보 표시
+
+        const categoryInfo = document.getElementById('category-info');
+
+        const categoryProgressInfo = document.getElementById('category-progress-info');
+
+        const currentCategorySpan = document.getElementById('current-category');
+
+        
+
+        if (categoryInfo && categoryProgressInfo && currentCategorySpan) {
+
+            categoryInfo.classList.remove('hidden');
+
+            categoryProgressInfo.classList.remove('hidden');
+
+            categoryInfo.textContent = `📚 ${currentCategory} 카테고리 학습`;
+
+            currentCategorySpan.textContent = currentCategory;
+
+        }
+
+        
+
+        // 상태 업데이트
+
+        const statusElement = document.getElementById('status');
+
+        if (statusElement) {
+
+            statusElement.textContent = `${currentCategory} 카테고리 학습 모드`;
+
+        }
+
+        
+
+    } catch (error) {
+
+        console.error('❌ 카테고리 UI 업데이트 실패:', error);
+
+    }
+
+}
+
+
+
+console.log('✅ 완전히 새로 작성된 기본학습 시스템 로드 완료');
+
+// 페이지 로드 시 자동 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 기본학습 시스템 자동 초기화 시작');
+    
+    // 문제 데이터 로딩
+    loadQuestions().then(() => {
+        console.log('✅ 문제 데이터 로딩 완료');
+        
+        // 첫 번째 문제 표시
+        if (questionsData && questionsData.length > 0) {
+            console.log('📋 첫 번째 문제 표시');
+            displayQuestion(0);
+        } else {
+            console.log('❌ 문제 데이터가 없습니다');
+        }
+    }).catch(error => {
+        console.error('❌ 문제 데이터 로딩 실패:', error);
+    });
+});

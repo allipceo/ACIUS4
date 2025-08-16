@@ -327,24 +327,24 @@ class IncorrectAnalysisManager {
             
             // 오답 분석 생성
             const analysis = this.generateIncorrectAnalysisFromData(stats, incorrectData);
-            
-            // 요약 정보 업데이트
-            this.updateSummary(analysis.summary);
-            
-            // 위험도별 문제 목록 업데이트
-            this.updateCriticalQuestions(analysis.critical_questions);
-            
-            // 과목별 분석 업데이트
-            this.updateSubjectAnalysis(analysis.subject_analysis);
-            
-            // 인사이트 업데이트
-            this.updateInsights(analysis.insights);
-            
-            // 권장사항 업데이트
-            this.updateRecommendations(analysis.recommendations);
-            
+        
+        // 요약 정보 업데이트
+        this.updateSummary(analysis.summary);
+        
+        // 위험도별 문제 목록 업데이트
+        this.updateCriticalQuestions(analysis.critical_questions);
+        
+        // 과목별 분석 업데이트
+        this.updateSubjectAnalysis(analysis.subject_analysis);
+        
+        // 인사이트 업데이트
+        this.updateInsights(analysis.insights);
+        
+        // 권장사항 업데이트
+        this.updateRecommendations(analysis.recommendations);
+        
             console.log('✅ IncorrectAnalysisManager UI 업데이트 완료');
-            return analysis;
+        return analysis;
             
         } catch (error) {
             console.error('❌ IncorrectAnalysisManager UI 업데이트 실패:', error);

@@ -113,8 +113,8 @@
 
                 <!-- 네비게이션 버튼 -->
                 <div class="flex justify-between mt-4">
-                    <button onclick="goBackToMenu()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
-                        메뉴로 돌아가기
+                    <button onclick="previousQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                        이전문제
                     </button>
                     <button onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
                         정답 확인
@@ -177,17 +177,9 @@
                 console.log(`✅ 이전 학습 상태 발견: ${lastLearningState.lastQuestionIndex + 1}번 문제부터 이어풀기`);
                 startContinueMode(lastLearningState.lastQuestionIndex);
             } else {
-                console.log('🔄 처음 시작하는 경우, 이어풀기 버튼 클릭으로 시작');
-                // 이어풀기 버튼 자동 클릭
-                setTimeout(() => {
-                    const continueButton = document.querySelector("button[onclick*='continue']");
-                    if (continueButton) {
-                        continueButton.click();
-                        console.log('✅ 이어풀기 버튼 자동 클릭 완료');
-                    } else {
-                        console.log('⚠️ 이어풀기 버튼을 찾을 수 없습니다');
-                    }
-                }, 1000);
+                console.log('🔄 처음 시작하는 경우, 1번 문제부터 시작');
+                // 바로 문제 로딩 시작
+                startContinueMode(0);
             }
         }
 
@@ -297,14 +289,14 @@
             // 기존 초기화 로직 (필요시 추가)
         }
 
-        // 메뉴로 돌아가기
-        function goBackToMenu() {
-            console.log('🏠 메뉴로 돌아가기');
-            document.getElementById('basic-question-area').classList.add('hidden');
-            document.getElementById('mode-selection').classList.remove('hidden');
-            
-            // 레이어별 조건부 버튼 업데이트
-            updateNavigationButton();
+        // 이전문제로 이동
+        function previousQuestion() {
+            console.log('⬅️ 이전문제로 이동');
+            if (typeof window.previousQuestion === 'function') {
+                window.previousQuestion();
+            } else {
+                console.log('⚠️ previousQuestion 함수를 찾을 수 없습니다');
+            }
         }
         
         // 홈으로 가기
@@ -344,18 +336,10 @@
                     button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg';
                 }
             } else {
-                // 기본학습 모드
-                if (isQuestionMode) {
-                    // 레이어2 (문제풀이): 기본학습메뉴로
-                    button.textContent = '기본학습메뉴로';
-                    button.onclick = goToBasicLearningMenu;
-                    button.className = 'bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg';
-                } else {
-                    // 레이어1 (기본학습 초기): 홈으로
-                    button.textContent = '홈으로';
-                    button.onclick = goToHome;
-                    button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg';
-                }
+                // 기본학습 모드 - 항상 홈으로
+                button.textContent = '홈으로';
+                button.onclick = goToHome;
+                button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg';
             }
             
             console.log(`🔄 네비게이션 버튼 업데이트: ${button.textContent} (${category ? '대분류학습' : '기본학습'} ${isQuestionMode ? '레이어2/3' : '레이어1'})`);

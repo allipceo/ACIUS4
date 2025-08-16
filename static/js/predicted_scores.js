@@ -100,22 +100,22 @@ class PredictedScoresManager {
         try {
             // 예상 점수 계산 (무한 재귀 방지)
             const scores = this.calculateScoresFromData();
-            const probability = this.calculatePassProbability(scores);
+        const probability = this.calculatePassProbability(scores);
             
             console.log('계산된 점수:', scores);
             console.log('계산된 확률:', probability);
-            
-            // 예상 점수 카드 업데이트
-            this.updateScoreCards(scores);
-            
-            // 합격 확률 업데이트
-            this.updatePassProbability(probability);
-            
-            // 전체 상태 업데이트
-            this.updateOverallStatus(scores, probability);
-            
+        
+        // 예상 점수 카드 업데이트
+        this.updateScoreCards(scores);
+        
+        // 합격 확률 업데이트
+        this.updatePassProbability(probability);
+        
+        // 전체 상태 업데이트
+        this.updateOverallStatus(scores, probability);
+        
             console.log('✅ PredictedScoresManager UI 업데이트 완료');
-            return { scores, probability };
+        return { scores, probability };
             
         } catch (error) {
             console.error('❌ PredictedScoresManager UI 업데이트 실패:', error);
@@ -170,20 +170,20 @@ class PredictedScoresManager {
         let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">';
         
         if (scores.subjects && Object.keys(scores.subjects).length > 0) {
-            Object.keys(scores.subjects).forEach(subjectKey => {
-                const subject = scores.subjects[subjectKey];
-                const passClass = subject.isPass ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
-                const passIcon = subject.isPass ? '✅' : '❌';
-                
-                html += `
-                    <div class="score-card ${passClass} border-2 rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold text-lg">${subject.name}</h4>
-                            <span class="text-2xl">${passIcon}</span>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-600">${subject.predictedScore}점</div>
-                            <div class="text-sm text-gray-600">정답률: ${subject.accuracy.toFixed(1)}%</div>
+        Object.keys(scores.subjects).forEach(subjectKey => {
+            const subject = scores.subjects[subjectKey];
+            const passClass = subject.isPass ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
+            const passIcon = subject.isPass ? '✅' : '❌';
+            
+            html += `
+                <div class="score-card ${passClass} border-2 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-lg">${subject.name}</h4>
+                        <span class="text-2xl">${passIcon}</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600">${subject.predictedScore}점</div>
+                        <div class="text-sm text-gray-600">정답률: ${subject.accuracy.toFixed(1)}%</div>
                             <div class="text-xs text-gray-500">(${subject.correct || 0}/${subject.solved || 0})</div>
                         </div>
                     </div>
@@ -203,10 +203,10 @@ class PredictedScoresManager {
                             <div class="text-3xl font-bold text-blue-600">0점</div>
                             <div class="text-sm text-gray-600">정답률: 0.0%</div>
                             <div class="text-xs text-gray-500">(0/0)</div>
-                        </div>
                     </div>
-                `;
-            });
+                </div>
+            `;
+        });
         }
         
         html += '</div>';
