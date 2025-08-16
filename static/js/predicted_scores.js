@@ -18,50 +18,37 @@ class PredictedScoresManager {
         this.init();
     }
     
-    // 예상 점수 계산
+    /**
+     * 예상 점수 계산
+     */
     calculatePredictedScores() {
-        const categoryStats = JSON.parse(localStorage.getItem('aicu_category_statistics') || '{}');
-        const scores = {};
-        let totalScore = 0;
-        let totalWeight = 0;
+        console.log('=== 예상 점수 계산 시작 ===');
         
-        Object.keys(this.subjects).forEach(subjectKey => {
-            const subject = this.subjects[subjectKey];
-            const stats = categoryStats.categories?.[subjectKey] || {};
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 카테고리별 통계 조회
+            const categoryStats = this.getCategoryStatistics();
+            console.log('카테고리별 통계:', categoryStats);
             
-            // 정답률 계산
-            const solved = stats.solved || 0;
-            const correct = stats.correct || 0;
-            const accuracy = solved > 0 ? (correct / solved) * 100 : 0;
+            // 카테고리별 정답률 계산
+            const categoryAccuracies = this.calculateCategoryAccuracy(categoryStats);
+            console.log('카테고리별 정답률:', categoryAccuracies);
             
-            // 예상 점수 계산 (정답률을 100점 만점으로 환산)
-            const predictedScore = Math.round(accuracy);
+            // 예상 점수 계산
+            const predictedScores = this.calculateScores(categoryAccuracies);
+            console.log('예상 점수:', predictedScores);
             
-            scores[subjectKey] = {
-                name: subject.name,
-                total: subject.total,
-                solved: solved,
-                correct: correct,
-                accuracy: accuracy,
-                predictedScore: predictedScore,
-                weight: subject.weight,
-                isPass: predictedScore >= this.passCriteria.subjectMinimum
-            };
+            // 합격 확률 계산
+            const passProbability = this.calculatePassProbability(predictedScores);
+            console.log('합격 확률:', passProbability);
             
-            totalScore += predictedScore * subject.weight;
-            totalWeight += subject.weight;
-        });
-        
-        // 전체 평균 점수
-        const overallAverage = totalWeight > 0 ? totalScore / totalWeight : 0;
-        
-        return {
-            subjects: scores,
-            overallAverage: Math.round(overallAverage),
-            totalSubjects: Object.keys(this.subjects).length,
-            passedSubjects: Object.values(scores).filter(s => s.isPass).length,
-            isOverallPass: overallAverage >= this.passCriteria.overallAverage
-        };
+            // UI 업데이트
+            this.updateDisplay(predictedScores, passProbability);
+            
+            console.log('✅ 예상 점수 계산 완료');
+            
+        } catch (error) {
+            console.error('❌ 예상 점수 계산 실패:', error);
+        }
     }
     
     // 합격 확률 계산
@@ -108,56 +95,134 @@ class PredictedScoresManager {
     
     // UI 업데이트
     updateDisplay() {
-        const scores = this.calculatePredictedScores();
-        const probability = this.calculatePassProbability(scores);
+        console.log('=== PredictedScoresManager UI 업데이트 ===');
         
-        // 예상 점수 카드 업데이트
-        this.updateScoreCards(scores);
+        try {
+            // 예상 점수 계산 (무한 재귀 방지)
+            const scores = this.calculateScoresFromData();
+            const probability = this.calculatePassProbability(scores);
+            
+            console.log('계산된 점수:', scores);
+            console.log('계산된 확률:', probability);
+            
+            // 예상 점수 카드 업데이트
+            this.updateScoreCards(scores);
+            
+            // 합격 확률 업데이트
+            this.updatePassProbability(probability);
+            
+            // 전체 상태 업데이트
+            this.updateOverallStatus(scores, probability);
+            
+            console.log('✅ PredictedScoresManager UI 업데이트 완료');
+            return { scores, probability };
+            
+        } catch (error) {
+            console.error('❌ PredictedScoresManager UI 업데이트 실패:', error);
+        }
+    }
+
+    /**
+     * 데이터에서 직접 점수 계산 (무한 재귀 방지)
+     */
+    calculateScoresFromData() {
+        console.log('=== 데이터에서 직접 점수 계산 ===');
         
-        // 합격 확률 업데이트
-        this.updatePassProbability(probability);
-        
-        // 전체 상태 업데이트
-        this.updateOverallStatus(scores, probability);
-        
-        return { scores, probability };
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 카테고리별 통계 조회
+            const categoryStats = this.getCategoryStatistics();
+            console.log('카테고리별 통계:', categoryStats);
+            
+            // 카테고리별 정답률 계산
+            const categoryAccuracies = this.calculateCategoryAccuracy(categoryStats);
+            console.log('카테고리별 정답률:', categoryAccuracies);
+            
+            // 예상 점수 계산
+            const predictedScores = this.calculateScores(categoryAccuracies);
+            console.log('예상 점수:', predictedScores);
+            
+            return predictedScores;
+            
+        } catch (error) {
+            console.error('❌ 점수 계산 실패:', error);
+            return {
+                subjects: {},
+                overallAverage: 0,
+                totalSubjects: 0,
+                passedSubjects: 0,
+                isOverallPass: false
+            };
+        }
     }
     
     // 예상 점수 카드 업데이트
     updateScoreCards(scores) {
+        console.log('=== 예상 점수 카드 업데이트 ===');
+        
         const scoreContainer = document.getElementById('predicted-scores-container');
-        if (!scoreContainer) return;
+        if (!scoreContainer) {
+            console.warn('⚠️ predicted-scores-container 요소를 찾을 수 없습니다.');
+            return;
+        }
+        
+        console.log('점수 데이터:', scores);
         
         let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">';
         
-        Object.keys(scores.subjects).forEach(subjectKey => {
-            const subject = scores.subjects[subjectKey];
-            const passClass = subject.isPass ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
-            const passIcon = subject.isPass ? '✅' : '❌';
-            
-            html += `
-                <div class="score-card ${passClass} border-2 rounded-lg p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-bold text-lg">${subject.name}</h4>
-                        <span class="text-2xl">${passIcon}</span>
+        if (scores.subjects && Object.keys(scores.subjects).length > 0) {
+            Object.keys(scores.subjects).forEach(subjectKey => {
+                const subject = scores.subjects[subjectKey];
+                const passClass = subject.isPass ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
+                const passIcon = subject.isPass ? '✅' : '❌';
+                
+                html += `
+                    <div class="score-card ${passClass} border-2 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-lg">${subject.name}</h4>
+                            <span class="text-2xl">${passIcon}</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600">${subject.predictedScore}점</div>
+                            <div class="text-sm text-gray-600">정답률: ${subject.accuracy.toFixed(1)}%</div>
+                            <div class="text-xs text-gray-500">(${subject.correct || 0}/${subject.solved || 0})</div>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-600">${subject.predictedScore}점</div>
-                        <div class="text-sm text-gray-600">정답률: ${subject.accuracy.toFixed(1)}%</div>
-                        <div class="text-xs text-gray-500">(${subject.correct}/${subject.solved})</div>
+                `;
+            });
+        } else {
+            // 데이터가 없을 때 기본 카드 표시
+            Object.keys(this.subjects).forEach(subjectKey => {
+                const subject = this.subjects[subjectKey];
+                html += `
+                    <div class="score-card border-red-500 bg-red-50 border-2 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-lg">${subject.name}</h4>
+                            <span class="text-2xl">❌</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600">0점</div>
+                            <div class="text-sm text-gray-600">정답률: 0.0%</div>
+                            <div class="text-xs text-gray-500">(0/0)</div>
+                        </div>
                     </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
         
         html += '</div>';
         scoreContainer.innerHTML = html;
+        console.log('✅ 예상 점수 카드 업데이트 완료');
     }
     
     // 합격 확률 업데이트
     updatePassProbability(probability) {
+        console.log('=== 합격 확률 업데이트 ===');
+        
         const probabilityContainer = document.getElementById('pass-probability-container');
-        if (!probabilityContainer) return;
+        if (!probabilityContainer) {
+            console.warn('⚠️ pass-probability-container 요소를 찾을 수 없습니다.');
+            return;
+        }
         
         const riskClass = `risk-${probability.riskLevel.level}`;
         
@@ -174,12 +239,18 @@ class PredictedScoresManager {
         `;
         
         probabilityContainer.innerHTML = html;
+        console.log('✅ 합격 확률 업데이트 완료');
     }
     
     // 전체 상태 업데이트
     updateOverallStatus(scores, probability) {
+        console.log('=== 전체 상태 업데이트 ===');
+        
         const statusContainer = document.getElementById('overall-status-container');
-        if (!statusContainer) return;
+        if (!statusContainer) {
+            console.warn('⚠️ overall-status-container 요소를 찾을 수 없습니다.');
+            return;
+        }
         
         const statusClass = scores.isOverallPass ? 'status-pass' : 'status-fail';
         const statusIcon = scores.isOverallPass ? '🎉' : '⚠️';
@@ -197,6 +268,110 @@ class PredictedScoresManager {
         `;
         
         statusContainer.innerHTML = html;
+        console.log('✅ 전체 상태 업데이트 완료');
+    }
+    
+    /**
+     * 카테고리별 통계 데이터 조회 (새로운 중앙 데이터 관리 시스템 사용)
+     */
+    getCategoryStatistics() {
+        console.log('=== 카테고리별 통계 데이터 조회 (새로운 시스템) ===');
+        
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 데이터 조회
+            if (window.CentralDataManager && typeof window.CentralDataManager.getAllCategoryData === 'function') {
+                const categoryData = window.CentralDataManager.getAllCategoryData();
+                console.log('✅ 새로운 중앙 데이터 관리 시스템에서 데이터 조회 성공:', categoryData);
+                return categoryData;
+            }
+            
+            // 기존 방식으로 폴백
+            const categoryStats = JSON.parse(localStorage.getItem('aicu_category_statistics') || '{}');
+            console.log('⚠️ 기존 방식으로 폴백:', categoryStats);
+            return categoryStats;
+            
+        } catch (error) {
+            console.error('❌ 카테고리별 통계 데이터 조회 실패:', error);
+            return {};
+        }
+    }
+
+    /**
+     * 카테고리별 정답률 계산 (새로운 데이터 구조 기반)
+     */
+    calculateCategoryAccuracy(categoryData) {
+        console.log('=== 카테고리별 정답률 계산 ===');
+        
+        const accuracies = {};
+        
+        Object.keys(categoryData).forEach(category => {
+            const data = categoryData[category];
+            
+            // 새로운 데이터 구조 처리
+            if (data.total !== undefined && data.correct !== undefined) {
+                accuracies[category] = data.total > 0 ? (data.correct / data.total) * 100 : 0;
+                console.log(`${category}: ${data.correct}/${data.total} = ${accuracies[category].toFixed(1)}%`);
+            }
+            // 기존 데이터 구조 처리
+            else if (data.solved !== undefined && data.correct !== undefined) {
+                accuracies[category] = data.solved > 0 ? (data.correct / data.solved) * 100 : 0;
+                console.log(`${category}: ${data.correct}/${data.solved} = ${accuracies[category].toFixed(1)}%`);
+            }
+            else {
+                accuracies[category] = 0;
+                console.log(`${category}: 데이터 없음 = 0%`);
+            }
+        });
+        
+        console.log('✅ 카테고리별 정답률 계산 완료:', accuracies);
+        return accuracies;
+    }
+
+    /**
+     * 예상 점수 계산 (새로운 데이터 구조 기반)
+     */
+    calculateScores(categoryAccuracies) {
+        console.log('=== 예상 점수 계산 (새로운 구조) ===');
+        
+        const scores = {};
+        let totalScore = 0;
+        let totalWeight = 0;
+        
+        Object.keys(this.subjects).forEach(subjectKey => {
+            const subject = this.subjects[subjectKey];
+            const accuracy = categoryAccuracies[subjectKey] || 0;
+            
+            // 예상 점수 계산 (정답률을 100점 만점으로 환산)
+            const predictedScore = Math.round(accuracy);
+            
+            scores[subjectKey] = {
+                name: subject.name,
+                total: subject.total,
+                accuracy: accuracy,
+                predictedScore: predictedScore,
+                weight: subject.weight,
+                isPass: predictedScore >= this.passCriteria.subjectMinimum
+            };
+            
+            totalScore += predictedScore * subject.weight;
+            totalWeight += subject.weight;
+            
+            console.log(`${subjectKey}: ${accuracy.toFixed(1)}% → ${predictedScore}점 (합격: ${scores[subjectKey].isPass})`);
+        });
+        
+        // 전체 평균 점수
+        const overallAverage = totalWeight > 0 ? totalScore / totalWeight : 0;
+        
+        const result = {
+            subjects: scores,
+            overallAverage: Math.round(overallAverage),
+            totalSubjects: Object.keys(this.subjects).length,
+            passedSubjects: Object.values(scores).filter(s => s.isPass).length,
+            isOverallPass: overallAverage >= this.passCriteria.overallAverage
+        };
+        
+        console.log('✅ 예상 점수 계산 완료:', result);
+        return result;
     }
     
     // 초기화

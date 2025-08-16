@@ -130,11 +130,20 @@
     <!-- 단순화된 JavaScript만 로드 -->
     <script src="/static/js/basic_learning_main.js"></script>
     
+    <!-- 중앙 데이터 관리 시스템 -->
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/compatibility_layer.js"></script>
+    <script src="/static/js/quiz_data_collector.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
+    
     <!-- 메뉴 관련 함수들 -->
     <script>
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             console.log('=== 기본학습 페이지 로드 ===');
+            
+            // 중앙 데이터 관리 시스템 초기화 확인
+            initializeCentralDataSystem();
             
             // 카테고리 정보 확인 및 제목 업데이트
             updateLearningTitle();
@@ -152,10 +161,91 @@
                 // 이어풀기 모드로 바로 시작
                 startContinueMode(parseInt(questionIndex));
             } else {
-                // 일반 모드로 초기화
-                initializeBasicLearning();
+                // 기본학습 자동 시작 (이전문제 이어풀기)
+                autoStartBasicLearning();
             }
         });
+
+        // 기본학습 자동 시작 함수
+        function autoStartBasicLearning() {
+            console.log('🔄 기본학습 자동 시작 (이전문제 이어풀기)');
+            
+            // 중앙 데이터에서 이전 학습 상태 확인
+            const lastLearningState = getLastLearningState();
+            
+            if (lastLearningState && lastLearningState.lastQuestionIndex > 0) {
+                console.log(`✅ 이전 학습 상태 발견: ${lastLearningState.lastQuestionIndex + 1}번 문제부터 이어풀기`);
+                startContinueMode(lastLearningState.lastQuestionIndex);
+            } else {
+                console.log('🔄 처음 시작하는 경우, 이어풀기 버튼 클릭으로 시작');
+                // 이어풀기 버튼 자동 클릭
+                setTimeout(() => {
+                    const continueButton = document.querySelector("button[onclick*='continue']");
+                    if (continueButton) {
+                        continueButton.click();
+                        console.log('✅ 이어풀기 버튼 자동 클릭 완료');
+                    } else {
+                        console.log('⚠️ 이어풀기 버튼을 찾을 수 없습니다');
+                    }
+                }, 1000);
+            }
+        }
+
+        // 이전 학습 상태 가져오기
+        function getLastLearningState() {
+            try {
+                const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+                const currentCategory = localStorage.getItem('aicu_current_category') || '06재산보험';
+                
+                // 기본학습 관련 데이터 확인
+                const basicLearningData = realTimeData['basic_learning'] || {};
+                
+                return {
+                    category: currentCategory,
+                    lastQuestionIndex: basicLearningData.lastQuestionIndex || 0,
+                    totalSolved: basicLearningData.solved || 0,
+                    totalCorrect: basicLearningData.correct || 0
+                };
+            } catch (error) {
+                console.error('❌ 이전 학습 상태 가져오기 실패:', error);
+                return null;
+            }
+        }
+
+        // 중앙 데이터 관리 시스템 초기화
+        function initializeCentralDataSystem() {
+            console.log('=== 중앙 데이터 관리 시스템 초기화 ===');
+            
+            // 중앙 데이터 관리자 확인
+            if (window.CentralDataManager) {
+                console.log('✅ CentralDataManager 확인됨');
+            } else {
+                console.warn('⚠️ CentralDataManager를 찾을 수 없습니다.');
+            }
+            
+            // 호환성 레이어 확인
+            if (window.CompatibilityLayer) {
+                console.log('✅ CompatibilityLayer 확인됨');
+            } else {
+                console.warn('⚠️ CompatibilityLayer를 찾을 수 없습니다.');
+            }
+            
+            // 문제 풀이 데이터 수집기 확인
+            if (window.QuizDataCollector) {
+                console.log('✅ QuizDataCollector 확인됨');
+            } else {
+                console.warn('⚠️ QuizDataCollector를 찾을 수 없습니다.');
+            }
+            
+            // 실시간 동기화 매니저 확인
+            if (window.RealtimeSyncManager) {
+                console.log('✅ RealtimeSyncManager 확인됨');
+            } else {
+                console.warn('⚠️ RealtimeSyncManager를 찾을 수 없습니다.');
+            }
+            
+            console.log('✅ 중앙 데이터 관리 시스템 초기화 완료');
+        }
 
         // 학습 제목 업데이트 함수
         function updateLearningTitle() {
@@ -286,11 +376,10 @@
             let startIndex = 0;
             
             if (mode === 'continue') {
-                // 이어풀기: 저장된 진행상황부터 시작
-                const progressData = localStorage.getItem('aicu_quiz_progress');
-                if (progressData) {
-                    const progress = JSON.parse(progressData);
-                    startIndex = progress.currentQuestionIndex || 0;
+                // 이어풀기: 중앙 데이터에서 이전 학습 상태 확인
+                const lastLearningState = getLastLearningState();
+                if (lastLearningState && lastLearningState.lastQuestionIndex > 0) {
+                    startIndex = lastLearningState.lastQuestionIndex;
                     console.log(`🔄 이어풀기: ${startIndex + 1}번 문제부터 시작`);
                 } else {
                     startIndex = 0;
@@ -306,6 +395,9 @@
                 console.log(`🎲 랜덤풀기: ${startIndex + 1}번 문제부터 시작`);
             }
             
+            // 문제 풀이 시작 이벤트 발생
+            triggerQuizStartEvent(startIndex, mode);
+            
             // 문제 로딩 및 표시
             if (typeof displayQuestion === 'function') {
                 // 전역 변수 업데이트
@@ -314,6 +406,59 @@
                 }
                 displayQuestion(startIndex);
             }
+        }
+
+        // 문제 풀이 시작 이벤트 발생
+        function triggerQuizStartEvent(questionIndex, mode) {
+            console.log('=== 문제 풀이 시작 이벤트 발생 ===');
+            
+            const quizStartData = {
+                questionId: `basic_${questionIndex}`,
+                category: 'basic_learning',
+                mode: mode,
+                questionIndex: questionIndex,
+                timestamp: new Date().toISOString(),
+                pageUrl: window.location.href
+            };
+            
+            // 문제 풀이 시작 이벤트 발생
+            const event = new CustomEvent('quizStarted', {
+                detail: quizStartData
+            });
+            
+            document.dispatchEvent(event);
+            console.log('✅ 문제 풀이 시작 이벤트 발생 완료:', quizStartData);
+        }
+
+        // 문제 풀이 완료 데이터 수집 함수
+        function collectQuizCompletionData(questionId, isCorrect, userAnswer, correctAnswer) {
+            console.log('=== 문제 풀이 완료 데이터 수집 ===');
+            
+            const quizData = {
+                questionId: questionId,
+                category: 'basic_learning',
+                isCorrect: isCorrect,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer,
+                timestamp: new Date().toISOString(),
+                pageUrl: window.location.href
+            };
+            
+            // 중앙 데이터 관리자로 전송
+            if (window.CentralDataManager && typeof window.CentralDataManager.recordQuizResult === 'function') {
+                window.CentralDataManager.recordQuizResult(
+                    quizData.questionId,
+                    quizData.category,
+                    quizData.isCorrect,
+                    quizData.userAnswer,
+                    quizData.correctAnswer
+                );
+                console.log('✅ 문제 풀이 완료 데이터 중앙 관리자로 전송 완료');
+            } else {
+                console.warn('⚠️ CentralDataManager를 찾을 수 없습니다.');
+            }
+            
+            return quizData;
         }
     </script>
 </body>

@@ -185,16 +185,27 @@
             `;
         }
 
-        // 통계 데이터 로드
+        // 통계 데이터 로드 (중앙 시스템 사용)
         function loadStatistics() {
             try {
-                // LocalStorage에서 통계 데이터 로드
-                const statsData = localStorage.getItem('aicu_statistics') || '{}';
-                const stats = JSON.parse(statsData);
+                console.log('=== 통계 페이지 - 중앙 시스템 데이터 로드 ===');
+                
+                // 중앙 데이터 관리 시스템에서 데이터 로드
+                let centralData = null;
+                
+                if (window.CentralDataManager && window.CentralDataManager.instance) {
+                    centralData = window.CentralDataManager.instance.getAllCategoryData();
+                    console.log('✅ 중앙 시스템에서 데이터 로드:', centralData);
+                } else {
+                    // 중앙 시스템이 없으면 직접 LocalStorage에서 로드
+                    const realTimeData = localStorage.getItem('aicu_real_time_data') || '{}';
+                    centralData = JSON.parse(realTimeData);
+                    console.log('⚠️ 직접 LocalStorage에서 데이터 로드:', centralData);
+                }
                 
                 // 기본값 설정
                 const defaultStats = {
-                    totalQuestions: 0,
+                    totalQuestions: 789,
                     solvedQuestions: 0,
                     correctAnswers: 0,
                     studyTime: 0,
@@ -202,15 +213,18 @@
                     recentActivity: []
                 };
                 
-                const finalStats = { ...defaultStats, ...stats };
+                // 중앙 시스템 데이터를 통계 형식으로 변환
+                const stats = convertCentralDataToStats(centralData, defaultStats);
+                
+                console.log('📊 변환된 통계 데이터:', stats);
                 
                 // 통계 표시
-                displayStatistics(finalStats);
+                displayStatistics(stats);
                 
             } catch (error) {
                 console.error('❌ 통계 로드 실패:', error);
                 displayStatistics({
-                    totalQuestions: 0,
+                    totalQuestions: 789,
                     solvedQuestions: 0,
                     correctAnswers: 0,
                     studyTime: 0,
@@ -218,6 +232,52 @@
                     recentActivity: []
                 });
             }
+        }
+
+        // 중앙 시스템 데이터를 통계 형식으로 변환
+        function convertCentralDataToStats(centralData, defaultStats) {
+            const stats = { ...defaultStats };
+            
+            if (centralData && centralData.categories) {
+                let totalSolved = 0;
+                let totalCorrect = 0;
+                const categories = {};
+                
+                // 카테고리별 데이터 변환
+                for (const [categoryKey, data] of Object.entries(centralData.categories)) {
+                    const categoryName = mapCategoryKeyToName(categoryKey);
+                    
+                    if (data.total > 0) {
+                        categories[categoryName] = {
+                            solved: data.total,
+                            correct: data.correct,
+                            accuracy: data.accuracy
+                        };
+                        
+                        totalSolved += data.total;
+                        totalCorrect += data.correct;
+                    }
+                }
+                
+                stats.solvedQuestions = totalSolved;
+                stats.correctAnswers = totalCorrect;
+                stats.categories = categories;
+                
+                console.log(`📊 변환 결과: 총 ${totalSolved}문제, ${totalCorrect}정답`);
+            }
+            
+            return stats;
+        }
+
+        // 카테고리 키를 이름으로 매핑
+        function mapCategoryKeyToName(categoryKey) {
+            const mapping = {
+                '06재산보험': '재산보험',
+                '07특종보험': '특종보험',
+                '08배상책임보험': '배상책임보험',
+                '09해상보험': '해상보험'
+            };
+            return mapping[categoryKey] || categoryKey;
         }
 
         // 통계 표시
@@ -244,18 +304,36 @@
         function displayCategoryStats(categories) {
             const categoryStatsElement = document.getElementById('category-stats');
             
-            if (Object.keys(categories).length === 0) {
+            // 올바른 4개 카테고리만 필터링 (대문과 일치)
+            const validCategories = ['06재산보험', '07특종보험', '08배상책임보험', '09해상보험'];
+            const categoryNames = {
+                '06재산보험': '재산보험',
+                '07특종보험': '특종보험',
+                '08배상책임보험': '배상책임보험',
+                '09해상보험': '해상보험'
+            };
+            
+            const filteredCategories = {};
+            
+            for (const category of validCategories) {
+                if (categories[category]) {
+                    filteredCategories[category] = categories[category];
+                }
+            }
+            
+            if (Object.keys(filteredCategories).length === 0) {
                 categoryStatsElement.innerHTML = '<p class="text-gray-500">아직 카테고리별 데이터가 없습니다.</p>';
                 return;
             }
             
             let html = '';
-            for (const [category, data] of Object.entries(categories)) {
+            for (const [category, data] of Object.entries(filteredCategories)) {
                 const accuracy = data.solved > 0 ? Math.round((data.correct / data.solved) * 100) : 0;
+                const displayName = categoryNames[category] || category;
                 html += `
                     <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                         <div>
-                            <div class="font-medium">${category}</div>
+                            <div class="font-medium">${displayName}</div>
                             <div class="text-sm text-gray-600">${data.solved}문제 풀이</div>
                         </div>
                         <div class="text-right">

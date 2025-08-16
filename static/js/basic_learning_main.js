@@ -126,6 +126,10 @@ function updateStatisticsDisplay(stats) {
     try {
         console.log('📊 통계 표시 업데이트 시작:', stats);
 
+        // 중앙 데이터에서 기본학습 통계 가져오기
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+        const basicLearningData = realTimeData['basic_learning'] || {};
+
         let totalQuestions, totalAttempted, totalCorrect, accuracyRate;
 
         if (isCategoryMode && currentCategory) {
@@ -141,20 +145,20 @@ function updateStatisticsDisplay(stats) {
             
             console.log(`📊 카테고리 모드: ${currentCategory} 통계`);
         } else {
-            // 일반 모드: 전체 통계 표시
+            // 일반 모드: 중앙 데이터의 기본학습 통계 표시
             totalQuestions = 789;
-            totalAttempted = stats.total_questions_attempted || 0;
-            totalCorrect = stats.total_correct_answers || 0;
-            accuracyRate = stats.accuracy_rate || 0;
+            totalAttempted = basicLearningData.solved || 0;
+            totalCorrect = basicLearningData.correct || 0;
+            accuracyRate = basicLearningData.accuracy || 0;
             
-            console.log('📊 일반 모드: 전체 통계');
+            console.log('📊 일반 모드: 중앙 데이터 기본학습 통계');
         }
         
-        // 오늘 통계 계산
+        // 오늘 통계 계산 (중앙 데이터 사용)
         const today = new Date().toISOString().split('T')[0];
-        const todayStats = stats.daily_progress?.[today] || { attempted: 0, correct: 0, accuracy: 0 };
-        const todayAttempted = todayStats.attempted || 0;
-        const todayAccuracy = todayStats.accuracy || 0;
+        const todayData = basicLearningData.daily_progress?.[today] || { solved: 0, correct: 0 };
+        const todayAttempted = todayData.solved || 0;
+        const todayAccuracy = todayData.solved > 0 ? (todayData.correct / todayData.solved * 100).toFixed(1) : 0;
         
         // 진행률 계산
         const progressRate = totalQuestions > 0 
@@ -631,13 +635,93 @@ function checkAnswer() {
         const currentQuestion = questionsData[currentQuestionIndex];
         const isCorrect = selectedAnswer === currentQuestion.answer;
         
-        // 새로운 통계 업데이트 함수 호출
+        console.log('=== 기본학습 정답 확인 ===');
+        console.log('문제:', currentQuestion.qcode, '사용자 답안:', selectedAnswer, '정답:', currentQuestion.answer, '정답여부:', isCorrect);
+        
+        // 중앙 데이터 관리자로 결과 전송
+        if (window.CentralDataManager && typeof window.CentralDataManager.recordQuizResult === 'function') {
+            window.CentralDataManager.recordQuizResult(
+                currentQuestion.qcode || `basic_${currentQuestionIndex}`,
+                'basic_learning',
+                isCorrect,
+                selectedAnswer,
+                currentQuestion.answer
+            );
+            console.log('✅ 기본학습 중앙 데이터 업데이트 완료');
+        } else {
+            console.warn('⚠️ CentralDataManager를 찾을 수 없습니다.');
+        }
+        
+        // 기본학습 상태 저장
+        saveBasicLearningState(currentQuestionIndex, isCorrect);
+        
+        // 새로운 통계 업데이트 함수 호출 (기존 호환성 유지)
         updateStatistics(currentQuestion, selectedAnswer, isCorrect);
         
         showCorrectAnswer(currentQuestion.answer);
         
         // 정답 확인 시 진행상황 저장
         saveProgress();
+    }
+}
+
+// 기본학습 상태 저장 함수
+function saveBasicLearningState(questionIndex, isCorrect) {
+    try {
+        console.log('=== 기본학습 상태 저장 ===');
+        
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+        
+        if (!realTimeData['basic_learning']) {
+            realTimeData['basic_learning'] = {
+                solved: 0,
+                correct: 0,
+                accuracy: 0,
+                daily_progress: {},
+                lastQuestionIndex: 0
+            };
+        }
+        
+        // 마지막 문제 인덱스 업데이트
+        realTimeData['basic_learning'].lastQuestionIndex = questionIndex;
+        
+        // 학습 통계 업데이트
+        realTimeData['basic_learning'].solved++;
+        if (isCorrect) {
+            realTimeData['basic_learning'].correct++;
+        }
+        realTimeData['basic_learning'].accuracy = (realTimeData['basic_learning'].correct / realTimeData['basic_learning'].solved * 100).toFixed(1);
+        
+        // 일일 진행률 업데이트
+        const today = new Date().toISOString().split('T')[0];
+        if (!realTimeData['basic_learning'].daily_progress[today]) {
+            realTimeData['basic_learning'].daily_progress[today] = {
+                solved: 0,
+                correct: 0
+            };
+        }
+        
+        realTimeData['basic_learning'].daily_progress[today].solved++;
+        if (isCorrect) {
+            realTimeData['basic_learning'].daily_progress[today].correct++;
+        }
+        
+        localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
+        
+        // 이벤트 발생
+        const event = new CustomEvent('basicLearningStateUpdated', {
+            detail: {
+                category: 'basic_learning',
+                questionIndex: questionIndex,
+                isCorrect: isCorrect
+            }
+        });
+        
+        document.dispatchEvent(event);
+        console.log('✅ 기본학습 상태 저장 완료');
+        
+    } catch (error) {
+        console.error('❌ 기본학습 상태 저장 실패:', error);
     }
 }
 

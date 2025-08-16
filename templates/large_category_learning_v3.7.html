@@ -120,12 +120,57 @@
         </div>
     </div>
 
+    <!-- 중앙 데이터 관리 시스템 -->
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/compatibility_layer.js"></script>
+    <script src="/static/js/quiz_data_collector.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
+    
     <script>
         // 페이지 로드 시 통계 표시
         document.addEventListener('DOMContentLoaded', function() {
             console.log('=== 대분류 학습 페이지 v3.7 로드 ===');
+            
+            // 중앙 데이터 관리 시스템 초기화 확인
+            initializeCentralDataSystem();
+            
             loadCategoryStatistics();
         });
+
+        // 중앙 데이터 관리 시스템 초기화
+        function initializeCentralDataSystem() {
+            console.log('=== 중앙 데이터 관리 시스템 초기화 ===');
+            
+            // 중앙 데이터 관리자 확인
+            if (window.CentralDataManager) {
+                console.log('✅ CentralDataManager 확인됨');
+            } else {
+                console.warn('⚠️ CentralDataManager를 찾을 수 없습니다.');
+            }
+            
+            // 호환성 레이어 확인
+            if (window.CompatibilityLayer) {
+                console.log('✅ CompatibilityLayer 확인됨');
+            } else {
+                console.warn('⚠️ CompatibilityLayer를 찾을 수 없습니다.');
+            }
+            
+            // 문제 풀이 데이터 수집기 확인
+            if (window.QuizDataCollector) {
+                console.log('✅ QuizDataCollector 확인됨');
+            } else {
+                console.warn('⚠️ QuizDataCollector를 찾을 수 없습니다.');
+            }
+            
+            // 실시간 동기화 매니저 확인
+            if (window.RealtimeSyncManager) {
+                console.log('✅ RealtimeSyncManager 확인됨');
+            } else {
+                console.warn('⚠️ RealtimeSyncManager를 찾을 수 없습니다.');
+            }
+            
+            console.log('✅ 중앙 데이터 관리 시스템 초기화 완료');
+        }
 
         // 카테고리별 통계 로드 (98번 문서 기반)
         function loadCategoryStatistics() {
@@ -234,6 +279,9 @@
             try {
                 console.log(`=== ${category} 카테고리 학습 시작 ===`);
                 
+                // 카테고리 학습 시작 이벤트 발생
+                triggerCategoryLearningStartEvent(category);
+                
                 // 현재 카테고리 정보 저장
                 localStorage.setItem('aicu_current_category', category);
                 
@@ -256,6 +304,26 @@
                 console.error(`❌ ${category} 카테고리 학습 시작 실패:`, error);
                 alert('학습을 시작하는데 실패했습니다.');
             }
+        }
+
+        // 카테고리 학습 시작 이벤트 발생
+        function triggerCategoryLearningStartEvent(category) {
+            console.log('=== 카테고리 학습 시작 이벤트 발생 ===');
+            
+            const categoryLearningData = {
+                category: category,
+                learningType: 'large_category',
+                timestamp: new Date().toISOString(),
+                pageUrl: window.location.href
+            };
+            
+            // 카테고리 학습 시작 이벤트 발생
+            const event = new CustomEvent('categoryLearningStarted', {
+                detail: categoryLearningData
+            });
+            
+            document.dispatchEvent(event);
+            console.log('✅ 카테고리 학습 시작 이벤트 발생 완료:', categoryLearningData);
         }
 
         // 카테고리 진도 초기화

@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/dday_counter.css">
     <link rel="stylesheet" href="/static/css/predicted_scores.css">
+    <link rel="stylesheet" href="/static/css/incorrect_analysis.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -157,6 +158,11 @@
             <div id="predicted-scores-container">
                 <!-- 과목별 예상 점수가 여기에 표시됩니다 -->
             </div>
+            
+            <!-- 오답 분석 및 개인 맞춤 인사이트 -->
+            <div id="incorrect-analysis-container" class="mt-8">
+                <!-- 오답 분석이 여기에 표시됩니다 -->
+            </div>
         </div>
 
         <!-- 개발자 도구 섹션 -->
@@ -175,6 +181,30 @@
                         class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
                     📊 고도화된 통계 테스트
                 </button>
+                <button onclick="testLearningPatternAnalysis()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🧠 학습 패턴 분석 테스트
+                </button>
+                <button onclick="testPersonalizedRecommendation()" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎯 개인 맞춤 추천 테스트
+                </button>
+                                  <button onclick="testPerformanceOptimization()" 
+                          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      ⚡ 성능 최적화 테스트
+                  </button>
+                  <button onclick="testFinalIntegration()" 
+                          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      🔍 최종 통합 테스트
+                  </button>
+                  <button onclick="testDocumentation()" 
+                          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      📚 문서화 테스트
+                  </button>
+                  <button onclick="testDataMigration()" 
+                          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      🔄 데이터 마이그레이션 테스트
+                  </button>
             </div>
         </div>
     </div>
@@ -358,35 +388,250 @@
             alert('세션 디버그 정보가 콘솔에 출력되었습니다. (F12로 확인)');
         }
 
+        // 고도화된 통계 테스트
         function testAdvancedStatistics() {
             console.log('=== 고도화된 통계 테스트 시작 ===');
             
-            // 테스트 데이터 생성
-            const testStats = {
-                totalQuestions: 789,
-                solvedQuestions: 150,
-                correctAnswers: 120,
-                totalAttempts: 200,
-                todayAttempts: 25,
-                todayCorrect: 20,
-                categories: {
-                    '보험법': { solved: 50, correct: 40 },
-                    '보험상품': { solved: 30, correct: 25 },
-                    '보험영업': { solved: 40, correct: 35 },
-                    '보험계리': { solved: 30, correct: 20 }
-                },
-                lastUpdated: new Date().toISOString()
-            };
-            
-            // LocalStorage에 테스트 데이터 저장
-            localStorage.setItem('aicu_statistics', JSON.stringify(testStats));
-            
-            // 화면 새로고침
-            location.reload();
-            
-            alert('고도화된 통계 테스트 데이터가 생성되었습니다.');
+            try {
+                // 고급 통계 관리자 상태 확인
+                if (window.advancedStatisticsManager) {
+                    const status = window.advancedStatisticsManager.getSystemStatus();
+                    console.log('📊 고급 통계 관리자 상태:', status);
+                    
+                    // 통계 데이터 내보내기 테스트
+                    const exportData = window.advancedStatisticsManager.exportStatisticsData();
+                    console.log('📊 내보낸 통계 데이터:', exportData);
+                    
+                    // 모든 통계 업데이트 테스트
+                    window.advancedStatisticsManager.updateAllStatistics();
+                    
+                    alert('✅ 고도화된 통계 테스트 완료!\n\n콘솔에서 상세 결과를 확인하세요.');
+                } else {
+                    console.error('❌ 고급 통계 관리자를 찾을 수 없습니다.');
+                    alert('❌ 고급 통계 관리자를 찾을 수 없습니다.');
+                }
+                
+            } catch (error) {
+                console.error('❌ 고도화된 통계 테스트 실패:', error);
+                alert('❌ 고도화된 통계 테스트 실패: ' + error.message);
+            }
         }
 
+        // 학습 패턴 분석 테스트
+        function testLearningPatternAnalysis() {
+            console.log('=== 학습 패턴 분석 테스트 시작 ===');
+            
+            try {
+                // 학습 패턴 분석기 상태 확인
+                if (window.learningPatternAnalyzer) {
+                    const status = window.learningPatternAnalyzer.getSystemStatus();
+                    console.log('📊 학습 패턴 분석기 상태:', status);
+                    
+                    // 패턴 데이터 조회
+                    const patternData = window.learningPatternAnalyzer.getPatternData();
+                    console.log('📊 패턴 데이터:', patternData);
+                    
+                    // 분석 결과 조회
+                    const analysisResults = window.learningPatternAnalyzer.getAnalysisResults();
+                    console.log('📊 분석 결과:', analysisResults);
+                    
+                    // 학습 패턴 분석 실행
+                    const newAnalysis = window.learningPatternAnalyzer.analyzeLearningPatterns();
+                    console.log('📊 새로운 분석 결과:', newAnalysis);
+                    
+                    alert('✅ 학습 패턴 분석 테스트 완료!\n\n콘솔에서 상세 결과를 확인하세요.');
+                } else {
+                    console.error('❌ 학습 패턴 분석기를 찾을 수 없습니다.');
+                    alert('❌ 학습 패턴 분석기를 찾을 수 없습니다.');
+                }
+                
+            } catch (error) {
+                console.error('❌ 학습 패턴 분석 테스트 실패:', error);
+                alert('❌ 학습 패턴 분석 테스트 실패: ' + error.message);
+            }
+        }
+
+                            // 개인 맞춤 추천 시스템 테스트
+                      function testPersonalizedRecommendation() {
+                          console.log('=== 개인 맞춤 추천 시스템 테스트 시작 ===');
+                          
+                          try {
+                              // 개인 맞춤 추천 시스템 상태 확인
+                              if (window.personalizedRecommendationSystem) {
+                                  const status = window.personalizedRecommendationSystem.getSystemStatus();
+                                  console.log('📊 개인 맞춤 추천 시스템 상태:', status);
+                                  
+                                  // 사용자 프로필 조회
+                                  const userProfile = window.personalizedRecommendationSystem.getUserProfile();
+                                  console.log('📊 사용자 프로필:', userProfile);
+                                  
+                                  // 추천 결과 조회
+                                  const recommendations = window.personalizedRecommendationSystem.getRecommendations();
+                                  console.log('📊 기존 추천 결과:', recommendations);
+                                  
+                                  // 새로운 추천 생성
+                                  const newRecommendations = window.personalizedRecommendationSystem.generateRecommendations();
+                                  console.log('📊 새로운 추천 결과:', newRecommendations);
+                                  
+                                  // 추천 요청 이벤트 발생
+                                  const event = new CustomEvent('recommendationRequested', {
+                                      detail: { type: 'test', category: 'all' }
+                                  });
+                                  document.dispatchEvent(event);
+                                  
+                                  alert('✅ 개인 맞춤 추천 시스템 테스트 완료!\n\n콘솔에서 상세 결과를 확인하세요.');
+                              } else {
+                                  console.error('❌ 개인 맞춤 추천 시스템을 찾을 수 없습니다.');
+                                  alert('❌ 개인 맞춤 추천 시스템을 찾을 수 없습니다.');
+                              }
+                              
+                          } catch (error) {
+                              console.error('❌ 개인 맞춤 추천 시스템 테스트 실패:', error);
+                              alert('❌ 개인 맞춤 추천 시스템 테스트 실패: ' + error.message);
+                          }
+                      }
+
+                    // 성능 최적화 테스트
+                      function testPerformanceOptimization() {
+                          console.log('=== 성능 최적화 테스트 시작 ===');
+                          
+                          try {
+                              // 성능 최적화 시스템 상태 확인
+                              if (window.performanceOptimizer) {
+                                  const status = window.performanceOptimizer.getSystemStatus();
+                                  console.log('📊 성능 최적화 시스템 상태:', status);
+                                  
+                                  // 성능 최적화 테스트 실행
+                                  const testResult = window.performanceOptimizer.testPerformanceOptimization();
+                                  console.log('📊 성능 최적화 테스트 결과:', testResult);
+                                  
+                                  // 성능 리포트 생성
+                                  const report = window.performanceOptimizer.generatePerformanceReport();
+                                  console.log('📊 성능 리포트:', report);
+                                  
+                                  alert('✅ 성능 최적화 테스트 완료!\n\n콘솔에서 상세 결과를 확인하세요.');
+                              } else {
+                                  console.error('❌ 성능 최적화 시스템을 찾을 수 없습니다.');
+                                  alert('❌ 성능 최적화 시스템을 찾을 수 없습니다.');
+                              }
+                              
+                          } catch (error) {
+                              console.error('❌ 성능 최적화 테스트 실패:', error);
+                              alert('❌ 성능 최적화 테스트 실패: ' + error.message);
+                          }
+                      }
+
+                    // 최종 통합 테스트
+                      function testFinalIntegration() {
+                          console.log('=== 최종 통합 테스트 시작 ===');
+                          
+                          try {
+                              // 최종 통합 테스트 관리자 상태 확인
+                              if (window.integrationTestManager) {
+                                  const status = window.integrationTestManager.getSystemStatus();
+                                  console.log('📊 최종 통합 테스트 관리자 상태:', status);
+                                  
+                                  // 최종 통합 테스트 실행
+                                  const testResult = window.integrationTestManager.testFinalIntegration();
+                                  console.log('📊 최종 통합 테스트 결과:', testResult);
+                                  
+                                  if (testResult.success) {
+                                      alert('✅ 최종 통합 테스트 완료!\n\n모든 테스트가 성공적으로 통과했습니다.\n콘솔에서 상세 결과를 확인하세요.');
+                                  } else {
+                                      alert('⚠️ 최종 통합 테스트 완료!\n\n일부 테스트에서 문제가 발견되었습니다.\n콘솔에서 상세 결과를 확인하세요.');
+                                  }
+                              } else {
+                                  console.error('❌ 최종 통합 테스트 관리자를 찾을 수 없습니다.');
+                                  alert('❌ 최종 통합 테스트 관리자를 찾을 수 없습니다.');
+                              }
+                              
+                          } catch (error) {
+                              console.error('❌ 최종 통합 테스트 실패:', error);
+                              alert('❌ 최종 통합 테스트 실패: ' + error.message);
+                          }
+                      }
+
+                    // 문서화 테스트
+                      function testDocumentation() {
+                          console.log('=== 문서화 테스트 시작 ===');
+                          
+                          try {
+                              // 문서화 관리자 상태 확인
+                              if (window.documentationManager) {
+                                  const status = window.documentationManager.getSystemStatus();
+                                  console.log('📊 문서화 관리자 상태:', status);
+                                  
+                                  // 문서 생성
+                                  const docResult = window.documentationManager.generateDocumentation();
+                                  console.log('📊 문서 생성 결과:', docResult);
+                                  
+                                  // 문서화 테스트 실행
+                                  const testResult = window.documentationManager.testDocumentation();
+                                  console.log('📊 문서화 테스트 결과:', testResult);
+                                  
+                                  // 모든 문서 목록 조회
+                                  const allDocs = window.documentationManager.getAllDocuments();
+                                  console.log('📊 모든 문서 목록:', allDocs);
+                                  
+                                  if (testResult.success && testResult.allPassed) {
+                                      alert('✅ 문서화 테스트 완료!\n\n모든 문서가 성공적으로 생성되었습니다.\n콘솔에서 상세 결과를 확인하세요.');
+                                  } else {
+                                      alert('⚠️ 문서화 테스트 완료!\n\n일부 문서에서 문제가 발견되었습니다.\n콘솔에서 상세 결과를 확인하세요.');
+                                  }
+                              } else {
+                                  console.error('❌ 문서화 관리자를 찾을 수 없습니다.');
+                                  alert('❌ 문서화 관리자를 찾을 수 없습니다.');
+                              }
+                              
+                          } catch (error) {
+                              console.error('❌ 문서화 테스트 실패:', error);
+                              alert('❌ 문서화 테스트 실패: ' + error.message);
+                          }
+                      }
+
+        // 데이터 마이그레이션 테스트
+        function testDataMigration() {
+            console.log('=== 데이터 마이그레이션 테스트 시작 ===');
+            
+            try {
+                // 마이그레이션 매니저 상태 확인
+                if (window.DataMigrationManager) {
+                    console.log('✅ DataMigrationManager 발견');
+                    
+                    // 마이그레이션 상태 확인
+                    const migrationStatus = window.DataMigrationManager.checkMigrationStatus();
+                    console.log('📊 마이그레이션 상태:', migrationStatus);
+                    
+                    if (migrationStatus) {
+                        alert('✅ 마이그레이션 성공!\n\n유효한 데이터가 중앙 시스템에 있습니다.\n콘솔에서 상세 결과를 확인하세요.');
+                    } else {
+                        const shouldForceMigration = confirm('❌ 마이그레이션 실패!\n\n중앙 시스템에 데이터가 없습니다.\n강제 마이그레이션을 실행하시겠습니까?');
+                        
+                        if (shouldForceMigration) {
+                            console.log('🔄 강제 마이그레이션 실행...');
+                            window.DataMigrationManager.forceMigration();
+                            
+                            // 마이그레이션 후 상태 재확인
+                            setTimeout(() => {
+                                const newStatus = window.DataMigrationManager.checkMigrationStatus();
+                                if (newStatus) {
+                                    alert('✅ 강제 마이그레이션 성공!\n\n이제 모든 페이지에서 데이터가 정상적으로 표시될 것입니다.');
+                                } else {
+                                    alert('❌ 강제 마이그레이션 실패!\n\n콘솔에서 오류를 확인하세요.');
+                                }
+                            }, 1000);
+                        }
+                    }
+                } else {
+                    console.error('❌ DataMigrationManager를 찾을 수 없습니다.');
+                    alert('❌ DataMigrationManager를 찾을 수 없습니다.');
+                }
+                
+            } catch (error) {
+                console.error('❌ 데이터 마이그레이션 테스트 실패:', error);
+                alert('❌ 데이터 마이그레이션 테스트 실패: ' + error.message);
+            }
+        }
 
     </script>
     
@@ -396,5 +641,31 @@
     <script src="/static/js/guest_mode_defaults.js"></script>
     <script src="/static/js/dday_counter.js"></script>
     <script src="/static/js/predicted_scores.js"></script>
+    <!-- Week3 고급통계 스크립트 -->
+    <script src="/static/js/incorrect_analysis.js"></script>
+    <!-- 중앙 데이터 관리자 -->
+    <script src="/static/js/central_data_manager.js"></script>
+    
+    <!-- 데이터 마이그레이션 매니저 -->
+    <script src="/static/js/data_migration_manager.js"></script>
+    
+    <!-- 호환성 레이어 -->
+    <script src="/static/js/compatibility_layer.js"></script>
+    <!-- 문제 풀이 데이터 수집 어댑터 -->
+    <script src="/static/js/quiz_data_collector.js"></script>
+    <!-- 실시간 데이터 동기화 매니저 -->
+    <script src="/static/js/realtime_sync_manager.js"></script>
+    <!-- 고급 통계 기능 통합 관리자 -->
+    <script src="/static/js/advanced_statistics_manager.js"></script>
+    <!-- 학습 패턴 분석 관리자 -->
+    <script src="/static/js/learning_pattern_analyzer.js"></script>
+                    <!-- 개인 맞춤 추천 시스템 -->
+                <script src="/static/js/personalized_recommendation_system.js"></script>
+                <!-- 성능 최적화 및 안정성 강화 시스템 -->
+                <script src="/static/js/performance_optimizer.js"></script>
+                <!-- 최종 통합 테스트 및 검증 관리자 -->
+                <script src="/static/js/integration_test_manager.js"></script>
+                <!-- 문서화 및 배포 준비 관리자 -->
+                <script src="/static/js/documentation_manager.js"></script>
 </body>
 </html>

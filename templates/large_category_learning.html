@@ -8,91 +8,112 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <!-- 헤더 -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">🎯 대분류 학습</h1>
-            <p class="text-gray-600">카테고리별 학습을 통해 체계적으로 준비하세요</p>
+        <!-- 상단 헤더 -->
+        <div class="flex justify-between items-center mb-8">
+            <!-- 좌측: 사용자 정보 -->
+            <div class="flex items-center space-x-4">
+                <div class="text-left">
+                    <div class="text-sm text-gray-600">이름: <span id="user-name" class="font-medium text-gray-800">로딩 중...</span></div>
+                    <div class="text-sm text-gray-600">유형: <span id="user-type" class="font-medium text-gray-800">로딩 중...</span></div>
+                </div>
+            </div>
+            
+            <!-- 중앙: 제목 -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🎯 대분류 학습</h1>
+                <p class="text-gray-600">카테고리별 학습을 통해 체계적으로 준비하세요</p>
+            </div>
+            
+            <!-- 우측: 홈으로 버튼 -->
+            <div>
+                <a href="/home" 
+                   class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🏠 홈으로
+                </a>
+            </div>
         </div>
 
-        <!-- 사용자 정보 -->
-        <div id="user-info" class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">👤 현재 사용자</h2>
-            <div id="user-details" class="space-y-2">
-                <!-- 사용자 정보가 여기에 동적으로 표시됩니다 -->
-                    </div>
+        <!-- D-Day 카운터 -->
+        <div class="text-center mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-4 inline-block">
+                <div class="flex items-center space-x-4">
+                    <h3 class="text-lg font-bold text-gray-800">📅 시험까지 남은 시간</h3>
+                    <div id="dday-counter" class="text-2xl font-bold text-red-600"></div>
                 </div>
+            </div>
+        </div>
                 
         <!-- 카테고리 선택 -->
-        <div class="max-w-4xl mx-auto mb-8">
+        <div class="max-w-6xl mx-auto mb-8">
             <h3 class="text-xl font-bold text-gray-800 mb-4">📚 카테고리 선택</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- 보험법 -->
+            <div class="grid grid-cols-4 gap-4">
+                <!-- 재산보험 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                     <div class="text-center">
-                        <div class="text-4xl mb-4">⚖️</div>
-                        <h4 class="text-lg font-bold text-blue-800 mb-2">보험법</h4>
-                        <p class="text-gray-600 mb-4">보험 관련 법규 및 제도</p>
+                        <div class="text-4xl mb-4">🏠</div>
+                        <h4 class="text-lg font-bold text-blue-800 mb-2">재산보험</h4>
+                        <p class="text-gray-600 mb-4">재산 관련 보험 문제</p>
                         <div class="text-sm text-gray-500 mb-4">
-                            <div>총 문제: <span class="font-medium">200문제</span></div>
-                            <div>진도: <span id="progress-보험법">0%</span></div>
-                            <div>정답률: <span id="accuracy-보험법">0%</span></div>
+                            <div>총 문제: <span class="font-medium">169문제</span></div>
+                            <div>진도: <span id="progress-재산보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-재산보험">0%</span></div>
                         </div>
-                        <button onclick="startCategoryLearning('보험법')" 
+                        <button onclick="startCategoryLearning('재산보험')" 
                                 class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                             학습 시작
                         </button>
                     </div>
                 </div>
                 
-                <!-- 보험상품 -->
+                <!-- 특종보험 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                     <div class="text-center">
-                        <div class="text-4xl mb-4">📋</div>
-                        <h4 class="text-lg font-bold text-green-800 mb-2">보험상품</h4>
-                        <p class="text-gray-600 mb-4">다양한 보험상품의 특징</p>
+                        <div class="text-4xl mb-4">🚗</div>
+                        <h4 class="text-lg font-bold text-green-800 mb-2">특종보험</h4>
+                        <p class="text-gray-600 mb-4">특수 종목 보험 문제</p>
                         <div class="text-sm text-gray-500 mb-4">
-                            <div>총 문제: <span class="font-medium">200문제</span></div>
-                            <div>진도: <span id="progress-보험상품">0%</span></div>
-                            <div>정답률: <span id="accuracy-보험상품">0%</span></div>
+                            <div>총 문제: <span class="font-medium">182문제</span></div>
+                            <div>진도: <span id="progress-특종보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-특종보험">0%</span></div>
                         </div>
-                        <button onclick="startCategoryLearning('보험상품')" 
+                        <button onclick="startCategoryLearning('특종보험')" 
                                 class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
                             학습 시작
                         </button>
                     </div>
                 </div>
                 
-                <!-- 보험영업 -->
+                <!-- 배상책임보험 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                     <div class="text-center">
-                        <div class="text-4xl mb-4">💼</div>
-                        <h4 class="text-lg font-bold text-purple-800 mb-2">보험영업</h4>
-                        <p class="text-gray-600 mb-4">보험 영업 및 고객 관리</p>
+                        <div class="text-4xl mb-4">⚖️</div>
+                        <h4 class="text-lg font-bold text-yellow-800 mb-2">배상책임보험</h4>
+                        <p class="text-gray-600 mb-4">배상 책임 보험 문제</p>
                         <div class="text-sm text-gray-500 mb-4">
-                            <div>총 문제: <span class="font-medium">200문제</span></div>
-                            <div>진도: <span id="progress-보험영업">0%</span></div>
-                            <div>정답률: <span id="accuracy-보험영업">0%</span></div>
+                            <div>총 문제: <span class="font-medium">268문제</span></div>
+                            <div>진도: <span id="progress-배상책임보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-배상책임보험">0%</span></div>
                         </div>
-                        <button onclick="startCategoryLearning('보험영업')" 
-                                class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="startCategoryLearning('배상책임보험')" 
+                                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors">
                             학습 시작
                         </button>
                     </div>
                 </div>
                 
-                <!-- 보험계리 -->
+                <!-- 해상보험 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                     <div class="text-center">
-                        <div class="text-4xl mb-4">🧮</div>
-                        <h4 class="text-lg font-bold text-orange-800 mb-2">보험계리</h4>
-                        <p class="text-gray-600 mb-4">보험료 계산 및 위험 관리</p>
+                        <div class="text-4xl mb-4">🚢</div>
+                        <h4 class="text-lg font-bold text-purple-800 mb-2">해상보험</h4>
+                        <p class="text-gray-600 mb-4">해상 관련 보험 문제</p>
                         <div class="text-sm text-gray-500 mb-4">
-                            <div>총 문제: <span class="font-medium">189문제</span></div>
-                            <div>진도: <span id="progress-보험계리">0%</span></div>
-                            <div>정답률: <span id="accuracy-보험계리">0%</span></div>
+                            <div>총 문제: <span class="font-medium">170문제</span></div>
+                            <div>진도: <span id="progress-해상보험">0%</span></div>
+                            <div>정답률: <span id="accuracy-해상보험">0%</span></div>
                         </div>
-                        <button onclick="startCategoryLearning('보험계리')" 
-                                class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="startCategoryLearning('해상보험')" 
+                                class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
                             학습 시작
                         </button>
                     </div>
@@ -101,39 +122,118 @@
         </div>
     </div>
 
-        <!-- 학습 통계 -->
-        <div class="max-w-4xl mx-auto mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">📊 카테고리별 학습 통계</h3>
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="category-stats">
-                    <!-- 카테고리별 통계가 여기에 동적으로 표시됩니다 -->
-                </div>
+    <!-- 문제 풀이 모듈 컨테이너 (처음에는 숨김) -->
+    <div id="problem-module-container" class="hidden max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+        <!-- 카테고리 정보 및 진도 표시 -->
+        <div class="flex justify-between items-center mb-4 p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-4">
+                <h3 id="problem-category-title" class="text-lg font-bold text-gray-800">카테고리: <span id="current-category-name">로딩 중...</span></h3>
+                <span class="text-gray-600">|</span>
+                <span id="problem-progress" class="text-sm text-gray-600">진도: <span id="current-progress">0 / 0 (0%)</span></span>
             </div>
+            <button onclick="hideProblemModule()" class="text-gray-500 hover:text-gray-700">
+                <span class="text-xl">✕</span>
+            </button>
         </div>
 
-        <!-- 액션 버튼들 -->
-        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">🚀 액션</h3>
-            <div class="space-y-3">
-                <button onclick="resetCategoryProgress()" 
-                        class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
-                    📊 카테고리 진도 초기화
+        <!-- 문제 풀이 모듈 -->
+        <div id="problem-module" class="mb-4">
+            <!-- 문제 내용이 여기에 동적으로 로드됨 -->
+        </div>
+
+        <!-- 문제 풀이 컨트롤 버튼들 -->
+        <div class="flex justify-between items-center">
+            <!-- 좌측: 이전/정답확인/다음 버튼 -->
+            <div class="flex space-x-2">
+                <button id="btn-prev" onclick="previousQuestion()" 
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    ← 이전문제
                 </button>
-                <a href="/home" 
-                   class="block w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-center">
-                    🏠 대문으로 돌아가기
-                </a>
+                <button id="btn-check" onclick="checkAnswer()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    ✓ 정답확인
+                </button>
+                <button id="btn-next" onclick="nextQuestion()" 
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    다음문제 →
+                </button>
+            </div>
+
+            <!-- 우측: 처음부터/랜덤 풀기 버튼 -->
+            <div class="flex space-x-2">
+                <button onclick="startFromBeginning()" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔄 처음부터풀기
+                </button>
+                <button onclick="startRandomMode()" 
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎲 랜덤풀기
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- 액션 버튼들 -->
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">🚀 액션</h3>
+        <div class="flex space-x-4">
+            <button onclick="resetCategoryProgress()" 
+                    class="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                📊 카테고리 진도 초기화
+            </button>
+            <a href="/" 
+               class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-center">
+                🏠 대문으로 돌아가기
+            </a>
+        </div>
+    </div>
+
+    <!-- 시스템 스크립트 로드 -->
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
+
     <script>
         // 페이지 로드 시 사용자 정보 및 통계 표시
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== 대분류 학습 페이지 로드 ===');
+            console.log('=== 대분류 학습 페이지 로드 (SPA 방식) ===');
+            
+            // localStorage 용량 초과 문제 해결
+            clearExcessiveData();
+            
             loadUserInfo();
             loadCategoryStatistics();
+            
+            // 실시간 데이터 업데이트 이벤트 리스너
+            document.addEventListener('dataUpdated', function() {
+                console.log('데이터 업데이트 이벤트 수신 - 통계 재로드');
+                loadCategoryStatistics();
+            });
         });
+
+        // localStorage 용량 초과 문제 해결
+        function clearExcessiveData() {
+            try {
+                // 큰 데이터 항목들 정리
+                const keysToCheck = [
+                    'aicu_quiz_results',
+                    'aicu_category_statistics', 
+                    'aicu_real_time_data',
+                    'aicu_incorrect_statistics'
+                ];
+                
+                keysToCheck.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data && data.length > 1000000) { // 1MB 이상이면 정리
+                        console.log(`큰 데이터 정리: ${key} (${data.length} bytes)`);
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                console.log('localStorage 정리 완료');
+            } catch (error) {
+                console.error('localStorage 정리 실패:', error);
+            }
+        }
 
         // 사용자 정보 로드 및 표시
         function loadUserInfo() {
@@ -158,54 +258,66 @@
 
         // 사용자 정보 표시
         function displayUserInfo(user) {
-            const userDetailsElement = document.getElementById('user-details');
+            const userNameElement = document.getElementById('user-name');
+            const userTypeElement = document.getElementById('user-type');
+            const ddayCounterElement = document.getElementById('dday-counter');
             
-            // D-Day 계산
+            // 사용자 이름과 유형 표시
+            userNameElement.textContent = user.name;
+            userTypeElement.textContent = user.user_type === 'guest' ? '게스트' : '실제 사용자';
+            userTypeElement.className = user.user_type === 'guest' ? 'font-medium text-blue-600' : 'font-medium text-green-600';
+            
+            // D-Day 계산 및 표시
             const examDate = new Date(user.exam_date);
             const today = new Date();
             const timeDiff = examDate.getTime() - today.getTime();
             const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
             const dDayText = daysDiff > 0 ? `D-${daysDiff}` : `D+${Math.abs(daysDiff)}`;
             
-            userDetailsElement.innerHTML = `
-                <div class="flex justify-between">
-                    <span class="font-medium">이름:</span>
-                    <span>${user.name}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="font-medium">유형:</span>
-                    <span class="${user.user_type === 'guest' ? 'text-blue-600' : 'text-green-600'}">
-                        ${user.user_type === 'guest' ? '게스트' : '실제 사용자'}
-                    </span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="font-medium">D-Day:</span>
-                    <span class="font-bold ${daysDiff <= 30 ? 'text-red-600' : 'text-blue-600'}">${dDayText}</span>
-                </div>
-            `;
+            ddayCounterElement.textContent = dDayText;
+            ddayCounterElement.className = `text-2xl font-bold ${daysDiff <= 30 ? 'text-red-600' : 'text-blue-600'}`;
         }
 
-        // 카테고리별 통계 로드
+                // 카테고리별 통계 로드 (중앙 시스템 데이터 사용)
         function loadCategoryStatistics() {
             try {
-                console.log('=== 대분류 학습 통계 로드 시작 ===');
-                const statsData = localStorage.getItem('aicu_statistics') || '{}';
-                const stats = JSON.parse(statsData);
+                console.log('=== 대분류 학습 통계 로드 시작 (중앙 시스템) ===');
                 
-                // 4개 카테고리만 처리 (JSON 파일 기준)
-                const categories = ['06재산보험', '07특종보험', '08배상책임보험', '09해상보험'];
+                // 중앙 시스템에서 데이터 로드
+                let centralData = null;
+                if (window.CentralDataManager) {
+                    const realTimeData = localStorage.getItem('aicu_real_time_data') || '{}';
+                    centralData = JSON.parse(realTimeData);
+                    console.log('✅ 중앙 시스템에서 데이터 로드:', centralData);
+                } else {
+                    const realTimeData = localStorage.getItem('aicu_real_time_data') || '{}';
+                    centralData = JSON.parse(realTimeData);
+                    console.log('⚠️ 직접 LocalStorage에서 데이터 로드:', centralData);
+                }
+                
+                // 4개 카테고리만 처리 (사용자 표시명 기준)
+                const categories = ['재산보험', '특종보험', '배상책임보험', '해상보험'];
                 const categoryTotals = {
-                    '06재산보험': 169,
-                    '07특종보험': 182,
-                    '08배상책임보험': 268,
-                    '09해상보험': 170
+                    '재산보험': 169,
+                    '특종보험': 182,
+                    '배상책임보험': 268,
+                    '해상보험': 170
                 };
                 
                 // 각 카테고리별 통계 표시
                 categories.forEach(category => {
-                    const categoryStats = stats.categories && stats.categories[category] 
-                        ? stats.categories[category] 
-                        : { solved: 0, correct: 0, total: categoryTotals[category] };
+                    let categoryStats = { total: 0, correct: 0, solved: 0 };
+                    
+                    // 중앙 시스템 데이터에서 카테고리 정보 추출 (매핑된 이름 사용)
+                    const mappedCategory = mapCategoryToSystemName(category);
+                    if (centralData && centralData.categories && centralData.categories[mappedCategory]) {
+                        const centralCategoryData = centralData.categories[mappedCategory];
+                        categoryStats = {
+                            total: categoryTotals[category],
+                            correct: centralCategoryData.correct || 0,
+                            solved: centralCategoryData.total || 0
+                        };
+                    }
                     
                     const progress = categoryStats.total > 0 
                         ? Math.round((categoryStats.solved / categoryStats.total) * 100) 
@@ -221,74 +333,312 @@
                     if (progressElement) progressElement.textContent = `${progress}%`;
                     if (accuracyElement) accuracyElement.textContent = `${accuracy}%`;
                     
-                    console.log(`📊 ${category}: 진행률 ${progress}%, 정답률 ${accuracy}%`);
+                    console.log(`📊 ${category}: 진행률 ${progress}%, 정답률 ${accuracy}% (푼 문제: ${categoryStats.solved}, 정답: ${categoryStats.correct})`);
                 });
-                
-                // 상세 통계 표시
-                displayCategoryStats(stats.categories || {});
-                
             } catch (error) {
                 console.error('❌ 카테고리 통계 로드 실패:', error);
             }
         }
 
-        // 카테고리별 상세 통계 표시
-        function displayCategoryStats(categories) {
-            const statsContainer = document.getElementById('category-stats');
-            
-            // 4개 카테고리만 필터링
-            const validCategories = ['보험법', '보험상품', '보험영업', '보험계리'];
-            const filteredCategories = {};
-            
-            for (const category of validCategories) {
-                if (categories[category]) {
-                    filteredCategories[category] = categories[category];
-                }
-            }
-            
-            if (Object.keys(filteredCategories).length === 0) {
-                statsContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center">아직 카테고리별 데이터가 없습니다.</p>';
-                return;
-            }
-            
-            let html = '';
-            for (const [category, data] of Object.entries(filteredCategories)) {
-                const progress = data.total > 0 ? Math.round((data.solved / data.total) * 100) : 0;
-                const accuracy = data.solved > 0 ? Math.round((data.correct / data.solved) * 100) : 0;
-                
-                html += `
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <h4 class="font-bold text-gray-800 mb-2">${category}</h4>
-                        <div class="space-y-1 text-sm">
-                            <div class="flex justify-between">
-                                <span>진도:</span>
-                                <span class="font-medium">${progress}% (${data.solved}/${data.total})</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>정답률:</span>
-                                <span class="font-medium text-blue-600">${accuracy}%</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>정답:</span>
-                                <span class="font-medium text-green-600">${data.correct}문제</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            statsContainer.innerHTML = html;
+        // 카테고리명 매핑 함수 (사용자 표시명 → 시스템 내부명)
+        function mapCategoryToSystemName(categoryName) {
+            const categoryMapping = {
+                '재산보험': '06재산보험',
+                '특종보험': '07특종보험',
+                '배상책임보험': '08배상책임보험',
+                '해상보험': '09해상보험'
+            };
+            return categoryMapping[categoryName] || categoryName;
         }
 
-        // 카테고리 학습 시작
+
+
+
+
+        // 카테고리 학습 시작 (새로운 SPA 방식)
         function startCategoryLearning(category) {
-            console.log(`=== ${category} 카테고리 학습 시작 ===`);
+            console.log(`=== ${category} 카테고리 학습 시작 (SPA 방식) ===`);
             
             // 현재 카테고리 정보를 LocalStorage에 저장
             localStorage.setItem('aicu_current_category', category);
             
-            // 기본 학습 페이지로 이동 (카테고리 필터링 적용)
-            window.location.href = '/basic-learning';
+            // 문제 풀이 모듈 표시
+            showProblemModule(category);
+        }
+
+        // 문제 풀이 모듈 표시
+        function showProblemModule(category) {
+            console.log('showProblemModule 호출됨:', category);
+            
+            const container = document.getElementById('problem-module-container');
+            const categoryName = document.getElementById('current-category-name');
+            
+            if (!container) {
+                console.error('problem-module-container를 찾을 수 없습니다!');
+                alert('문제 모듈 컨테이너를 찾을 수 없습니다!');
+                return;
+            }
+            
+            if (!categoryName) {
+                console.error('current-category-name을 찾을 수 없습니다!');
+                alert('카테고리명 요소를 찾을 수 없습니다!');
+                return;
+            }
+            
+            // 카테고리명 표시
+            categoryName.textContent = category;
+            
+            // 모듈 표시
+            container.classList.remove('hidden');
+            console.log('문제 모듈이 표시되었습니다.');
+            
+            // 첫 번째 문제 로드
+            loadQuestion(category, 0);
+            
+            // 페이지 스크롤을 모듈로 이동
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 문제 풀이 모듈 숨기기
+        function hideProblemModule() {
+            const container = document.getElementById('problem-module-container');
+            container.classList.add('hidden');
+        }
+
+        // 문제 로드
+        function loadQuestion(category, questionIndex) {
+            console.log(`문제 로드: ${category} - ${questionIndex}번`);
+            
+            // 카테고리 매핑
+            const systemCategory = mapCategoryToSystemName(category);
+            console.log(`카테고리 매핑: ${category} → ${systemCategory}`);
+            
+            // 실제 API 호출로 문제 데이터 로드
+            fetch(`/api/questions?category=${encodeURIComponent(systemCategory)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.questions && data.questions.length > 0) {
+                        const question = data.questions[questionIndex] || data.questions[0];
+                        displayQuestion(question, category, questionIndex);
+                        updateProgress(category, questionIndex, data.questions.length);
+                        console.log(`✅ 문제 로드 성공: ${data.questions.length}개 문제`);
+                    } else {
+                        displayNoQuestions(category);
+                        console.log(`⚠️ ${category} 카테고리에 문제가 없습니다.`);
+                    }
+                })
+                .catch(error => {
+                    console.error('문제 로드 실패:', error);
+                    // API 실패 시 테스트 문제 표시
+                    const testQuestion = {
+                        id: 1,
+                        question: `${category} 테스트 문제입니다. 이것은 임시 문제입니다.`,
+                        answer: 'O',
+                        type: '진위형'
+                    };
+                    displayQuestion(testQuestion, category, questionIndex);
+                    updateProgress(category, questionIndex, 100);
+                });
+        }
+
+        // 문제 표시 (JSON 구조 그대로 사용)
+        function displayQuestion(question, category, questionIndex) {
+            const module = document.getElementById('problem-module');
+            
+            // 문제 타입에 따라 다른 UI 표시
+            const isTrueFalse = question.type === '진위형';
+            
+            module.innerHTML = `
+                <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm text-gray-600">문제 ${questionIndex + 1}</span>
+                        <span class="text-sm text-gray-600">${category} (${question.type})</span>
+                    </div>
+                    <div class="text-lg font-medium mb-6 whitespace-pre-line">${question.question || '문제 내용을 불러올 수 없습니다.'}</div>
+                    
+                    <div class="space-y-3">
+                        ${isTrueFalse ? `
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="O" class="mr-3">
+                                <span>맞음 (O)</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="X" class="mr-3">
+                                <span>틀림 (X)</span>
+                            </label>
+                        ` : `
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="1" class="mr-3">
+                                <span>1번</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="2" class="mr-3">
+                                <span>2번</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="3" class="mr-3">
+                                <span>3번</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answer" value="4" class="mr-3">
+                                <span>4번</span>
+                            </label>
+                        `}
+                    </div>
+                </div>
+            `;
+            
+            // 현재 문제 정보 저장
+            window.currentQuestion = {
+                id: question.qcode || questionIndex,
+                category: category,
+                index: questionIndex,
+                correctAnswer: question.answer || 'O',
+                type: question.type || '진위형'
+            };
+            
+            console.log('문제 표시 완료:', {
+                question: question.question?.substring(0, 50) + '...',
+                type: question.type,
+                correctAnswer: question.answer
+            });
+        }
+
+        // 진행률 업데이트
+        function updateProgress(category, currentIndex, totalQuestions) {
+            const progressElement = document.getElementById('current-progress');
+            const percentage = totalQuestions > 0 ? Math.round((currentIndex / totalQuestions) * 100) : 0;
+            progressElement.textContent = `${currentIndex + 1} / ${totalQuestions} (${percentage}%)`;
+        }
+
+        // 정답 확인
+        function checkAnswer() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            
+            if (!selectedAnswer) {
+                alert('답을 선택해주세요.');
+                return;
+            }
+
+            if (!window.currentQuestion) {
+                alert('문제 정보를 찾을 수 없습니다.');
+                return;
+            }
+
+            const userAnswer = selectedAnswer.value;
+            const isCorrect = userAnswer === window.currentQuestion.correctAnswer;
+            
+            console.log('정답 확인:', {
+                userAnswer: userAnswer,
+                correctAnswer: window.currentQuestion.correctAnswer,
+                isCorrect: isCorrect,
+                questionType: window.currentQuestion.type
+            });
+            
+            // 중앙 데이터 관리자에 결과 전송 (시스템 카테고리명 사용)
+            if (window.CentralDataManager && typeof window.CentralDataManager.recordQuizResult === 'function') {
+                const systemCategory = mapCategoryToSystemName(window.currentQuestion.category);
+                window.CentralDataManager.recordQuizResult(
+                    window.currentQuestion.id,
+                    systemCategory,
+                    isCorrect,
+                    userAnswer,
+                    window.currentQuestion.correctAnswer
+                );
+                console.log(`✅ 중앙 데이터 관리자에 결과 전송: ${systemCategory}`);
+            }
+
+            // 결과 표시
+            showAnswerResult(isCorrect, userAnswer, window.currentQuestion.correctAnswer);
+            
+            // 카테고리 통계 업데이트
+            setTimeout(() => {
+                loadCategoryStatistics();
+            }, 100);
+        }
+
+        // 정답 결과 표시
+        function showAnswerResult(isCorrect, userAnswer, correctAnswer) {
+            const module = document.getElementById('problem-module');
+            const resultDiv = document.createElement('div');
+            
+            // 답안 텍스트 변환
+            const getAnswerText = (answer) => {
+                if (answer === 'O') return '맞음';
+                if (answer === 'X') return '틀림';
+                return `${answer}번`;
+            };
+            
+            resultDiv.className = `fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`;
+            resultDiv.innerHTML = `
+                <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+                    <div class="text-6xl mb-4">${isCorrect ? '✅' : '❌'}</div>
+                    <h3 class="text-xl font-bold mb-2">${isCorrect ? '정답입니다!' : '틀렸습니다.'}</h3>
+                    <p class="text-gray-600 mb-4">
+                        선택한 답: ${getAnswerText(userAnswer)}<br>
+                        정답: ${getAnswerText(correctAnswer)}
+                    </p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
+                        확인
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(resultDiv);
+        }
+
+        // 이전 문제
+        function previousQuestion() {
+            if (window.currentQuestion && window.currentQuestion.index > 0) {
+                loadQuestion(window.currentQuestion.category, window.currentQuestion.index - 1);
+            }
+        }
+
+        // 다음 문제
+        function nextQuestion() {
+            if (window.currentQuestion) {
+                loadQuestion(window.currentQuestion.category, window.currentQuestion.index + 1);
+            }
+        }
+
+        // 처음부터 풀기
+        function startFromBeginning() {
+            if (window.currentQuestion) {
+                loadQuestion(window.currentQuestion.category, 0);
+            }
+        }
+
+        // 랜덤 풀기
+        function startRandomMode() {
+            if (window.currentQuestion) {
+                const randomIndex = Math.floor(Math.random() * 100); // 임시로 100개 문제 가정
+                loadQuestion(window.currentQuestion.category, randomIndex);
+            }
+        }
+
+        // 문제 없음 표시
+        function displayNoQuestions(category) {
+            const module = document.getElementById('problem-module');
+            module.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold mb-2">문제를 찾을 수 없습니다</h3>
+                    <p class="text-gray-600">${category} 카테고리의 문제가 준비되지 않았습니다.</p>
+                </div>
+            `;
+        }
+
+        // 에러 표시
+        function displayError(message) {
+            const module = document.getElementById('problem-module');
+            module.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-bold mb-2">오류가 발생했습니다</h3>
+                    <p class="text-gray-600">${message}</p>
+                </div>
+            `;
         }
 
         // 카테고리 진도 초기화
@@ -298,13 +648,13 @@
                     const statsData = localStorage.getItem('aicu_statistics') || '{}';
                     const stats = JSON.parse(statsData);
                     
-                    // 4개 카테고리만 초기화
-                    const categories = ['보험법', '보험상품', '보험영업', '보험계리'];
+                    // 4개 카테고리만 초기화 (올바른 카테고리명 사용)
+                    const categories = ['재산보험', '특종보험', '배상책임보험', '해상보험'];
                     const categoryTotals = {
-                        '보험법': 200,
-                        '보험상품': 200,
-                        '보험영업': 200,
-                        '보험계리': 189
+                        '재산보험': 169,
+                        '특종보험': 182,
+                        '배상책임보험': 268,
+                        '해상보험': 170
                     };
                     
                     // 카테고리별 데이터 초기화

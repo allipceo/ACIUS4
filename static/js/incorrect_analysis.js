@@ -315,24 +315,40 @@ class IncorrectAnalysisManager {
     
     // UI 업데이트
     updateDisplay() {
-        const analysis = this.generateIncorrectAnalysis();
+        console.log('=== IncorrectAnalysisManager UI 업데이트 ===');
         
-        // 요약 정보 업데이트
-        this.updateSummary(analysis.summary);
-        
-        // 위험도별 문제 목록 업데이트
-        this.updateCriticalQuestions(analysis.critical_questions);
-        
-        // 과목별 분석 업데이트
-        this.updateSubjectAnalysis(analysis.subject_analysis);
-        
-        // 인사이트 업데이트
-        this.updateInsights(analysis.insights);
-        
-        // 권장사항 업데이트
-        this.updateRecommendations(analysis.recommendations);
-        
-        return analysis;
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 데이터 조회
+            const stats = this.getStatisticsData();
+            const incorrectData = this.getIncorrectData();
+            
+            console.log('통계 데이터:', stats);
+            console.log('오답 데이터:', incorrectData);
+            
+            // 오답 분석 생성
+            const analysis = this.generateIncorrectAnalysisFromData(stats, incorrectData);
+            
+            // 요약 정보 업데이트
+            this.updateSummary(analysis.summary);
+            
+            // 위험도별 문제 목록 업데이트
+            this.updateCriticalQuestions(analysis.critical_questions);
+            
+            // 과목별 분석 업데이트
+            this.updateSubjectAnalysis(analysis.subject_analysis);
+            
+            // 인사이트 업데이트
+            this.updateInsights(analysis.insights);
+            
+            // 권장사항 업데이트
+            this.updateRecommendations(analysis.recommendations);
+            
+            console.log('✅ IncorrectAnalysisManager UI 업데이트 완료');
+            return analysis;
+            
+        } catch (error) {
+            console.error('❌ IncorrectAnalysisManager UI 업데이트 실패:', error);
+        }
     }
     
     // 요약 정보 업데이트
@@ -501,6 +517,324 @@ class IncorrectAnalysisManager {
         
         html += '</div>';
         container.innerHTML = html;
+    }
+    
+    /**
+     * 통계 데이터 조회 (새로운 중앙 데이터 관리 시스템 사용)
+     */
+    getStatisticsData() {
+        console.log('=== 통계 데이터 조회 (새로운 시스템) ===');
+        
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 데이터 조회
+            if (window.CentralDataManager && typeof window.CentralDataManager.getAllCategoryData === 'function') {
+                const categoryData = window.CentralDataManager.getAllCategoryData();
+                console.log('✅ 새로운 중앙 데이터 관리 시스템에서 데이터 조회 성공:', categoryData);
+                
+                // 새로운 데이터 구조를 기존 형식으로 변환
+                const convertedData = this.convertNewDataToOldFormat(categoryData);
+                console.log('✅ 데이터 변환 완료:', convertedData);
+                
+                return convertedData;
+            }
+            
+            // 기존 방식으로 폴백
+            const stats = JSON.parse(localStorage.getItem('aicu_statistics') || '{}');
+            console.log('⚠️ 기존 방식으로 폴백:', stats);
+            return stats;
+            
+        } catch (error) {
+            console.error('❌ 통계 데이터 조회 실패:', error);
+            return {};
+        }
+    }
+
+    /**
+     * 새로운 데이터 구조를 기존 형식으로 변환
+     */
+    convertNewDataToOldFormat(categoryData) {
+        console.log('=== 새로운 데이터 구조 변환 ===');
+        
+        let totalSolved = 0;
+        let totalCorrect = 0;
+        let totalIncorrect = 0;
+        
+        // 카테고리별 데이터 집계
+        Object.keys(categoryData).forEach(category => {
+            const data = categoryData[category];
+            
+            if (data.total !== undefined && data.correct !== undefined) {
+                totalSolved += data.total;
+                totalCorrect += data.correct;
+                totalIncorrect += (data.total - data.correct);
+            }
+        });
+        
+        const convertedData = {
+            total_problems: 789, // 전체 문제 수
+            solved_problems: totalSolved,
+            correct_answers: totalCorrect,
+            incorrect_answers: totalIncorrect,
+            accuracy_rate: totalSolved > 0 ? (totalCorrect / totalSolved) * 100 : 0,
+            categories: categoryData
+        };
+        
+        console.log('✅ 데이터 변환 결과:', convertedData);
+        return convertedData;
+    }
+
+    /**
+     * 오답 데이터 조회 (새로운 중앙 데이터 관리 시스템 사용)
+     */
+    getIncorrectData() {
+        console.log('=== 오답 데이터 조회 (새로운 시스템) ===');
+        
+        try {
+            // 새로운 중앙 데이터 관리 시스템에서 오답 데이터 조회
+            if (window.CentralDataManager && typeof window.CentralDataManager.getQuizResults === 'function') {
+                const quizResults = window.CentralDataManager.getQuizResults();
+                console.log('✅ 새로운 중앙 데이터 관리 시스템에서 오답 데이터 조회 성공:', quizResults);
+                
+                // 퀴즈 결과를 오답 분석 형식으로 변환
+                const incorrectData = this.convertQuizResultsToIncorrectFormat(quizResults);
+                console.log('✅ 오답 데이터 변환 완료:', incorrectData);
+                
+                return incorrectData;
+            }
+            
+            // 기존 방식으로 폴백
+            const incorrectStats = JSON.parse(localStorage.getItem('aicu_incorrect_statistics') || '{}');
+            console.log('⚠️ 기존 방식으로 폴백:', incorrectStats);
+            return incorrectStats;
+            
+        } catch (error) {
+            console.error('❌ 오답 데이터 조회 실패:', error);
+            return {};
+        }
+    }
+
+    /**
+     * 퀴즈 결과를 오답 분석 형식으로 변환
+     */
+    convertQuizResultsToIncorrectFormat(quizResults) {
+        console.log('=== 퀴즈 결과를 오답 분석 형식으로 변환 ===');
+        
+        const incorrectProblems = {};
+        const categoryIncorrect = {};
+        
+        // 퀴즈 결과에서 오답만 필터링
+        quizResults.forEach(result => {
+            if (!result.isCorrect) {
+                const questionId = result.questionId;
+                
+                if (!incorrectProblems[questionId]) {
+                    incorrectProblems[questionId] = {
+                        questionId: questionId,
+                        category: result.category,
+                        attempts: 1,
+                        lastAttempted: result.timestamp,
+                        isVeryHighRisk: false,
+                        isHighRisk: false,
+                        isMediumRisk: false,
+                        isLowRisk: false
+                    };
+                } else {
+                    incorrectProblems[questionId].attempts += 1;
+                    incorrectProblems[questionId].lastAttempted = result.timestamp;
+                }
+                
+                // 카테고리별 오답 카운트
+                if (!categoryIncorrect[result.category]) {
+                    categoryIncorrect[result.category] = 0;
+                }
+                categoryIncorrect[result.category] += 1;
+            }
+        });
+        
+        // 위험도 분류
+        Object.keys(incorrectProblems).forEach(questionId => {
+            const problem = incorrectProblems[questionId];
+            
+            if (problem.attempts >= 5) {
+                problem.isVeryHighRisk = true;
+            } else if (problem.attempts >= 3) {
+                problem.isHighRisk = true;
+            } else if (problem.attempts >= 2) {
+                problem.isMediumRisk = true;
+            } else {
+                problem.isLowRisk = true;
+            }
+        });
+        
+        const convertedData = {
+            total_incorrect: Object.keys(incorrectProblems).length,
+            very_high_risk: Object.values(incorrectProblems).filter(p => p.isVeryHighRisk).length,
+            high_risk: Object.values(incorrectProblems).filter(p => p.isHighRisk).length,
+            medium_risk: Object.values(incorrectProblems).filter(p => p.isMediumRisk).length,
+            low_risk: Object.values(incorrectProblems).filter(p => p.isLowRisk).length,
+            average_attempts: Object.keys(incorrectProblems).length > 0 ? 
+                Object.values(incorrectProblems).reduce((sum, p) => sum + p.attempts, 0) / Object.keys(incorrectProblems).length : 0,
+            problems: incorrectProblems,
+            category_incorrect: categoryIncorrect
+        };
+        
+        console.log('✅ 오답 분석 데이터 변환 완료:', convertedData);
+        return convertedData;
+    }
+    
+    /**
+     * 새로운 데이터 구조에서 오답 분석 생성
+     */
+    generateIncorrectAnalysisFromData(stats, incorrectData) {
+        console.log('=== 새로운 데이터 구조에서 오답 분석 생성 ===');
+        
+        // 요약 정보 생성
+        const summary = {
+            total_questions: incorrectData.total_incorrect || 0,
+            critical_count: incorrectData.very_high_risk || 0,
+            high_count: incorrectData.high_risk || 0,
+            medium_count: incorrectData.medium_risk || 0,
+            low_count: incorrectData.low_risk || 0,
+            average_attempts: incorrectData.average_attempts || 0
+        };
+        
+        // 위험도별 문제 목록 생성
+        const criticalQuestions = {
+            critical: [],
+            high: [],
+            medium: [],
+            low: []
+        };
+        
+        if (incorrectData.problems) {
+            Object.values(incorrectData.problems).forEach(problem => {
+                const questionData = {
+                    id: problem.questionId,
+                    category: problem.category,
+                    incorrect: problem.attempts,
+                    lastAttempted: problem.lastAttempted
+                };
+                
+                if (problem.isVeryHighRisk) {
+                    criticalQuestions.critical.push(questionData);
+                } else if (problem.isHighRisk) {
+                    criticalQuestions.high.push(questionData);
+                } else if (problem.isMediumRisk) {
+                    criticalQuestions.medium.push(questionData);
+                } else if (problem.isLowRisk) {
+                    criticalQuestions.low.push(questionData);
+                }
+            });
+        }
+        
+        // 과목별 분석 생성
+        const subjectAnalysis = {};
+        if (stats.categories) {
+            Object.keys(stats.categories).forEach(category => {
+                const categoryData = stats.categories[category];
+                const incorrectCount = incorrectData.category_incorrect?.[category] || 0;
+                
+                subjectAnalysis[category] = {
+                    name: this.getSubjectDisplayName(category),
+                    total: categoryData.total || 0,
+                    correct: categoryData.correct || 0,
+                    incorrect: incorrectCount,
+                    accuracy: categoryData.accuracy || 0,
+                    weak_points: incorrectCount > 0 ? `${incorrectCount}개 문제` : '없음'
+                };
+            });
+        }
+        
+        // 인사이트 생성
+        const insights = this.generateInsightsFromData(stats, incorrectData);
+        
+        // 권장사항 생성
+        const recommendations = this.generateRecommendationsFromData(stats, incorrectData);
+        
+        const analysis = {
+            summary,
+            critical_questions: criticalQuestions,
+            subject_analysis: subjectAnalysis,
+            insights,
+            recommendations
+        };
+        
+        console.log('✅ 오답 분석 생성 완료:', analysis);
+        return analysis;
+    }
+
+    /**
+     * 새로운 데이터 구조에서 인사이트 생성
+     */
+    generateInsightsFromData(stats, incorrectData) {
+        const insights = [];
+        
+        // 전체 정답률 기반 인사이트
+        if (stats.accuracy_rate < 60) {
+            insights.push('전체 정답률이 낮아 집중적인 복습이 필요합니다.');
+        } else if (stats.accuracy_rate < 80) {
+            insights.push('정답률이 보통 수준이므로 약점 보완에 집중하세요.');
+        } else {
+            insights.push('높은 정답률을 유지하고 있습니다. 안정적인 학습을 계속하세요.');
+        }
+        
+        // 오답 패턴 기반 인사이트
+        if (incorrectData.very_high_risk > 0) {
+            insights.push(`${incorrectData.very_high_risk}개의 매우 위험한 문제가 있습니다. 우선적으로 복습하세요.`);
+        }
+        
+        if (incorrectData.high_risk > 0) {
+            insights.push(`${incorrectData.high_risk}개의 높은 위험 문제가 있습니다. 반복 학습이 필요합니다.`);
+        }
+        
+        // 카테고리별 약점 인사이트
+        if (incorrectData.category_incorrect) {
+            const worstCategory = Object.entries(incorrectData.category_incorrect)
+                .sort(([,a], [,b]) => b - a)[0];
+            
+            if (worstCategory && worstCategory[1] > 0) {
+                insights.push(`${this.getSubjectDisplayName(worstCategory[0])}에서 가장 많은 오답이 발생했습니다.`);
+            }
+        }
+        
+        return insights;
+    }
+
+    /**
+     * 새로운 데이터 구조에서 권장사항 생성
+     */
+    generateRecommendationsFromData(stats, incorrectData) {
+        const recommendations = [];
+        
+        // 우선순위별 권장사항
+        if (incorrectData.very_high_risk > 0) {
+            recommendations.push('매우 위험한 문제들을 우선적으로 복습하세요.');
+        }
+        
+        if (incorrectData.high_risk > 0) {
+            recommendations.push('높은 위험 문제들을 반복 학습하세요.');
+        }
+        
+        // 카테고리별 권장사항
+        if (incorrectData.category_incorrect) {
+            const worstCategory = Object.entries(incorrectData.category_incorrect)
+                .sort(([,a], [,b]) => b - a)[0];
+            
+            if (worstCategory && worstCategory[1] > 0) {
+                recommendations.push(`${this.getSubjectDisplayName(worstCategory[0])} 카테고리에 집중 학습하세요.`);
+            }
+        }
+        
+        // 전체적인 권장사항
+        if (stats.accuracy_rate < 60) {
+            recommendations.push('기본 개념을 다시 정리하고 기본 문제부터 차근차근 풀어보세요.');
+        } else if (stats.accuracy_rate < 80) {
+            recommendations.push('약점 부분을 집중적으로 보완하고 실전 문제를 더 풀어보세요.');
+        } else {
+            recommendations.push('현재 학습 상태가 좋습니다. 실전 모의고사로 실력을 점검해보세요.');
+        }
+        
+        return recommendations;
     }
     
     // 초기화
