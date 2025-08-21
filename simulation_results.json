@@ -1,0 +1,338 @@
+{
+  "simulation_start": "2025-08-21T23:01:36.857864",
+  "scenarios": {
+    "day1_morning": {
+      "day": 1,
+      "time": "10:00",
+      "user_type": "guest",
+      "activities": [
+        {
+          "learning_type": "basic",
+          "category": null,
+          "correct_count": 14,
+          "total_count": 20,
+          "accuracy": 70.0
+        },
+        {
+          "learning_type": "category",
+          "category": "06재산보험",
+          "correct_count": 15,
+          "total_count": 20,
+          "accuracy": 75.0
+        },
+        {
+          "learning_type": "category",
+          "category": "07특종보험",
+          "correct_count": 12,
+          "total_count": 15,
+          "accuracy": 80.0
+        },
+        {
+          "learning_type": "category",
+          "category": "08배상책임보험",
+          "correct_count": 11,
+          "total_count": 13,
+          "accuracy": 84.61538461538461
+        },
+        {
+          "learning_type": "category",
+          "category": "09해상보험",
+          "correct_count": 14,
+          "total_count": 17,
+          "accuracy": 82.35294117647058
+        }
+      ]
+    },
+    "day1_afternoon": {
+      "day": 1,
+      "time": "13:00",
+      "user_type": "guest",
+      "activities": [
+        {
+          "learning_type": "basic",
+          "category": null,
+          "correct_count": 15,
+          "total_count": 20,
+          "accuracy": 75.0
+        },
+        {
+          "learning_type": "category",
+          "category": "06재산보험",
+          "correct_count": 16,
+          "total_count": 20,
+          "accuracy": 80.0
+        },
+        {
+          "learning_type": "category",
+          "category": "07특종보험",
+          "correct_count": 13,
+          "total_count": 15,
+          "accuracy": 86.66666666666667
+        },
+        {
+          "learning_type": "category",
+          "category": "08배상책임보험",
+          "correct_count": 12,
+          "total_count": 13,
+          "accuracy": 92.3076923076923
+        },
+        {
+          "learning_type": "category",
+          "category": "09해상보험",
+          "correct_count": 15,
+          "total_count": 17,
+          "accuracy": 88.23529411764706
+        }
+      ]
+    },
+    "day2": {
+      "day": 2,
+      "time": "10:00",
+      "user_type": "guest",
+      "activities": [
+        {
+          "learning_type": "basic",
+          "category": null,
+          "correct_count": 24,
+          "total_count": 30,
+          "accuracy": 80.0
+        },
+        {
+          "learning_type": "category",
+          "category": "06재산보험",
+          "correct_count": 21,
+          "total_count": 25,
+          "accuracy": 84.0
+        },
+        {
+          "learning_type": "category",
+          "category": "07특종보험",
+          "correct_count": 18,
+          "total_count": 20,
+          "accuracy": 90.0
+        },
+        {
+          "learning_type": "category",
+          "category": "08배상책임보험",
+          "correct_count": 17,
+          "total_count": 18,
+          "accuracy": 94.44444444444444
+        },
+        {
+          "learning_type": "category",
+          "category": "09해상보험",
+          "correct_count": 20,
+          "total_count": 22,
+          "accuracy": 90.9090909090909
+        }
+      ]
+    },
+    "day3_registration": {
+      "day": 3,
+      "time": "10:00",
+      "user_type": "registration",
+      "activities": [
+        {
+          "type": "registration",
+          "user_name": "조대표",
+          "status": "success",
+          "pages_accessed": [
+            "settings",
+            "register"
+          ]
+        }
+      ]
+    },
+    "day3_learning": {
+      "day": 3,
+      "time": "11:00",
+      "user_type": "registered_user",
+      "activities": [
+        {
+          "learning_type": "basic",
+          "category": null,
+          "correct_count": 21,
+          "total_count": 25,
+          "accuracy": 84.0
+        },
+        {
+          "learning_type": "category",
+          "category": "06재산보험",
+          "correct_count": 18,
+          "total_count": 20,
+          "accuracy": 90.0
+        },
+        {
+          "learning_type": "category",
+          "category": "07특종보험",
+          "correct_count": 17,
+          "total_count": 18,
+          "accuracy": 94.44444444444444
+        },
+        {
+          "learning_type": "category",
+          "category": "08배상책임보험",
+          "correct_count": 15,
+          "total_count": 16,
+          "accuracy": 93.75
+        },
+        {
+          "learning_type": "category",
+          "category": "09해상보험",
+          "correct_count": 17,
+          "total_count": 19,
+          "accuracy": 89.47368421052632
+        }
+      ]
+    },
+    "customer_scenarios": [
+      {
+        "scenario": "초보 학습자",
+        "description": "처음 시작하는 학습자, 낮은 정답률",
+        "activities": [
+          {
+            "learning_type": "basic",
+            "category": null,
+            "correct_count": 5,
+            "total_count": 20,
+            "accuracy": 25.0
+          },
+          {
+            "learning_type": "category",
+            "category": "06재산보험",
+            "correct_count": 8,
+            "total_count": 20,
+            "accuracy": 40.0
+          }
+        ]
+      },
+      {
+        "scenario": "중급 학습자",
+        "description": "어느 정도 학습한 사용자, 중간 정답률",
+        "activities": [
+          {
+            "learning_type": "basic",
+            "category": null,
+            "correct_count": 15,
+            "total_count": 20,
+            "accuracy": 75.0
+          },
+          {
+            "learning_type": "category",
+            "category": "07특종보험",
+            "correct_count": 16,
+            "total_count": 20,
+            "accuracy": 80.0
+          }
+        ]
+      },
+      {
+        "scenario": "고급 학습자",
+        "description": "충분히 학습한 사용자, 높은 정답률",
+        "activities": [
+          {
+            "learning_type": "basic",
+            "category": null,
+            "correct_count": 18,
+            "total_count": 20,
+            "accuracy": 90.0
+          },
+          {
+            "learning_type": "category",
+            "category": "08배상책임보험",
+            "correct_count": 19,
+            "total_count": 20,
+            "accuracy": 95.0
+          }
+        ]
+      },
+      {
+        "scenario": "불규칙 학습자",
+        "description": "간헐적으로 학습하는 사용자",
+        "activities": [
+          {
+            "learning_type": "basic",
+            "category": null,
+            "correct_count": 10,
+            "total_count": 15,
+            "accuracy": 66.66666666666666
+          },
+          {
+            "learning_type": "category",
+            "category": "09해상보험",
+            "correct_count": 12,
+            "total_count": 15,
+            "accuracy": 80.0
+          }
+        ]
+      },
+      {
+        "scenario": "집중 학습자",
+        "description": "하루에 많은 문제를 푸는 사용자",
+        "activities": [
+          {
+            "learning_type": "basic",
+            "category": null,
+            "correct_count": 35,
+            "total_count": 50,
+            "accuracy": 70.0
+          },
+          {
+            "learning_type": "category",
+            "category": "06재산보험",
+            "correct_count": 40,
+            "total_count": 50,
+            "accuracy": 80.0
+          },
+          {
+            "learning_type": "category",
+            "category": "07특종보험",
+            "correct_count": 38,
+            "total_count": 50,
+            "accuracy": 76.0
+          }
+        ]
+      }
+    ],
+    "error_scenarios": [
+      {
+        "scenario": "네트워크 오류",
+        "description": "서버 연결 실패 상황",
+        "expected_error": true,
+        "actual_result": true,
+        "error_message": "HTTPConnectionPool(host='localhost', port=9999): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001AF95940550>: Failed to establish a new connection: [WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다'))"
+      },
+      {
+        "scenario": "잘못된 데이터",
+        "description": "잘못된 형식의 데이터 전송",
+        "expected_error": true,
+        "actual_result": true
+      },
+      {
+        "scenario": "세션 만료",
+        "description": "장시간 비활성 상태",
+        "expected_error": false,
+        "actual_result": true
+      }
+    ]
+  },
+  "errors": [],
+  "success_count": 0,
+  "total_count": 0,
+  "verification": {
+    "daily_stats": {
+      "homepage_accessible": true,
+      "stats_displayed": true
+    },
+    "cumulative_stats": {
+      "basic_learning_accessible": true
+    },
+    "category_stats": {
+      "category_learning_accessible": true
+    },
+    "continue_learning": {},
+    "registration_point": {}
+  },
+  "simulation_end": "2025-08-21T23:29:40.168982",
+  "total_duration": 1683.311118
+}

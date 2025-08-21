@@ -115,11 +115,420 @@ class CentralDataManager {
             today_correct: 0,
             today_accuracy: 0,
             last_updated: new Date().toISOString(),
-            session_start: new Date().toISOString()
+            session_start: new Date().toISOString(),
+            // 시뮬레이션을 위한 시간대별 데이터 구조 추가
+            time_based_sessions: {
+                // 날짜별 시간대별 세션 기록
+                // 예: "2025-01-15": { "10:00": {...}, "13:00": {...} }
+            },
+            current_session: {
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+                session_id: this.generateSessionId()
+            },
+            // Continue Learning을 위한 시간대별 마지막 문제 번호
+            last_question_per_session: {
+                // 카테고리별 마지막 문제 번호 기록
+                // 예: "06재산보험": { "2025-01-15_10:00": 20, "2025-01-15_13:00": 40 }
+            }
         };
 
         localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
-        console.log('✅ 실시간 데이터 초기화 완료');
+        console.log('✅ 실시간 데이터 초기화 완료 (시간대별 구조 포함)');
+    }
+
+    /**
+     * 세션 ID 생성 (시간대별 구분용)
+     */
+    generateSessionId() {
+        const now = new Date();
+        const date = now.toISOString().split('T')[0];
+        const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+        return `${date}_${time}`;
+    }
+
+    /**
+     * 시간대별 세션 시작
+     */
+    startTimeBasedSession() {
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        const currentDate = new Date().toISOString().split('T')[0];
+        const currentTime = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+        const sessionId = this.generateSessionId();
+
+        // 현재 세션 정보 업데이트
+        realTimeData.current_session = {
+            date: currentDate,
+            time: currentTime,
+            session_id: sessionId
+        };
+
+        // 시간대별 세션 초기화 (없는 경우)
+        if (!realTimeData.time_based_sessions[currentDate]) {
+            realTimeData.time_based_sessions[currentDate] = {};
+        }
+
+        if (!realTimeData.time_based_sessions[currentDate][currentTime]) {
+            realTimeData.time_based_sessions[currentDate][currentTime] = {
+                session_id: sessionId,
+                start_time: new Date().toISOString(),
+                basic_learning: { attempts: 0, correct: 0, accuracy: 0 },
+                categories: {
+                    "06재산보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "07특종보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "08배상책임보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "09해상보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 }
+                },
+                total_attempts: 0,
+                total_correct: 0,
+                total_accuracy: 0
+            };
+        }
+
+        localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
+        console.log(`✅ 시간대별 세션 시작: ${currentDate} ${currentTime}`);
+    }
+
+    /**
+     * 시간대별 문제 풀이 결과 저장
+     */
+    saveTimeBasedQuizResult(quizData) {
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        const currentDate = realTimeData.current_session.date;
+        const currentTime = realTimeData.current_session.time;
+        const mappedCategory = this.mapCategoryToSystemName(quizData.category);
+
+        // 시간대별 세션에 결과 저장
+        if (realTimeData.time_based_sessions[currentDate] && 
+            realTimeData.time_based_sessions[currentDate][currentTime]) {
+            
+            const session = realTimeData.time_based_sessions[currentDate][currentTime];
+            
+            // 기본학습 또는 카테고리별 학습 구분
+            if (quizData.category === 'basic_learning' || !mappedCategory) {
+                session.basic_learning.attempts += 1;
+                if (quizData.isCorrect) {
+                    session.basic_learning.correct += 1;
+                }
+                session.basic_learning.accuracy = session.basic_learning.attempts > 0 ? 
+                    (session.basic_learning.correct / session.basic_learning.attempts) * 100 : 0;
+            } else {
+                // 카테고리별 학습
+                if (session.categories[mappedCategory]) {
+                    session.categories[mappedCategory].attempts += 1;
+                    if (quizData.isCorrect) {
+                        session.categories[mappedCategory].correct += 1;
+                    }
+                    session.categories[mappedCategory].accuracy = session.categories[mappedCategory].attempts > 0 ? 
+                        (session.categories[mappedCategory].correct / session.categories[mappedCategory].attempts) * 100 : 0;
+                    
+                    // 마지막 문제 번호 업데이트
+                    session.categories[mappedCategory].last_question = quizData.questionId || 
+                        session.categories[mappedCategory].last_question + 1;
+                }
+            }
+
+            // 전체 통계 업데이트
+            session.total_attempts += 1;
+            if (quizData.isCorrect) {
+                session.total_correct += 1;
+            }
+            session.total_accuracy = session.total_attempts > 0 ? 
+                (session.total_correct / session.total_attempts) * 100 : 0;
+
+            // Continue Learning을 위한 마지막 문제 번호 저장
+            const sessionKey = `${currentDate}_${currentTime}`;
+            if (!realTimeData.last_question_per_session[mappedCategory]) {
+                realTimeData.last_question_per_session[mappedCategory] = {};
+            }
+            realTimeData.last_question_per_session[mappedCategory][sessionKey] = 
+                session.categories[mappedCategory]?.last_question || 0;
+        }
+
+        localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
+        console.log(`✅ 시간대별 문제 풀이 결과 저장: ${currentDate} ${currentTime} - ${quizData.category}`);
+    }
+
+    /**
+     * Continue Learning을 위한 마지막 문제 번호 조회
+     */
+    getLastQuestionForContinueLearning(category, targetDate = null, targetTime = null) {
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        const mappedCategory = this.mapCategoryToSystemName(category);
+        
+        if (!targetDate || !targetTime) {
+            // 가장 최근 세션의 마지막 문제 번호 반환
+            const categorySessions = realTimeData.last_question_per_session[mappedCategory] || {};
+            const sessionKeys = Object.keys(categorySessions);
+            
+            if (sessionKeys.length > 0) {
+                // 가장 최근 세션 키 찾기
+                const latestSessionKey = sessionKeys.sort().pop();
+                return categorySessions[latestSessionKey] || 0;
+            }
+            return 0;
+        } else {
+            // 특정 날짜/시간의 마지막 문제 번호 반환
+            const sessionKey = `${targetDate}_${targetTime}`;
+            return realTimeData.last_question_per_session[mappedCategory]?.[sessionKey] || 0;
+        }
+    }
+
+    /**
+     * 날짜별 시간대별 통계 조회
+     */
+    getTimeBasedStatistics(targetDate = null) {
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        
+        if (!targetDate) {
+            targetDate = new Date().toISOString().split('T')[0];
+        }
+
+        const daySessions = realTimeData.time_based_sessions[targetDate] || {};
+        
+        // 해당 날짜의 모든 시간대별 세션 통계
+        const timeBasedStats = {};
+        let dayTotal = { attempts: 0, correct: 0, accuracy: 0 };
+
+        Object.keys(daySessions).forEach(time => {
+            const session = daySessions[time];
+            timeBasedStats[time] = {
+                basic_learning: session.basic_learning,
+                categories: session.categories,
+                total: {
+                    attempts: session.total_attempts,
+                    correct: session.total_correct,
+                    accuracy: session.total_accuracy
+                }
+            };
+
+            // 날짜별 총계 누적
+            dayTotal.attempts += session.total_attempts;
+            dayTotal.correct += session.total_correct;
+        });
+
+        dayTotal.accuracy = dayTotal.attempts > 0 ? (dayTotal.correct / dayTotal.attempts) * 100 : 0;
+
+        return {
+            date: targetDate,
+            time_based_sessions: timeBasedStats,
+            day_total: dayTotal
+        };
+    }
+
+    /**
+     * 시뮬레이션을 위한 시간대별 세션 설정
+     */
+    setSimulationTime(date, time) {
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        
+        realTimeData.current_session = {
+            date: date,
+            time: time,
+            session_id: `${date}_${time}`
+        };
+
+        // 해당 시간대 세션이 없으면 초기화
+        if (!realTimeData.time_based_sessions[date]) {
+            realTimeData.time_based_sessions[date] = {};
+        }
+
+        if (!realTimeData.time_based_sessions[date][time]) {
+            realTimeData.time_based_sessions[date][time] = {
+                session_id: `${date}_${time}`,
+                start_time: new Date().toISOString(),
+                basic_learning: { attempts: 0, correct: 0, accuracy: 0 },
+                categories: {
+                    "06재산보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "07특종보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "08배상책임보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 },
+                    "09해상보험": { attempts: 0, correct: 0, accuracy: 0, last_question: 0 }
+                },
+                total_attempts: 0,
+                total_correct: 0,
+                total_accuracy: 0
+            };
+        }
+
+        localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
+        console.log(`✅ 시뮬레이션 시간 설정: ${date} ${time}`);
+    }
+
+    /**
+     * 시뮬레이션을 위한 일괄 문제 풀이 결과 저장
+     */
+    simulateBatchQuizResults(date, time, quizResults) {
+        console.log(`=== 시뮬레이션 일괄 문제 풀이: ${date} ${time} ===`);
+        
+        // 시뮬레이션 시간 설정
+        this.setSimulationTime(date, time);
+        
+        // 각 문제 풀이 결과를 순차적으로 처리
+        quizResults.forEach((result, index) => {
+            const quizData = {
+                questionId: result.questionId || (index + 1),
+                category: result.category,
+                isCorrect: result.isCorrect,
+                userAnswer: result.userAnswer || 'A',
+                correctAnswer: result.correctAnswer || 'A',
+                timestamp: new Date().toISOString()
+            };
+            
+            // 시간대별 데이터 저장
+            this.saveTimeBasedQuizResult(quizData);
+            
+            // 기존 통계 업데이트도 함께 수행
+            this.saveQuizResult(quizData);
+            this.updateCategoryStatistics(quizData);
+            this.updateRealTimeData(quizData);
+        });
+        
+        // 최종 통계 업데이트
+        this.recalculatePredictedScores();
+        this.broadcastDataUpdate();
+        
+        console.log(`✅ 시뮬레이션 일괄 문제 풀이 완료: ${quizResults.length}문제`);
+    }
+
+    /**
+     * 시뮬레이션 결과 검증
+     */
+    validateSimulationResults(expectedResults) {
+        console.log('=== 시뮬레이션 결과 검증 ===');
+        
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        const validationResults = {
+            success: true,
+            details: []
+        };
+
+        Object.keys(expectedResults).forEach(date => {
+            const dayResults = expectedResults[date];
+            const daySessions = realTimeData.time_based_sessions[date] || {};
+            
+            Object.keys(dayResults).forEach(time => {
+                const expected = dayResults[time];
+                const actual = daySessions[time];
+                
+                if (!actual) {
+                    validationResults.success = false;
+                    validationResults.details.push({
+                        date, time, status: 'FAIL', reason: '세션 데이터 없음'
+                    });
+                    return;
+                }
+
+                // 기본학습 검증
+                if (expected.basic_learning) {
+                    const basicMatch = actual.basic_learning.attempts === expected.basic_learning.attempts &&
+                                     actual.basic_learning.correct === expected.basic_learning.correct;
+                    
+                    if (!basicMatch) {
+                        validationResults.success = false;
+                        validationResults.details.push({
+                            date, time, status: 'FAIL', 
+                            reason: `기본학습 불일치: 예상(${expected.basic_learning.attempts}/${expected.basic_learning.correct}) vs 실제(${actual.basic_learning.attempts}/${actual.basic_learning.correct})`
+                        });
+                    } else {
+                        validationResults.details.push({
+                            date, time, status: 'PASS', 
+                            reason: `기본학습 일치: ${actual.basic_learning.attempts}/${actual.basic_learning.correct}`
+                        });
+                    }
+                }
+
+                // 카테고리별 검증
+                Object.keys(expected.categories || {}).forEach(category => {
+                    const expectedCat = expected.categories[category];
+                    const actualCat = actual.categories[category];
+                    
+                    if (!actualCat) {
+                        validationResults.success = false;
+                        validationResults.details.push({
+                            date, time, category, status: 'FAIL', reason: '카테고리 데이터 없음'
+                        });
+                        return;
+                    }
+
+                    const catMatch = actualCat.attempts === expectedCat.attempts &&
+                                   actualCat.correct === expectedCat.correct;
+                    
+                    if (!catMatch) {
+                        validationResults.success = false;
+                        validationResults.details.push({
+                            date, time, category, status: 'FAIL',
+                            reason: `카테고리 불일치: 예상(${expectedCat.attempts}/${expectedCat.correct}) vs 실제(${actualCat.attempts}/${actualCat.correct})`
+                        });
+                    } else {
+                        validationResults.details.push({
+                            date, time, category, status: 'PASS',
+                            reason: `카테고리 일치: ${actualCat.attempts}/${actualCat.correct}`
+                        });
+                    }
+                });
+            });
+        });
+
+        console.log('✅ 시뮬레이션 결과 검증 완료:', validationResults);
+        return validationResults;
+    }
+
+    /**
+     * 시뮬레이션 전제조건 검증
+     */
+    validateSimulationPrerequisites() {
+        console.log('=== 시뮬레이션 전제조건 검증 ===');
+        
+        const registrationCompleted = localStorage.getItem('aicu_registration_completed');
+        const registrationTimestamp = localStorage.getItem('aicu_registration_timestamp');
+        const userData = localStorage.getItem('aicu_user_data');
+        
+        console.log('📋 전제조건 확인:');
+        console.log('  - 등록 완료 플래그:', registrationCompleted ? '✅ 있음' : '❌ 없음');
+        console.log('  - 등록 시점:', registrationTimestamp || '❌ 없음');
+        console.log('  - 사용자 데이터:', userData ? '✅ 있음' : '❌ 없음');
+        
+        if (!registrationCompleted || !registrationTimestamp || !userData) {
+            const error = '게스트 등록이 완료되지 않았습니다. 먼저 등록을 완료해주세요.';
+            console.error('❌ 시뮬레이션 전제조건 실패:', error);
+            throw new Error(error);
+        }
+        
+        const registration = JSON.parse(registrationCompleted);
+        const user = JSON.parse(userData);
+        
+        console.log('✅ 시뮬레이션 전제조건 확인 완료:');
+        console.log('  - 사용자:', user.name);
+        console.log('  - 등록 타입:', registration.type);
+        console.log('  - 등록 시점:', registrationTimestamp);
+        console.log('  - 등록일:', registration.registration_date);
+        
+        return {
+            user: user,
+            registration: registration,
+            registrationTimestamp: registrationTimestamp
+        };
+    }
+
+    /**
+     * 시뮬레이션 데이터 초기화
+     */
+    resetSimulationData() {
+        console.log('=== 시뮬레이션 데이터 초기화 ===');
+        
+        const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data'));
+        
+        // 시간대별 세션 데이터 초기화
+        realTimeData.time_based_sessions = {};
+        realTimeData.last_question_per_session = {};
+        realTimeData.current_session = {
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+            session_id: this.generateSessionId()
+        };
+
+        localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
+        console.log('✅ 시뮬레이션 데이터 초기화 완료');
     }
 
     /**
@@ -169,13 +578,16 @@ class CentralDataManager {
             // 3. 실시간 데이터 업데이트
             this.updateRealTimeData(quizData);
             
-            // 4. 예상 점수 재계산
+            // 4. 시간대별 데이터 저장 (시뮬레이션 지원)
+            this.saveTimeBasedQuizResult(quizData);
+            
+            // 5. 예상 점수 재계산
             this.recalculatePredictedScores();
             
-            // 5. 이벤트 브로드캐스트
+            // 6. 이벤트 브로드캐스트
             this.broadcastDataUpdate();
             
-            console.log('✅ 문제 풀이 완료 처리 완료');
+            console.log('✅ 문제 풀이 완료 처리 완료 (시간대별 데이터 포함)');
             
         } catch (error) {
             console.error('❌ 문제 풀이 완료 처리 실패:', error);

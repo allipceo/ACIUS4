@@ -137,31 +137,35 @@
             </div>
         </div>
 
-        <!-- 예상 점수 및 합격 확률 섹션 (페이지 하단) -->
+        <!-- 중앙아키텍처 기반 통계 섹션 -->
         <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 예상 점수 및 합격 확률</h3>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 중앙아키텍처 기반 통계</h3>
             
-            <!-- 전체 상태 및 합격 확률 (가로 배치) -->
+            <!-- 중앙 데이터 기반 통계 표시 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- 전체 상태 -->
-                <div id="overall-status-container">
-                    <!-- 전체 상태가 여기에 표시됩니다 -->
+                <!-- 중앙 통계 요약 -->
+                <div id="central-stats-summary" class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+                    <h4 class="text-lg font-semibold text-blue-800 mb-2">중앙 데이터 요약</h4>
+                    <div id="central-stats-content" class="text-blue-700">
+                        <p>로딩 중...</p>
+                    </div>
                 </div>
                 
-                <!-- 합격 확률 -->
-                <div id="pass-probability-container">
-                    <!-- 합격 확률이 여기에 표시됩니다 -->
+                <!-- 데이터 상태 -->
+                <div id="data-status" class="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                    <h4 class="text-lg font-semibold text-green-800 mb-2">데이터 상태</h4>
+                    <div id="data-status-content" class="text-green-700">
+                        <p>확인 중...</p>
+                    </div>
                 </div>
             </div>
             
-            <!-- 과목별 예상 점수 (가로 배치) -->
-            <div id="predicted-scores-container">
-                <!-- 과목별 예상 점수가 여기에 표시됩니다 -->
-            </div>
-            
-            <!-- 오답 분석 및 개인 맞춤 인사이트 -->
-            <div id="incorrect-analysis-container" class="mt-8">
-                <!-- 오답 분석이 여기에 표시됩니다 -->
+            <!-- 중앙 데이터 상세 -->
+            <div id="central-data-details" class="mt-6">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">중앙 데이터 상세</h4>
+                <div id="central-data-content" class="bg-gray-50 rounded-lg p-4 text-sm">
+                    <p>중앙아키텍처 데이터 로딩 중...</p>
+                </div>
             </div>
         </div>
 
@@ -215,28 +219,52 @@
             console.log('=== 대문 페이지 로드 ===');
             loadUserInfo();
             loadStatistics();
+            loadCentralArchitectureData(); // 중앙아키텍처 데이터 로드
         });
 
         // 사용자 정보 로드 및 표시
-        function loadUserInfo() {
+        // 등록 상태 확인 및 홈페이지 접근 제어
+        function checkRegistrationStatus() {
             try {
-                const userData = localStorage.getItem('aicu_user_data');
+                console.log('=== 등록 상태 확인 시작 ===');
                 
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    displayUserInfo(user);
-                    console.log('✅ 사용자 정보 로드 완료:', user);
-                } else {
-                    console.log('❌ 사용자 정보 없음');
-                    // 사용자 정보가 없으면 등록 페이지로 이동
-                    window.location.href = '/register';
+                const userData = localStorage.getItem('aicu_user_data');
+                const registrationCompleted = localStorage.getItem('aicu_registration_completed');
+                const registrationTimestamp = localStorage.getItem('aicu_registration_timestamp');
+                
+                console.log('📋 등록 상태 확인:');
+                console.log('  - 사용자 데이터:', userData ? '있음' : '없음');
+                console.log('  - 등록 완료 플래그:', registrationCompleted ? '있음' : '없음');
+                console.log('  - 등록 시점:', registrationTimestamp || '없음');
+                
+                // 등록이 완료되지 않았으면 등록 페이지로 강제 이동
+                if (!userData || !registrationCompleted || !registrationTimestamp) {
+                    console.log('❌ 등록이 완료되지 않음 - 등록 페이지로 이동');
+                    window.location.replace('/register');
+                    return false;
                 }
                 
+                const user = JSON.parse(userData);
+                const registration = JSON.parse(registrationCompleted);
+                
+                console.log('✅ 등록 상태 확인 완료:');
+                console.log('  - 사용자:', user.name);
+                console.log('  - 등록 타입:', registration.type);
+                console.log('  - 등록 시점:', registrationTimestamp);
+                
+                displayUserInfo(user);
+                return true;
+                
             } catch (error) {
-                console.error('❌ 사용자 정보 로드 실패:', error);
-                // 에러 발생 시 등록 페이지로 이동
-                window.location.href = '/register';
+                console.error('❌ 등록 상태 확인 실패:', error);
+                window.location.replace('/register');
+                return false;
             }
+        }
+
+        // 사용자 정보 로드 (기존 함수명 유지)
+        function loadUserInfo() {
+            return checkRegistrationStatus();
         }
 
         // 사용자 정보 표시
@@ -633,16 +661,144 @@
             }
         }
 
+        // 중앙아키텍처 데이터 로드 및 표시
+        function loadCentralArchitectureData() {
+            console.log('=== 중앙아키텍처 데이터 로드 ===');
+            
+            try {
+                // 중앙 데이터 관리자 확인
+                if (window.CentralDataManager) {
+                    console.log('✅ CentralDataManager 발견');
+                    
+                    // 중앙 데이터 요약 표시
+                    displayCentralStatsSummary();
+                    
+                    // 데이터 상태 표시
+                    displayDataStatus();
+                    
+                    // 중앙 데이터 상세 표시
+                    displayCentralDataDetails();
+                    
+                } else {
+                    console.log('❌ CentralDataManager를 찾을 수 없습니다');
+                    document.getElementById('central-stats-content').innerHTML = 
+                        '<p class="text-red-600">중앙 데이터 관리자를 찾을 수 없습니다.</p>';
+                }
+                
+            } catch (error) {
+                console.error('❌ 중앙아키텍처 데이터 로드 실패:', error);
+                document.getElementById('central-stats-content').innerHTML = 
+                    '<p class="text-red-600">데이터 로드 중 오류가 발생했습니다.</p>';
+            }
+        }
+        
+        // 중앙 통계 요약 표시
+        function displayCentralStatsSummary() {
+            try {
+                const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+                const userData = JSON.parse(localStorage.getItem('aicu_user_data') || '{}');
+                
+                const summary = {
+                    totalAttempts: realTimeData.total_attempts || 0,
+                    totalCorrect: realTimeData.total_correct || 0,
+                    overallAccuracy: realTimeData.overall_accuracy || 0,
+                    userName: userData.name || '게스트',
+                    registrationDate: userData.registration_date || '미등록'
+                };
+                
+                const content = `
+                    <div class="space-y-2">
+                        <div><strong>사용자:</strong> ${summary.userName}</div>
+                        <div><strong>등록일:</strong> ${summary.registrationDate}</div>
+                        <div><strong>총 시도:</strong> ${summary.totalAttempts}회</div>
+                        <div><strong>총 정답:</strong> ${summary.totalCorrect}회</div>
+                        <div><strong>전체 정답률:</strong> ${summary.overallAccuracy}%</div>
+                    </div>
+                `;
+                
+                document.getElementById('central-stats-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 중앙 통계 요약 표시 실패:', error);
+            }
+        }
+        
+        // 데이터 상태 표시
+        function displayDataStatus() {
+            try {
+                const localStorageKeys = [
+                    'aicu_user_data',
+                    'aicu_real_time_data',
+                    'aicu_statistics',
+                    'aicu_quiz_results'
+                ];
+                
+                const status = {};
+                localStorageKeys.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    status[key] = data ? '✅ 있음' : '❌ 없음';
+                });
+                
+                const content = `
+                    <div class="space-y-1 text-sm">
+                        <div>aicu_user_data: ${status.aicu_user_data}</div>
+                        <div>aicu_real_time_data: ${status.aicu_real_time_data}</div>
+                        <div>aicu_statistics: ${status.aicu_statistics}</div>
+                        <div>aicu_quiz_results: ${status.aicu_quiz_results}</div>
+                    </div>
+                `;
+                
+                document.getElementById('data-status-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 데이터 상태 표시 실패:', error);
+            }
+        }
+        
+        // 중앙 데이터 상세 표시
+        function displayCentralDataDetails() {
+            try {
+                const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+                const userData = JSON.parse(localStorage.getItem('aicu_user_data') || '{}');
+                const statistics = JSON.parse(localStorage.getItem('aicu_statistics') || '{}');
+                
+                const details = {
+                    realTimeData: realTimeData,
+                    userData: userData,
+                    statistics: statistics
+                };
+                
+                const content = `
+                    <div class="space-y-3">
+                        <div>
+                            <strong>실시간 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(realTimeData, null, 2)}</pre>
+                        </div>
+                        <div>
+                            <strong>사용자 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(userData, null, 2)}</pre>
+                        </div>
+                        <div>
+                            <strong>통계 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(statistics, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('central-data-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 중앙 데이터 상세 표시 실패:', error);
+            }
+        }
+
     </script>
     
-    <!-- Week1 고급통계 스크립트 -->
+    <!-- 중앙아키텍처 기반 스크립트 -->
     <script src="/static/js/performance_monitor.js"></script>
     <script src="/static/js/rollback_manager.js"></script>
     <script src="/static/js/guest_mode_defaults.js"></script>
     <script src="/static/js/dday_counter.js"></script>
-    <script src="/static/js/predicted_scores.js"></script>
-    <!-- Week3 고급통계 스크립트 -->
-    <script src="/static/js/incorrect_analysis.js"></script>
     <!-- 중앙 데이터 관리자 -->
     <script src="/static/js/central_data_manager.js"></script>
     

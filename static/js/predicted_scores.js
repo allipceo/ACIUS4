@@ -282,6 +282,33 @@ class PredictedScoresManager {
             if (window.CentralDataManager && typeof window.CentralDataManager.getAllCategoryData === 'function') {
                 const categoryData = window.CentralDataManager.getAllCategoryData();
                 console.log('✅ 새로운 중앙 데이터 관리 시스템에서 데이터 조회 성공:', categoryData);
+                
+                // 데이터가 없거나 모든 값이 0인 경우 완전히 0으로 초기화된 객체 반환
+                if (!categoryData || Object.keys(categoryData).length === 0) {
+                    console.log('📊 카테고리 통계 데이터 없음 - 완전히 0으로 초기화');
+                    return {
+                        "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                    };
+                }
+                
+                // 모든 카테고리의 데이터가 0인지 확인
+                const hasData = Object.values(categoryData).some(cat => 
+                    (cat.total && cat.total > 0) || (cat.solved && cat.solved > 0) || (cat.correct && cat.correct > 0)
+                );
+                
+                if (!hasData) {
+                    console.log('📊 모든 카테고리 데이터가 0 - 완전히 0으로 초기화');
+                    return {
+                        "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                    };
+                }
+                
                 return categoryData;
             }
             
@@ -289,10 +316,15 @@ class PredictedScoresManager {
             const categoryStats = JSON.parse(localStorage.getItem('aicu_category_statistics') || '{}');
             console.log('⚠️ 기존 방식으로 폴백:', categoryStats);
             
-            // 데이터가 없거나 모든 값이 0인 경우 빈 객체 반환
+            // 데이터가 없거나 모든 값이 0인 경우 완전히 0으로 초기화된 객체 반환
             if (!categoryStats || Object.keys(categoryStats).length === 0) {
-                console.log('📊 카테고리 통계 데이터 없음 - 0점으로 표시');
-                return {};
+                console.log('📊 카테고리 통계 데이터 없음 - 완전히 0으로 초기화');
+                return {
+                    "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                };
             }
             
             // 모든 카테고리의 데이터가 0인지 확인
@@ -301,15 +333,25 @@ class PredictedScoresManager {
             );
             
             if (!hasData) {
-                console.log('📊 모든 카테고리 데이터가 0 - 0점으로 표시');
-                return {};
+                console.log('📊 모든 카테고리 데이터가 0 - 완전히 0으로 초기화');
+                return {
+                    "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                };
             }
             
             return categoryStats;
             
         } catch (error) {
             console.error('❌ 카테고리별 통계 데이터 조회 실패:', error);
-            return {};
+            return {
+                "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+            };
         }
     }
 

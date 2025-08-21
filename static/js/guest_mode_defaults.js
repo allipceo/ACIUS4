@@ -5,23 +5,39 @@ class GuestModeManager {
     static applyDefaults() {
         const userInfo = localStorage.getItem('aicu_user_data');
         const statistics = localStorage.getItem('aicu_statistics');
+        const registrationCompleted = localStorage.getItem('aicu_registration_completed');
         
         // localStorage가 완전히 클리어된 경우에만 기본값 적용
-        if (!userInfo && !statistics) {
+        if (!userInfo && !statistics && !registrationCompleted) {
+            const registrationTimestamp = new Date().toISOString();
+            
             const defaultUserData = {
                 name: '게스트',
-                registration_date: '2025-08-01',
+                registration_date: registrationTimestamp.split('T')[0],
                 exam_subject: 'AICU',
                 exam_date: '2025-09-13',
                 phone: '010-1234-5678',
                 is_guest: true,
-                created_at: new Date().toISOString()
+                created_at: registrationTimestamp
+            };
+            
+            // 등록 완료 플래그 절대적 저장
+            const registrationData = {
+                type: 'guest',
+                registration_timestamp: registrationTimestamp,
+                is_permanent: true, // 절대적 보존 플래그
+                user_name: '게스트',
+                registration_date: registrationTimestamp.split('T')[0]
             };
             
             localStorage.setItem('aicu_user_data', JSON.stringify(defaultUserData));
+            localStorage.setItem('aicu_registration_completed', JSON.stringify(registrationData));
+            localStorage.setItem('aicu_registration_timestamp', registrationTimestamp);
+            
             this.initializeStatistics(defaultUserData);
             
-            console.log('✅ 게스트 모드 기본값 적용 완료');
+            console.log('✅ 게스트 모드 기본값 적용 완료 (등록 시점 절대적 저장)');
+            console.log('📅 등록 시점:', registrationTimestamp);
             return defaultUserData;
         }
         
@@ -61,6 +77,18 @@ class GuestModeManager {
             
             localStorage.setItem('aicu_real_time_data', JSON.stringify(initialRealTimeData));
         }
+        
+        // 학습 로그 초기화 (누락된 키)
+        if (!localStorage.getItem('aicu_learning_log')) {
+            const initialLearningLog = {
+                user_id: userData.name,
+                registration_date: userData.registration_date,
+                logs: [],
+                last_updated: new Date().toISOString()
+            };
+            
+            localStorage.setItem('aicu_learning_log', JSON.stringify(initialLearningLog));
+        }
     }
     
     static isGuestMode() {
@@ -71,8 +99,23 @@ class GuestModeManager {
     static updateGuestToUser(userData) {
         userData.is_guest = false;
         userData.updated_at = new Date().toISOString();
+        
+        // 기존 등록 시점 유지하면서 사용자 정보 업데이트
+        const registrationCompleted = localStorage.getItem('aicu_registration_completed');
+        const registrationTimestamp = localStorage.getItem('aicu_registration_timestamp');
+        
+        if (registrationCompleted && registrationTimestamp) {
+            const registration = JSON.parse(registrationCompleted);
+            registration.user_name = userData.name;
+            registration.type = 'registered';
+            registration.updated_at = new Date().toISOString();
+            
+            localStorage.setItem('aicu_registration_completed', JSON.stringify(registration));
+        }
+        
         localStorage.setItem('aicu_user_data', JSON.stringify(userData));
-        console.log('✅ 게스트 모드에서 실제 사용자로 전환 완료');
+        console.log('✅ 게스트 모드에서 실제 사용자로 전환 완료 (등록 시점 유지)');
+        console.log('📅 원본 등록 시점:', registrationTimestamp);
     }
     
     static getGuestInfo() {

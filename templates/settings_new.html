@@ -215,35 +215,44 @@
             console.log('✅ 통계 데이터 초기화 완료:', statistics);
         }
 
-        // 모든 데이터 초기화
-        function clearAllData() {
-            if (confirm('⚠️ 정말로 모든 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-                try {
-                    console.log('=== 완전한 데이터 초기화 시작 ===');
-                    
-                    // localStorage 완전 클리어
-                    localStorage.clear();
-                    
-                    // 게스트 모드 기본값 재적용
-                    setTimeout(() => {
-                        applyGuestModeDefaults();
-                    }, 100);
-                    
-                    showStatusMessage('🗑️ 데이터 초기화 완료', '모든 데이터가 성공적으로 삭제되었습니다.', 'success');
-                    
-                    // 현재 사용자 정보 새로고침
-                    setTimeout(() => {
-                        loadCurrentUserInfo();
-                    }, 1000);
-                    
-                    console.log('✅ 완전한 데이터 초기화 완료');
-                    
-                } catch (error) {
-                    console.error('데이터 초기화 실패:', error);
-                    showStatusMessage('❌ 초기화 실패', '데이터 초기화 중 오류가 발생했습니다.', 'error');
+                        // 모든 데이터 초기화 (등록 시점 포함)
+                function clearAllData() {
+                    if (confirm('⚠️ 정말로 모든 데이터를 초기화하시겠습니까?\n\n이 작업은 다음을 포함합니다:\n• 모든 학습 데이터\n• 모든 통계 데이터\n• 등록 시점 정보\n• 사용자 정보\n\n이 작업은 되돌릴 수 없습니다.')) {
+                        try {
+                            console.log('=== 완전한 데이터 초기화 시작 ===');
+                            
+                            // 등록 시점 관련 데이터 명시적 삭제
+                            localStorage.removeItem('aicu_registration_completed');
+                            localStorage.removeItem('aicu_registration_timestamp');
+                            localStorage.removeItem('aicu_user_data');
+                            localStorage.removeItem('aicu_statistics');
+                            localStorage.removeItem('aicu_real_time_data');
+                            localStorage.removeItem('aicu_quiz_results');
+                            localStorage.removeItem('aicu_category_statistics');
+                            
+                            // localStorage 완전 클리어
+                            localStorage.clear();
+                            
+                            // 게스트 모드 기본값 재적용 (새로운 등록 시점으로)
+                            setTimeout(() => {
+                                applyGuestModeDefaults();
+                            }, 100);
+                            
+                            showStatusMessage('🗑️ 데이터 초기화 완료', '모든 데이터와 등록 시점이 성공적으로 삭제되었습니다.', 'success');
+                            
+                            // 현재 사용자 정보 새로고침
+                            setTimeout(() => {
+                                loadCurrentUserInfo();
+                            }, 1000);
+                            
+                            console.log('✅ 완전한 데이터 초기화 완료 (등록 시점 포함)');
+                            
+                        } catch (error) {
+                            console.error('데이터 초기화 실패:', error);
+                            showStatusMessage('❌ 초기화 실패', '데이터 초기화 중 오류가 발생했습니다.', 'error');
+                        }
+                    }
                 }
-            }
-        }
 
         // 게스트 모드 기본값 적용
         function applyGuestModeDefaults() {
@@ -283,12 +292,21 @@
                     last_updated: new Date().toISOString()
                 };
                 
+                // 학습 로그 초기화 (누락된 키)
+                const defaultLearningLog = {
+                    user_id: '게스트',
+                    registration_date: defaultUserData.registration_date,
+                    logs: [],
+                    last_updated: new Date().toISOString()
+                };
+                
                 // 기본값 저장
                 localStorage.setItem('aicu_user_data', JSON.stringify(defaultUserData));
                 localStorage.setItem('aicu_statistics', JSON.stringify(defaultStatistics));
                 localStorage.setItem('aicu_real_time_data', JSON.stringify(defaultRealTimeData));
+                localStorage.setItem('aicu_learning_log', JSON.stringify(defaultLearningLog));
                 
-                console.log('✅ 게스트 모드 기본값 적용 완료 (실시간 데이터 포함)');
+                console.log('✅ 게스트 모드 기본값 적용 완료 (실시간 데이터 및 학습 로그 포함)');
                 
             } catch (error) {
                 console.error('❌ 게스트 모드 기본값 적용 실패:', error);
