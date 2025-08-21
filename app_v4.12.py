@@ -5,6 +5,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# 기존 블루프린트 등록 제거 (새 설정 페이지 사용)
+# from routes.settings_routes import settings_bp
+# app.register_blueprint(settings_bp)
+
 # 문제 데이터 로드
 def load_questions():
     try:
@@ -37,13 +41,13 @@ def home():
 
 @app.route('/register')
 def register():
-    return render_template('register.html')
+    return render_template('user_registration.html')
 
-@app.route('/basic_learning')
+@app.route('/basic-learning')
 def basic_learning():
     return render_template('basic_learning.html')
 
-@app.route('/large_category_learning')
+@app.route('/large-category-learning')
 def large_category_learning():
     return render_template('large_category_learning_v3.7.html')
 
@@ -54,6 +58,10 @@ def statistics():
 @app.route('/debug')
 def debug():
     return render_template('debug.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings_new.html')
 
 @app.route('/api/register', methods=['POST'])
 def api_register():

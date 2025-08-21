@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 대분류 학습</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 공통 컴포넌트 CSS -->
+    <link rel="stylesheet" href="/static/css/question_ui.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -441,67 +443,76 @@
                 });
         }
 
-        // 문제 표시 (JSON 구조 그대로 사용)
+        // 문제 표시 (공통 컴포넌트 사용)
         function displayQuestion(question, category, questionIndex) {
-            const module = document.getElementById('problem-module');
-            
-            // 문제 타입에 따라 다른 UI 표시
-            const isTrueFalse = question.type === '진위형';
-            
-            module.innerHTML = `
-                <div class="bg-gray-50 rounded-lg p-6 mb-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-600">문제 ${questionIndex + 1}</span>
-                        <span class="text-sm text-gray-600">${category} (${question.type})</span>
+            try {
+                console.log('📋 대분류학습 문제 표시 시작:', question.qcode);
+                
+                // 문제 모듈 컨테이너 생성
+                const module = document.getElementById('problem-module');
+                module.innerHTML = `
+                    <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="question-code" class="text-sm text-gray-600">문제 ${questionIndex + 1}</span>
+                            <span id="question-type" class="text-sm text-gray-600">${category} (${question.type})</span>
+                        </div>
+                        <div id="layer-info" class="text-sm text-gray-500 mb-2">${question.layer1 || ''} > ${question.layer2 || ''}</div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm text-gray-600">진도</span>
+                            <span id="progress-info" class="text-sm font-medium text-blue-600">${questionIndex + 1} / 로딩 중...</span>
+                        </div>
+                        <div id="question-text" class="text-lg font-medium mb-6 whitespace-pre-line">${question.question || '문제 내용을 불러올 수 없습니다.'}</div>
+                        
+                        <div id="answer-buttons" class="mb-4">
+                            <!-- 선택지 버튼이 여기에 생성됩니다 -->
+                        </div>
+                        
+                        <div class="flex justify-center space-x-4">
+                            <button onclick="previousQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                                이전 문제
+                            </button>
+                            <button onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                                정답 확인
+                            </button>
+                            <button onclick="nextQuestion()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                                다음 문제
+                            </button>
+                        </div>
                     </div>
-                    <div class="text-lg font-medium mb-6 whitespace-pre-line">${question.question || '문제 내용을 불러올 수 없습니다.'}</div>
-                    
-                    <div class="space-y-3">
-                        ${isTrueFalse ? `
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="O" class="mr-3">
-                                <span>맞음 (O)</span>
-                            </label>
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="X" class="mr-3">
-                                <span>틀림 (X)</span>
-                            </label>
-                        ` : `
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="1" class="mr-3">
-                                <span>1번</span>
-                            </label>
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="2" class="mr-3">
-                                <span>2번</span>
-                            </label>
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="3" class="mr-3">
-                                <span>3번</span>
-                            </label>
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answer" value="4" class="mr-3">
-                                <span>4번</span>
-                            </label>
-                        `}
-                    </div>
-                </div>
-            `;
-            
-            // 현재 문제 정보 저장
-            window.currentQuestion = {
-                id: question.qcode || questionIndex,
-                category: category,
-                index: questionIndex,
-                correctAnswer: question.answer || 'O',
-                type: question.type || '진위형'
-            };
-            
-            console.log('문제 표시 완료:', {
-                question: question.question?.substring(0, 50) + '...',
-                type: question.type,
-                correctAnswer: question.answer
-            });
+                `;
+                
+                // 공통 컴포넌트를 사용하여 문제 표시
+                if (window.QuestionDisplayManager) {
+                    window.QuestionDisplayManager.displayQuestion(question, questionIndex, 100, {
+                        isCategoryMode: true,
+                        currentCategory: category
+                    });
+                }
+                
+                // 공통 컴포넌트를 사용하여 선택지 생성
+                if (window.AnswerButtonManager) {
+                    window.AnswerButtonManager.createAnswerButtons(question, 'answer-buttons');
+                }
+                
+                // 결과 표시 초기화
+                if (window.ResultDisplayManager) {
+                    window.ResultDisplayManager.resetResult();
+                }
+                
+                // 현재 문제 정보 저장
+                window.currentQuestion = {
+                    id: question.qcode || questionIndex,
+                    category: category,
+                    index: questionIndex,
+                    correctAnswer: question.answer || 'O',
+                    type: question.type || '진위형'
+                };
+                
+                console.log('✅ 대분류학습 문제 표시 완료');
+                
+            } catch (error) {
+                console.error('❌ 대분류학습 문제 표시 실패:', error);
+            }
         }
 
         // 진행률 업데이트
@@ -511,11 +522,12 @@
             progressElement.textContent = `${currentIndex + 1} / ${totalQuestions} (${percentage}%)`;
         }
 
-        // 정답 확인
+        // 정답 확인 (공통 컴포넌트 사용)
         function checkAnswer() {
-            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            // 공통 컴포넌트에서 선택된 답안 가져오기
+            const userAnswer = window.AnswerButtonManager ? window.AnswerButtonManager.getSelectedAnswer() : null;
             
-            if (!selectedAnswer) {
+            if (!userAnswer) {
                 alert('답을 선택해주세요.');
                 return;
             }
@@ -525,10 +537,9 @@
                 return;
             }
 
-            const userAnswer = selectedAnswer.value;
             const isCorrect = userAnswer === window.currentQuestion.correctAnswer;
             
-            console.log('정답 확인:', {
+            console.log('대분류학습 정답 확인:', {
                 userAnswer: userAnswer,
                 correctAnswer: window.currentQuestion.correctAnswer,
                 isCorrect: isCorrect,
@@ -548,8 +559,15 @@
                 console.log(`✅ 중앙 데이터 관리자에 결과 전송: ${systemCategory}`);
             }
 
-            // 결과 표시
-            showAnswerResult(isCorrect, userAnswer, window.currentQuestion.correctAnswer);
+            // 공통 컴포넌트를 사용하여 정답 결과 표시
+            if (window.ResultDisplayManager) {
+                window.ResultDisplayManager.showInlineResult(userAnswer, window.currentQuestion.correctAnswer, window.currentQuestion);
+            }
+            
+            // 공통 컴포넌트를 사용하여 선택지 색상 변경
+            if (window.AnswerButtonManager) {
+                window.AnswerButtonManager.showAnswerResult(window.currentQuestion.correctAnswer);
+            }
             
             // 카테고리 통계 업데이트
             setTimeout(() => {
@@ -696,5 +714,12 @@
             }
         }
     </script>
+    
+    <!-- 공통 컴포넌트 JavaScript -->
+    <script src="/static/js/question_display_manager.js"></script>
+    <script src="/static/js/answer_button_manager.js"></script>
+    <script src="/static/js/result_display_manager.js"></script>
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
 </body>
 </html>

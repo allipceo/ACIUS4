@@ -436,11 +436,20 @@ function prevQuestion() {
 // 홈으로 이동 함수
 function goHome() {
     if (isFlaskMode) {
-        window.location.href = '/home';
+        // 현재 창에서 홈으로 이동 (새 창 열림 방지)
+        try {
+            window.location.replace('/home');
+        } catch (error) {
+            window.location.assign('/home');
+        }
     } else {
         alert('홈 화면으로 이동합니다.');
         // 로컬 모드에서는 사용자 등록 화면으로
-        window.location.href = 'user_registration.html';
+        try {
+            window.location.replace('user_registration.html');
+        } catch (error) {
+            window.location.assign('user_registration.html');
+        }
     }
 }
 

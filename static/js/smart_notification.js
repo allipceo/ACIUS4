@@ -482,16 +482,32 @@ class SmartNotification {
         // 알림 타입에 따른 페이지 이동
         switch (message.type) {
             case 'study_reminder':
-                window.location.href = '/home';
+                try {
+                    window.location.replace('/home');
+                } catch (error) {
+                    window.location.assign('/home');
+                }
                 break;
             case 'weak_area':
-                window.location.href = '/advanced-statistics';
+                try {
+                    window.location.replace('/advanced-statistics');
+                } catch (error) {
+                    window.location.assign('/advanced-statistics');
+                }
                 break;
             case 'goal_achievement':
-                window.location.href = '/advanced-statistics';
+                try {
+                    window.location.replace('/advanced-statistics');
+                } catch (error) {
+                    window.location.assign('/advanced-statistics');
+                }
                 break;
             default:
-                window.location.href = '/home';
+                try {
+                    window.location.replace('/home');
+                } catch (error) {
+                    window.location.assign('/home');
+                }
         }
     }
 
@@ -625,6 +641,8 @@ class SmartNotification {
 // 전역 인스턴스 생성
 window.smartNotification = new SmartNotification();
 console.log('🎯 스마트 알림 시스템 모듈 로드 완료');
+
+
 
 
 

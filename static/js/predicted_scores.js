@@ -288,6 +288,23 @@ class PredictedScoresManager {
             // 기존 방식으로 폴백
             const categoryStats = JSON.parse(localStorage.getItem('aicu_category_statistics') || '{}');
             console.log('⚠️ 기존 방식으로 폴백:', categoryStats);
+            
+            // 데이터가 없거나 모든 값이 0인 경우 빈 객체 반환
+            if (!categoryStats || Object.keys(categoryStats).length === 0) {
+                console.log('📊 카테고리 통계 데이터 없음 - 0점으로 표시');
+                return {};
+            }
+            
+            // 모든 카테고리의 데이터가 0인지 확인
+            const hasData = Object.values(categoryStats).some(cat => 
+                (cat.total && cat.total > 0) || (cat.solved && cat.solved > 0)
+            );
+            
+            if (!hasData) {
+                console.log('📊 모든 카테고리 데이터가 0 - 0점으로 표시');
+                return {};
+            }
+            
             return categoryStats;
             
         } catch (error) {

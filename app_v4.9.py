@@ -8,7 +8,7 @@ app = Flask(__name__)
 # 문제 데이터 로드
 def load_questions():
     try:
-        with open('questions.json', 'r', encoding='utf-8') as f:
+        with open('static/questions.json', 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         return {"questions": []}
@@ -35,17 +35,21 @@ def load_user_data():
 def home():
     return render_template('home.html')
 
+@app.route('/home')
+def home_route():
+    return render_template('home.html')
+
 @app.route('/register')
 def register():
     return render_template('register.html')
 
-@app.route('/basic_learning')
+@app.route('/basic-learning')
 def basic_learning():
     return render_template('basic_learning.html')
 
-@app.route('/large_category_learning')
+@app.route('/large-category-learning')
 def large_category_learning():
-    return render_template('large_category_learning_v3.7.html')
+    return render_template('large_category_learning.html')
 
 @app.route('/statistics')
 def statistics():
@@ -54,6 +58,10 @@ def statistics():
 @app.route('/debug')
 def debug():
     return render_template('debug.html')
+
+@app.route('/simulation')
+def simulation():
+    return render_template('simulation.html')
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
@@ -122,29 +130,24 @@ def api_statistics():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("🚀 AICU S4 v4.9 - 개인 맞춤 추천 시스템 구축 완료")
+    print("🚀 AICU S4 v4.9 - UI 개선 및 공통 컴포넌트 시스템 구축 완료")
     print("📍 URL: http://localhost:5000")
-    print("📋 v4.9 개인 맞춤 추천 시스템:")
-    print("   ✅ PersonalizedRecommendationSystem 구축 완료")
-    print("   ✅ 협업 필터링 (Collaborative Filtering) 완료")
-    print("   ✅ 콘텐츠 기반 필터링 (Content-based Filtering) 완료")
-    print("   ✅ 하이브리드 추천 (Hybrid Recommendation) 완료")
-    print("   ✅ 딥러닝 기반 추천 (Deep Learning Recommendation) 완료")
-    print("   ✅ 실시간 적응형 추천 (Real-time Adaptive Recommendation) 완료")
-    print("   ✅ 개인 맞춤 문제 추천 생성 완료")
-    print("   ✅ 카테고리 추천 생성 완료")
-    print("   ✅ 난이도 추천 생성 완료")
-    print("   ✅ 학습 경로 추천 생성 완료")
-    print("   ✅ 적응형 추천 생성 완료")
-    print("   ✅ 우선순위 추천 생성 완료")
-    print("   ✅ 사용자 프로필 분석 완료")
-    print("   ✅ 학습 스타일 분석 완료")
-    print("   ✅ 강점/약점 식별 완료")
-    print("   ✅ 목표 추론 완료")
-    print("   ✅ 실시간 이벤트 기반 데이터 수집 완료")
-    print("   ✅ 주기적 추천 업데이트 (10분마다) 완료")
-    print("   ✅ 개인 맞춤 추천 테스트 기능 완료")
-    print("   ✅ 116번 문서 과업11 완료")
+    print("📋 v4.9 UI 개선 및 공통 컴포넌트 시스템:")
+    print("   ✅ LearningPatternAnalyzer 구축 완료")
+    print("   ✅ 세션 분석 (총 세션, 최근 세션, 평균 세션 길이)")
+    print("   ✅ 일일 패턴 분석 (일일 평균 문제, 최고 성과일, 일관성)")
+    print("   ✅ 카테고리 패턴 분석 (선호 카테고리, 약점 카테고리, 균형)")
+    print("   ✅ 시간 패턴 분석 (피크 시간, 최적 학습 시간, 주간 패턴)")
+    print("   ✅ 정확도 패턴 분석 (전체 트렌드, 개선률, 일관성, 예측)")
+    print("   ✅ 학습 권장사항 생성 (카테고리, 시간, 정확도 기반)")
+    print("   ✅ 실시간 이벤트 기반 데이터 수집")
+    print("   ✅ 주기적 분석 (5분마다)")
+    print("   ✅ 학습 패턴 테스트 기능")
+    print("   ✅ 116번 문서 과업10 완료")
+    print("   ✅ UI 개선: 선택지 1행 배치 및 인라인 정답 표시")
+    print("   ✅ 공통 컴포넌트 시스템 구축 (QuestionDisplayManager, AnswerButtonManager, ResultDisplayManager)")
+    print("   ✅ 중앙아키텍처 기반 함수 재활용 원칙 적용")
+    print("   ✅ 기본학습 및 대분류학습 UI 통합")
     print("=" * 60)
     
     app.run(debug=True, host='0.0.0.0', port=5000)

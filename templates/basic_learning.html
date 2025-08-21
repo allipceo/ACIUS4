@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 기본학습</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 공통 컴포넌트 CSS -->
+    <link rel="stylesheet" href="/static/css/question_ui.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -23,40 +25,12 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-semibold" id="learning-title">기본학습</h2>
                 
-                <!-- 통계 시스템 통합된 통계 박스 -->
-                <div id="basic-progress-box" class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 min-w-[300px]">
-                    <!-- 카테고리 정보 (카테고리 모드일 때만 표시) -->
-                    <div id="category-progress-info" class="mb-2 hidden">
-                        <span class="text-sm font-medium text-gray-700">카테고리:</span>
-                        <span id="current-category" class="ml-2 text-sm font-bold text-orange-600">로딩 중...</span>
-                    </div>
-                    <!-- 진행률 정보 -->
-                    <div class="mb-2">
-                        <span class="text-sm font-medium text-gray-700">진행률:</span>
-                        <span id="basic-progress-text" class="ml-2 text-sm font-bold text-blue-600">로딩 중...</span>
-                    </div>
-                    <!-- 정답률 정보 -->
-                    <div class="mb-2">
-                        <span class="text-sm font-medium text-gray-700">정답률:</span>
-                        <span id="basic-accuracy-text" class="ml-2 text-sm font-bold text-green-600">로딩 중...</span>
-                    </div>
-                    <!-- 오늘 정답률 -->
-                    <div>
-                        <span class="text-sm font-medium text-gray-700">오늘 정답률:</span>
-                        <span id="basic-today-accuracy" class="ml-2 text-sm font-bold text-purple-600">로딩 중...</span>
-                    </div>
-                </div>
-                
                 <button id="navigation-button" onclick="goToHome()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
                     홈으로
                 </button>
             </div>
             
-            <!-- 다음 문제 안내 박스 -->
-            <div id="next-question-box" class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h3 class="text-lg font-semibold text-yellow-800 mb-2">📝 다음 문제 안내</h3>
-                <p id="next-question-text" class="text-sm text-yellow-700">로딩 중...</p>
-            </div>
+
             
             <!-- 학습 방식 선택 -->
             <div class="mb-8" id="mode-selection">
@@ -80,48 +54,198 @@
                 </div>
             </div>
             
-            <!-- 문제 표시 영역 -->
+            <!-- 문제 표시 영역 (V5.0 업그레이드) -->
             <div id="basic-question-area" class="hidden">
-                <h2 class="text-2xl font-semibold mb-4">문제 풀이</h2>
-                
-                <!-- 문제 정보 -->
-                <div class="mb-4 p-4 bg-gray-50 rounded">
-                    <div class="flex justify-between items-center mb-2">
-                        <span id="question-type" class="text-sm text-blue-600 font-medium">진위형</span>
-                        <span id="question-code" class="text-sm text-gray-600">Q001</span>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-2xl font-semibold mb-3 flex items-center">
+                        <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        문제 풀이
+                    </h2>
+                    
+                    <!-- V5.0 모듈식 컴포넌트들 -->
+                    <!-- 문제정보 모듈 (기존 DOM ID 모두 보존) -->
+                    <div id="question-info-module">
+                        <!-- 문제 정보 표시 컨테이너 -->
+                        <div class="mb-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 shadow-sm">
+                            <!-- 문제 헤더 정보 -->
+                            <div class="flex justify-between items-center mb-3">
+                                <!-- 문제 타입과 레이어 정보 통합 (1행) -->
+                                <div class="flex items-center space-x-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+                                        <span id="question-type">진위형</span>
+                                    </span>
+                                    <span class="text-sm text-gray-600">
+                                        <span id="layer-info" class="font-medium">재산보험 > 일반재산보험</span>
+                                    </span>
+                                </div>
+                                
+                                <!-- 문제 코드 (기존 DOM ID 유지) -->
+                                <div class="text-sm text-gray-600 font-mono bg-gray-100 px-3 py-1 rounded">
+                                    <span class="text-gray-500">Q</span><span id="question-code">001</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 금일/누적 통계 정보 (2행, 3행) -->
+                            <div class="space-y-2">
+                                <!-- 2행: 금일통계 -->
+                                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-sm font-medium text-green-700">금일통계</span>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-medium text-gray-700">금일 푼 문제수:</span>
+                                            <span id="daily-questions-solved" class="text-sm font-bold text-green-600">0</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-medium text-gray-700">금일 정답률:</span>
+                                            <span id="daily-accuracy" class="text-sm font-bold text-green-600">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 3행: 누적통계 -->
+                                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                        <span class="text-sm font-medium text-blue-700">누적통계</span>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-medium text-gray-700">누적 푼 문제수:</span>
+                                            <span id="cumulative-questions-solved" class="text-sm font-bold text-blue-600">0</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-medium text-gray-700">누적 정답률:</span>
+                                            <span id="cumulative-accuracy" class="text-sm font-bold text-blue-600">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="layer-info" class="text-sm text-gray-500 mb-2">재산보험 > 일반재산보험</div>
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm text-gray-600">진도</span>
-                        <span id="progress-info" class="text-sm font-medium text-blue-600">1 / 789</span>
+                    
+                    <!-- 문제내용 모듈 (기존 DOM ID 보존) -->
+                    <div id="question-content-module">
+                        <div class="mb-3 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                            <div class="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-semibold text-gray-800">문제</h3>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4">
+                                <div id="question-text" class="text-lg leading-relaxed text-gray-800 font-medium min-h-[100px] 
+                                            bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border-l-4 border-orange-400 
+                                            shadow-inner whitespace-pre-line">
+                                    문제 텍스트가 여기에 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="question-text" class="text-lg font-medium bg-red-100 p-4 rounded border-2 border-red-300">
-                        문제 텍스트가 여기에 표시됩니다.
+
+                    <!-- 답안버튼 모듈 (기존 DOM ID 보존) -->
+                    <div id="answer-buttons-module">
+                        <div class="mb-3">
+                            <div class="mb-2 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h2m0-12h10a2 2 0 012 2v10a2 2 0 01-2 2H9m0-12V3a2 2 0 012-2h2a2 2 0 012 2v2M9 5v12"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-semibold text-gray-800">답안 선택</h3>
+                                </div>
+                            </div>
+                            
+                            <!-- 답안 버튼 영역 (기존 DOM ID 유지) -->
+                            <div id="answer-buttons" class="space-y-3">
+                                <!-- 동적으로 생성될 답안 버튼들이 여기에 표시됩니다 -->
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 답안 버튼 영역 -->
-                <div id="answer-buttons" class="mb-4">
-                    <!-- 동적으로 생성될 답안 버튼들 -->
-                </div>
+                    <!-- 결과표시 모듈 (기존 DOM ID 보존) -->
+                    <div id="result-display-module">
+                        <!-- 정답 표시 영역 (기존 DOM ID 유지) -->
+                        <div id="correct-answer" class="hidden mb-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 
+                                                         rounded-lg border-l-4 border-green-500 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="flex items-center justify-center w-10 h-10 bg-green-500 rounded-full mr-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-green-800">정답</h3>
+                                    <p class="text-sm text-green-600">올바른 답안입니다</p>
+                                </div>
+                            </div>
+                            
+                            <div id="correct-answer-text" class="text-green-700 font-medium bg-white p-4 rounded border border-green-200">
+                                정답 내용이 여기에 표시됩니다.
+                            </div>
+                        </div>
 
-                <!-- 정답 표시 -->
-                <div id="correct-answer" class="hidden p-4 bg-green-100 rounded border border-green-300">
-                    <h3 class="font-semibold text-green-800">정답:</h3>
-                    <p id="correct-answer-text" class="text-green-700"></p>
-                </div>
+                        <!-- 결과 표시 영역 (기존 DOM ID 유지) -->
+                        <div id="result-area" class="hidden mb-6">
+                            <div id="result-message" class="p-4 rounded-lg font-medium border-l-4">
+                                <!-- 동적으로 생성될 결과 메시지 -->
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- 네비게이션 버튼 -->
-                <div class="flex justify-between mt-4">
-                    <button onclick="previousQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
-                        이전문제
-                    </button>
-                    <button onclick="checkAnswer()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
-                        정답 확인
-                    </button>
-                    <button onclick="nextQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
-                        다음 문제
-                    </button>
+                    <!-- 네비게이션 모듈 (기존 함수명 보존) -->
+                    <div id="navigation-module">
+                        <div class="mt-4 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <!-- 이전 문제 버튼 (기존 함수명 유지) -->
+                                <button onclick="previousQuestion()" 
+                                        class="flex items-center justify-center px-6 py-3 bg-gray-500 hover:bg-gray-600 
+                                               text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                                               focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-lg">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                    이전 문제
+                                </button>
+                                
+                                <!-- 정답 확인 버튼 (기존 함수명 유지) -->
+                                <button id="check-button" onclick="checkAnswer()" 
+                                        class="flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 
+                                               text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    정답 확인
+                                </button>
+                                
+                                <!-- 다음 문제 버튼 (기존 함수명 유지) -->
+                                <button onclick="nextQuestion()" 
+                                        class="flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 
+                                               text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                                               focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg">
+                                    다음 문제
+                                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -135,6 +259,9 @@
     <script src="/static/js/compatibility_layer.js"></script>
     <script src="/static/js/quiz_data_collector.js"></script>
     <script src="/static/js/realtime_sync_manager.js"></script>
+    
+    <!-- 결과 표시 관리자 (정답확인 기능 필수) -->
+    <script src="/static/js/result_display_manager.js"></script>
     
     <!-- 메뉴 관련 함수들 -->
     <script>
@@ -301,7 +428,14 @@
         
         // 홈으로 가기
         function goToHome() {
-            window.location.href = '/home';
+            // 현재 창에서 홈으로 이동 (새 창 열림 방지)
+            try {
+                // 방법 1: replace 사용 (브라우저 히스토리에서 현재 페이지 제거)
+                window.location.replace('/');
+            } catch (error) {
+                // 방법 2: assign 사용 (대체 방법)
+                window.location.assign('/');
+            }
         }
         
         // 기본학습 메뉴로 가기
@@ -445,5 +579,15 @@
             return quizData;
         }
     </script>
+    
+    <!-- 공통 컴포넌트 JavaScript -->
+    <script src="/static/js/question_display_manager.js"></script>
+    <script src="/static/js/answer_button_manager.js"></script>
+    <script src="/static/js/result_display_manager.js"></script>
+    <script src="/static/js/basic_learning_main.js"></script>
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/compatibility_layer.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
+    <script src="/static/js/quiz_data_collector.js"></script>
 </body>
 </html>

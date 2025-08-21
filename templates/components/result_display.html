@@ -1,0 +1,155 @@
+<!-- 
+AICU S4 V5.0 - 결과표시 모듈 (Day 4)
+작성자: 서대리
+작성일: 2025년 8월 16일
+크기: 60줄 이하
+기능: 정답/오답 결과 표시
+통계 연결: 기존 통계 업데이트 로직 그대로 유지
+-->
+
+<!-- 정답 표시 영역 (기존 DOM ID 유지) -->
+<div id="correct-answer" class="hidden mb-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 
+                                 rounded-lg border-l-4 border-green-500 shadow-lg">
+    <!-- 정답 헤더 -->
+    <div class="flex items-center mb-4">
+        <div class="flex items-center justify-center w-10 h-10 bg-green-500 rounded-full mr-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-green-800">정답</h3>
+            <p class="text-sm text-green-600">올바른 답안입니다</p>
+        </div>
+    </div>
+    
+    <!-- 정답 내용 (기존 DOM ID 유지) -->
+    <div id="correct-answer-text" class="text-green-700 font-medium bg-white p-4 rounded border border-green-200">
+        정답 내용이 여기에 표시됩니다.
+    </div>
+</div>
+
+<!-- 결과 표시 영역 (기존 DOM ID 유지) -->
+<div id="result-area" class="hidden mb-6">
+    <!-- 결과 메시지 (기존 DOM ID 유지) -->
+    <div id="result-message" class="p-4 rounded-lg font-medium border-l-4">
+        <!-- 동적으로 생성될 결과 메시지 -->
+    </div>
+    
+    <!-- 상세 결과 정보 -->
+    <div id="result-details" class="mt-4 p-4 bg-gray-50 rounded-lg">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <!-- 소요 시간 -->
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-gray-600">소요시간: <span id="time-taken" class="font-medium">-</span></span>
+            </div>
+            
+            <!-- 정답률 -->
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="text-gray-600">현재 정답률: <span id="current-accuracy" class="font-medium">-</span></span>
+            </div>
+            
+            <!-- 연속 정답 -->
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <span class="text-gray-600">연속 정답: <span id="streak-count" class="font-medium">-</span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 결과 표시 관련 스크립트 (기존 시스템과 호환) -->
+<script>
+// 결과 표시 개선 함수 (기존 통계 시스템과 연동)
+function enhanceResultDisplay(isCorrect, userAnswer, correctAnswer, timeSpent) {
+    const resultArea = document.getElementById('result-area');
+    const resultMessage = document.getElementById('result-message');
+    const correctAnswerDiv = document.getElementById('correct-answer');
+    
+    if (resultArea && resultMessage) {
+        // 결과 영역 표시
+        resultArea.classList.remove('hidden');
+        
+        if (isCorrect) {
+            // 정답인 경우
+            resultMessage.className = 'p-4 rounded-lg font-medium border-l-4 bg-green-50 border-green-500 text-green-800';
+            resultMessage.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    정답입니다! 🎉
+                </div>
+            `;
+        } else {
+            // 오답인 경우
+            resultMessage.className = 'p-4 rounded-lg font-medium border-l-4 bg-red-50 border-red-500 text-red-800';
+            resultMessage.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    틀렸습니다 😞
+                </div>
+                <p class="text-sm">선택한 답: <span class="font-bold">${userAnswer}</span></p>
+            `;
+            
+            // 정답 표시
+            if (correctAnswerDiv) {
+                correctAnswerDiv.classList.remove('hidden');
+                const correctAnswerText = document.getElementById('correct-answer-text');
+                if (correctAnswerText) {
+                    correctAnswerText.textContent = correctAnswer;
+                }
+            }
+        }
+        
+        // 상세 정보 업데이트
+        updateResultDetails(timeSpent);
+    }
+}
+
+// 상세 결과 정보 업데이트 (기존 통계 데이터 활용)
+function updateResultDetails(timeSpent) {
+    // 소요 시간 표시
+    const timeTakenElement = document.getElementById('time-taken');
+    if (timeTakenElement && timeSpent) {
+        timeTakenElement.textContent = `${timeSpent}초`;
+    }
+    
+    // 현재 정답률 표시 (기존 통계에서 가져오기)
+    const currentAccuracyElement = document.getElementById('current-accuracy');
+    if (currentAccuracyElement) {
+        // 기존 통계 시스템에서 정답률 가져오기
+        const stats = JSON.parse(localStorage.getItem('aicu_statistics') || '{}');
+        const accuracy = stats.accuracy_rate || 0;
+        currentAccuracyElement.textContent = `${accuracy}%`;
+    }
+    
+    // 연속 정답 표시 (기존 통계에서 가져오기)
+    const streakElement = document.getElementById('streak-count');
+    if (streakElement) {
+        // 기존 통계 시스템에서 연속 정답 가져오기 (구현에 따라 조정 필요)
+        streakElement.textContent = '0회'; // 실제 연속 정답 로직으로 교체
+    }
+}
+
+// 기존 checkAnswer 함수와 연동
+document.addEventListener('answerChecked', function(event) {
+    if (event.detail) {
+        const { isCorrect, userAnswer, correctAnswer, timeSpent } = event.detail;
+        enhanceResultDisplay(isCorrect, userAnswer, correctAnswer, timeSpent);
+    }
+});
+</script>

@@ -646,6 +646,174 @@ class CentralDataManager {
         
         console.log(`✅ 일일 진행률 업데이트: ${today} - ${basicLearningData.daily_progress[today].solved}문제, ${basicLearningData.daily_progress[today].correct}정답`);
     }
+
+    /**
+     * 금일/누적 통계 조회
+     * @param {string} category - 카테고리 (선택사항)
+     * @returns {Object} 금일/누적 통계 데이터
+     */
+    getDailyCumulativeStats(category = null) {
+        try {
+            console.log('📊 금일/누적 통계 조회 시작');
+            
+            const today = new Date().toISOString().split('T')[0];
+            const statsData = localStorage.getItem('aicu_statistics') || '{}';
+            const stats = JSON.parse(statsData);
+            
+            if (category && stats.categories && stats.categories[category]) {
+                // 카테고리별 통계
+                const categoryStats = stats.categories[category];
+                const dailyProgress = categoryStats.daily_progress?.[today] || { solved: 0, correct: 0 };
+                
+                return {
+                    today: {
+                        date: today,
+                        questions_solved: dailyProgress.solved || 0,
+                        correct_answers: dailyProgress.correct || 0,
+                        accuracy_rate: dailyProgress.solved > 0 ? Math.round((dailyProgress.correct / dailyProgress.solved) * 100) : 0
+                    },
+                    cumulative: {
+                        total_questions_solved: categoryStats.solved || 0,
+                        total_correct_answers: categoryStats.correct || 0,
+                        accuracy_rate: categoryStats.accuracy || 0
+                    }
+                };
+            } else {
+                // 전체 통계
+                const dailyProgress = stats.daily_progress?.[today] || { attempted: 0, correct: 0 };
+                
+                return {
+                    today: {
+                        date: today,
+                        questions_solved: dailyProgress.attempted || 0,
+                        correct_answers: dailyProgress.correct || 0,
+                        accuracy_rate: dailyProgress.attempted > 0 ? Math.round((dailyProgress.correct / dailyProgress.attempted) * 100) : 0
+                    },
+                    cumulative: {
+                        total_questions_solved: stats.total_questions_attempted || 0,
+                        total_correct_answers: stats.total_correct_answers || 0,
+                        accuracy_rate: stats.accuracy_rate || 0
+                    }
+                };
+            }
+            
+        } catch (error) {
+            console.error('❌ 금일/누적 통계 조회 실패:', error);
+            return {
+                today: { date: new Date().toISOString().split('T')[0], questions_solved: 0, correct_answers: 0, accuracy_rate: 0 },
+                cumulative: { total_questions_solved: 0, total_correct_answers: 0, accuracy_rate: 0 }
+            };
+        }
+    }
+    
+    /**
+     * 금일/누적 통계 업데이트
+     * @param {Object} questionData - 문제 데이터
+     * @param {boolean} isCorrect - 정답 여부
+     * @param {string} category - 카테고리 (선택사항)
+     * @returns {boolean} 업데이트 성공 여부
+     */
+    updateDailyCumulativeStats(questionData, isCorrect, category = null) {
+        try {
+            console.log('📊 금일/누적 통계 업데이트 시작');
+            
+            const today = new Date().toISOString().split('T')[0];
+            const statsData = localStorage.getItem('aicu_statistics') || '{}';
+            const stats = JSON.parse(statsData);
+            
+            if (category && stats.categories && stats.categories[category]) {
+                // 카테고리별 통계 업데이트
+                if (!stats.categories[category].daily_progress) {
+                    stats.categories[category].daily_progress = {};
+                }
+                
+                if (!stats.categories[category].daily_progress[today]) {
+                    stats.categories[category].daily_progress[today] = {
+                        solved: 0,
+                        correct: 0,
+                        accuracy: 0
+                    };
+                }
+                
+                const dailyStats = stats.categories[category].daily_progress[today];
+                dailyStats.solved += 1;
+                if (isCorrect) {
+                    dailyStats.correct += 1;
+                }
+                dailyStats.accuracy = Math.round((dailyStats.correct / dailyStats.solved) * 100);
+                
+                // 누적 통계 업데이트
+                stats.categories[category].solved += 1;
+                if (isCorrect) {
+                    stats.categories[category].correct += 1;
+                }
+                stats.categories[category].accuracy = Math.round((stats.categories[category].correct / stats.categories[category].solved) * 100);
+                
+                console.log(`📊 ${category} 카테고리 통계 업데이트: 금일 ${dailyStats.solved}문제, 누적 ${stats.categories[category].solved}문제`);
+                
+            } else {
+                // 전체 통계 업데이트
+                if (!stats.daily_progress) {
+                    stats.daily_progress = {};
+                }
+                
+                if (!stats.daily_progress[today]) {
+                    stats.daily_progress[today] = {
+                        attempted: 0,
+                        correct: 0,
+                        accuracy: 0
+                    };
+                }
+                
+                const dailyStats = stats.daily_progress[today];
+                dailyStats.attempted += 1;
+                if (isCorrect) {
+                    dailyStats.correct += 1;
+                }
+                dailyStats.accuracy = Math.round((dailyStats.correct / dailyStats.attempted) * 100);
+                
+                // 누적 통계 업데이트
+                stats.total_questions_attempted += 1;
+                if (isCorrect) {
+                    stats.total_correct_answers += 1;
+                }
+                stats.accuracy_rate = Math.round((stats.total_correct_answers / stats.total_questions_attempted) * 100);
+                
+                console.log(`📊 전체 통계 업데이트: 금일 ${dailyStats.attempted}문제, 누적 ${stats.total_questions_attempted}문제`);
+            }
+            
+            stats.last_updated = new Date().toISOString();
+            localStorage.setItem('aicu_statistics', JSON.stringify(stats));
+            
+            // 실시간 동기화
+            this.triggerStatisticsUpdate(stats);
+            
+            return true;
+            
+        } catch (error) {
+            console.error('❌ 금일/누적 통계 업데이트 실패:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * 통계 업데이트 이벤트 발생
+     * @param {Object} stats - 업데이트된 통계 데이터
+     */
+    triggerStatisticsUpdate(stats) {
+        try {
+            const event = new CustomEvent('statisticsUpdated', {
+                detail: {
+                    stats: stats,
+                    timestamp: new Date().toISOString()
+                }
+            });
+            document.dispatchEvent(event);
+            console.log('✅ 통계 업데이트 이벤트 발생');
+        } catch (error) {
+            console.error('❌ 통계 업데이트 이벤트 발생 실패:', error);
+        }
+    }
 }
 
 // 전역 인스턴스 생성

@@ -4,8 +4,10 @@
 class GuestModeManager {
     static applyDefaults() {
         const userInfo = localStorage.getItem('aicu_user_data');
+        const statistics = localStorage.getItem('aicu_statistics');
         
-        if (!userInfo) {
+        // localStorage가 완전히 클리어된 경우에만 기본값 적용
+        if (!userInfo && !statistics) {
             const defaultUserData = {
                 name: '게스트',
                 registration_date: '2025-08-01',
@@ -23,12 +25,13 @@ class GuestModeManager {
             return defaultUserData;
         }
         
-        return JSON.parse(userInfo);
+        return userInfo ? JSON.parse(userInfo) : null;
     }
     
     static initializeStatistics(userData) {
         const today = new Date().toISOString().split('T')[0];
         
+        // 기존 통계가 없으면 초기화
         if (!localStorage.getItem('aicu_statistics')) {
             const initialStats = {
                 registration_timestamp: userData.created_at,
@@ -42,6 +45,21 @@ class GuestModeManager {
             };
             
             localStorage.setItem('aicu_statistics', JSON.stringify(initialStats));
+        }
+        
+        // 예상점수 계산에 사용되는 실시간 데이터도 초기화
+        if (!localStorage.getItem('aicu_real_time_data')) {
+            const initialRealTimeData = {
+                categories: {
+                    "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                    "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                },
+                last_updated: new Date().toISOString()
+            };
+            
+            localStorage.setItem('aicu_real_time_data', JSON.stringify(initialRealTimeData));
         }
     }
     

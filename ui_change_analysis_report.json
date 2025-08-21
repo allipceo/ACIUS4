@@ -1,0 +1,118 @@
+{
+  "current_structure": {
+    "basic_learning": {
+      "answer_buttons_container": true,
+      "correct_answer_container": true,
+      "modal_popup": false,
+      "grid_layout": false,
+      "flex_layout": true
+    },
+    "large_category_learning": {
+      "answer_buttons_container": false,
+      "correct_answer_container": false,
+      "modal_popup": false,
+      "grid_layout": false,
+      "flex_layout": true
+    },
+    "javascript_functions": {
+      "displayQuestion": true,
+      "createAnswerButtons": true,
+      "showCorrectAnswer": true,
+      "selectAnswer": true
+    }
+  },
+  "change_requirements": {
+    "layout_change": {
+      "from": "2열 그리드 (grid-cols-2)",
+      "to": "1행 플렉스 (flex)",
+      "target": [
+        "진위형 선택지",
+        "선택형 선택지"
+      ]
+    },
+    "answer_display": {
+      "from": "모달 팝업",
+      "to": "인라인 표시",
+      "location": "선택지와 정답확인 버튼 사이"
+    },
+    "consistency": {
+      "scope": [
+        "기본학습",
+        "대분류학습"
+      ],
+      "requirement": "동일한 UI/UX 제공"
+    }
+  },
+  "impact_analysis": {
+    "files_to_modify": [
+      "static/js/basic_learning_main.js",
+      "templates/large_category_learning.html"
+    ],
+    "files_to_create": [
+      "static/js/question_display_manager.js",
+      "static/js/answer_button_manager.js",
+      "static/js/result_display_manager.js",
+      "static/css/question_ui.css"
+    ],
+    "functions_to_refactor": [
+      "displayQuestion",
+      "createAnswerButtons",
+      "showCorrectAnswer",
+      "selectAnswer"
+    ],
+    "css_classes_to_change": [
+      "grid-cols-2 → flex",
+      "space-y-3 → space-x-4",
+      "modal → inline"
+    ]
+  },
+  "recommendations": [
+    {
+      "phase": "1단계: 공통 컴포넌트 설계",
+      "tasks": [
+        "QuestionDisplayManager 클래스 설계",
+        "AnswerButtonManager 클래스 설계",
+        "ResultDisplayManager 클래스 설계",
+        "공통 CSS 스타일 정의"
+      ],
+      "estimated_time": "2시간"
+    },
+    {
+      "phase": "2단계: 기본학습 적용",
+      "tasks": [
+        "basic_learning_main.js 리팩토링",
+        "새로운 선택지 렌더링 로직 적용",
+        "인라인 정답 표시 로직 구현",
+        "중앙 데이터 시스템 연동"
+      ],
+      "estimated_time": "1.5시간"
+    },
+    {
+      "phase": "3단계: 대분류학습 적용",
+      "tasks": [
+        "large_category_learning.html 수정",
+        "동일한 컴포넌트 적용",
+        "UI 일관성 검증",
+        "통합 테스트"
+      ],
+      "estimated_time": "1.5시간"
+    }
+  ],
+  "central_architecture": {
+    "central_data_manager": {
+      "recordQuizResult": true,
+      "updateCategoryStatistics": true,
+      "updateRealTimeData": true
+    },
+    "realtime_sync_manager": {
+      "handleQuizUpdate": false,
+      "updateUI": false,
+      "event_listeners": true
+    },
+    "event_system": {
+      "quizCompleted": true,
+      "dataUpdated": true,
+      "customEvents": true
+    }
+  }
+}

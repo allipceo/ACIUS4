@@ -1,0 +1,263 @@
+/* ===== ACIU S4 문제 UI 공통 스타일 ===== */
+/* 중앙아키텍처 기반 문제 풀이 UI 스타일 */
+
+/* 선택지 버튼 공통 스타일 */
+.answer-button {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1);
+}
+
+.answer-button:hover {
+    transform: scale(1.05);
+}
+
+.answer-button:active {
+    transform: scale(0.95);
+}
+
+/* 선택지 1행 배치 스타일 */
+.answer-buttons-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+/* 진위형 버튼 스타일 */
+.true-false-button {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 선택형 버튼 스타일 */
+.multiple-choice-button {
+    min-width: 80px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 선택 상태 스타일 */
+.answer-button.selected {
+    background-color: #fbbf24;
+    color: #1f2937;
+    border-color: #f59e0b;
+}
+
+.answer-button.selected:hover {
+    background-color: #f59e0b;
+}
+
+/* 정답 상태 스타일 */
+.answer-button.correct {
+    background-color: #10b981;
+    color: white;
+    border-color: #059669;
+}
+
+.answer-button.correct:hover {
+    background-color: #059669;
+}
+
+/* 오답 상태 스타일 */
+.answer-button.incorrect {
+    background-color: #ef4444;
+    color: white;
+    border-color: #dc2626;
+}
+
+.answer-button.incorrect:hover {
+    background-color: #dc2626;
+}
+
+/* 인라인 결과 컨테이너 스타일 */
+.inline-result-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-width: 2px;
+    transition: all 0.3s ease-in-out;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.inline-result-container.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    display: none;
+}
+
+/* 정답 결과 스타일 */
+.result-correct {
+    border-color: #bbf7d0;
+    background-color: #f0fdf4;
+}
+
+/* 오답 결과 스타일 */
+.result-incorrect {
+    border-color: #fecaca;
+    background-color: #fef2f2;
+}
+
+/* 결과 아이콘 스타일 */
+.result-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.result-icon.correct {
+    background-color: #10b981;
+}
+
+.result-icon.incorrect {
+    background-color: #ef4444;
+}
+
+/* 결과 텍스트 스타일 */
+.result-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.result-title.correct {
+    color: #065f46;
+}
+
+.result-title.incorrect {
+    color: #991b1b;
+}
+
+.result-details {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.result-details.correct {
+    color: #047857;
+}
+
+.result-details.incorrect {
+    color: #b91c1c;
+}
+
+/* 애니메이션 효과 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.fade-out-up {
+    animation: fadeOutUp 0.3s ease-out;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .answer-buttons-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .true-false-button,
+    .multiple-choice-button {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .inline-result-container {
+        margin: 0.5rem;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .answer-buttons-row {
+        gap: 0.25rem;
+    }
+    
+    .true-false-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .multiple-choice-button {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* 접근성 개선 */
+.answer-button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.answer-button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+    .answer-button {
+        border-width: 2px;
+    }
+    
+    .inline-result-container {
+        border-width: 3px;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .answer-button {
+        background-color: #374151;
+        color: #f9fafb;
+        border-color: #4b5563;
+    }
+    
+    .answer-button:hover {
+        background-color: #4b5563;
+    }
+    
+    .answer-button.selected {
+        background-color: #fbbf24;
+        color: #1f2937;
+    }
+    
+    .inline-result-container {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+}
