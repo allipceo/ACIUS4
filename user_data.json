@@ -1,6 +1,7 @@
 {
-  "name": "데이터플로우테스트사용자",
-  "exam_date": "2025-12-15",
-  "registration_date": "2025-08-21T07:38:10.834146",
-  "type": "registered"
+  "name": "게스트",
+  "exam_date": "2025-09-13",
+  "registration_date": "2025-08-22T07:50:58.488490",
+  "type": "guest",
+  "created_at": "2025-08-22T07:50:58.488513"
 }

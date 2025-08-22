@@ -135,6 +135,18 @@ class CentralDataManager {
 
         localStorage.setItem('aicu_real_time_data', JSON.stringify(realTimeData));
         console.log('✅ 실시간 데이터 초기화 완료 (시간대별 구조 포함)');
+
+        // 학습 로그 초기화 (누락된 키)
+        if (!localStorage.getItem('aicu_learning_log')) {
+            const initialLearningLog = {
+                user_id: '게스트',
+                registration_date: new Date().toISOString().split('T')[0],
+                logs: [],
+                last_updated: new Date().toISOString()
+            };
+            localStorage.setItem('aicu_learning_log', JSON.stringify(initialLearningLog));
+            console.log('✅ 학습 로그 초기화 완료');
+        }
     }
 
     /**
