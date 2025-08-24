@@ -1,0 +1,144 @@
+{
+  "summary": {
+    "total_tests": 10,
+    "successful_tests": 10,
+    "failed_tests": 0,
+    "success_rate": 100.0
+  },
+  "detailed_results": [
+    {
+      "test": "category_mapping",
+      "user_category": "재산보험",
+      "system_category": "06재산보험",
+      "question_count": 169,
+      "status": "success"
+    },
+    {
+      "test": "category_mapping",
+      "user_category": "특종보험",
+      "system_category": "07특종보험",
+      "question_count": 182,
+      "status": "success"
+    },
+    {
+      "test": "category_mapping",
+      "user_category": "배상책임보험",
+      "system_category": "08배상책임보험",
+      "question_count": 268,
+      "status": "success"
+    },
+    {
+      "test": "category_mapping",
+      "user_category": "해상보험",
+      "system_category": "09해상보험",
+      "question_count": 170,
+      "status": "success"
+    },
+    {
+      "test": "question_types",
+      "category": "06재산보험",
+      "type_counts": {
+        "진위형": 9,
+        "선택형": 1
+      },
+      "status": "success"
+    },
+    {
+      "test": "question_types",
+      "category": "07특종보험",
+      "type_counts": {
+        "진위형": 10
+      },
+      "status": "success"
+    },
+    {
+      "test": "question_types",
+      "category": "08배상책임보험",
+      "type_counts": {
+        "진위형": 10
+      },
+      "status": "success"
+    },
+    {
+      "test": "question_types",
+      "category": "09해상보험",
+      "type_counts": {
+        "진위형": 10
+      },
+      "status": "success"
+    },
+    {
+      "test": "data_flow_simulation",
+      "simulation_data": {
+        "quiz_results": [
+          {
+            "questionId": "ABANK-0001",
+            "category": "06재산보험",
+            "isCorrect": true,
+            "userAnswer": "O",
+            "correctAnswer": "O",
+            "timestamp": "2025-08-16T09:25:11.028376"
+          },
+          {
+            "questionId": "ABANK-0002",
+            "category": "06재산보험",
+            "isCorrect": false,
+            "userAnswer": "X",
+            "correctAnswer": "O",
+            "timestamp": "2025-08-16T09:25:11.028456"
+          },
+          {
+            "questionId": "ABANK-0003",
+            "category": "07특종보험",
+            "isCorrect": true,
+            "userAnswer": "1",
+            "correctAnswer": "1",
+            "timestamp": "2025-08-16T09:25:11.028469"
+          }
+        ]
+      },
+      "category_stats": {
+        "06재산보험": {
+          "solved": 2,
+          "correct": 1,
+          "accuracy": 50.0
+        },
+        "07특종보험": {
+          "solved": 1,
+          "correct": 1,
+          "accuracy": 100.0
+        }
+      },
+      "status": "success"
+    },
+    {
+      "test": "ui_consistency",
+      "ui_data_structure": {
+        "categories": {
+          "재산보험": {
+            "progress": 14.8,
+            "accuracy": 80.0
+          },
+          "특종보험": {
+            "progress": 16.5,
+            "accuracy": 80.0
+          },
+          "배상책임보험": {
+            "progress": 6.7,
+            "accuracy": 33.3
+          },
+          "해상보험": {
+            "progress": 0.0,
+            "accuracy": 0.0
+          }
+        },
+        "overall": {
+          "total_progress": 9.3,
+          "total_accuracy": 68.5
+        }
+      },
+      "calculated_total_progress": 9.5,
+      "status": "success"
+    }
+  ]
+}

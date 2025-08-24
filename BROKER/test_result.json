@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-23T13:23:28.282341",
+  "test_type": "PDF2EXCEL 변환 테스트",
+  "target_file": "28회(2022)_공통(보험관계법령 등).pdf",
+  "result": {
+    "success": true,
+    "updated_count": 40,
+    "total_questions": 40,
+    "errors": []
+  },
+  "summary": {
+    "success": true,
+    "updated_count": 40,
+    "total_questions": 40,
+    "error_count": 0
+  }
+}

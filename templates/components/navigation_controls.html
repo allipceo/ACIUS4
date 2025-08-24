@@ -1,0 +1,172 @@
+<!-- 
+AICU S4 V5.0 - 네비게이션 모듈 (Day 5)
+작성자: 서대리
+작성일: 2025년 8월 16일
+크기: 70줄 이하
+기능: 이전/다음/정답확인 버튼
+통계 연결: 기존 함수명 그대로 유지
+-->
+
+<!-- 네비게이션 컨트롤 컨테이너 -->
+<div class="mt-8 bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+    <!-- 네비게이션 헤더 -->
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+            </svg>
+            문제 조작
+        </h3>
+        
+        <!-- 진행 상태 표시 -->
+        <div class="text-sm text-gray-500">
+            <span class="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                진행 중
+            </span>
+        </div>
+    </div>
+    
+    <!-- 메인 네비게이션 버튼들 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- 이전 문제 버튼 (기존 함수명 유지) -->
+        <button onclick="previousQuestion()" 
+                class="flex items-center justify-center px-6 py-3 bg-gray-500 hover:bg-gray-600 
+                       text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                       focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-lg">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            이전 문제
+        </button>
+        
+        <!-- 정답 확인 버튼 (기존 함수명 유지) -->
+        <button id="check-button" onclick="checkAnswer()" 
+                class="flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 
+                       text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            정답 확인
+        </button>
+        
+        <!-- 다음 문제 버튼 (기존 함수명 유지) -->
+        <button onclick="nextQuestion()" 
+                class="flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 
+                       text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 
+                       focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg">
+            다음 문제
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- 추가 조작 버튼들 -->
+    <div class="flex flex-wrap gap-3 justify-center border-t border-gray-200 pt-4">
+        <!-- 홈으로 버튼 (기존 함수명 유지) -->
+        <button onclick="goToHome()" 
+                class="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 
+                       rounded-lg transition-all duration-200 text-sm font-medium">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            홈으로
+        </button>
+        
+        <!-- 북마크 버튼 (새 기능) -->
+        <button onclick="toggleBookmark()" 
+                class="flex items-center px-4 py-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 
+                       rounded-lg transition-all duration-200 text-sm font-medium">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+            </svg>
+            북마크
+        </button>
+        
+        <!-- 메모 버튼 (새 기능) -->
+        <button onclick="openMemo()" 
+                class="flex items-center px-4 py-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 
+                       rounded-lg transition-all duration-200 text-sm font-medium">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            메모
+        </button>
+    </div>
+</div>
+
+<!-- 네비게이션 관련 스크립트 (기존 시스템과 호환) -->
+<script>
+// 버튼 상태 관리 (기존 기능과 연동)
+function updateNavigationState(hasAnswer, isAnswered) {
+    const checkButton = document.getElementById('check-button');
+    
+    if (checkButton) {
+        if (isAnswered) {
+            // 정답 확인 후 상태
+            checkButton.innerHTML = `
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                확인 완료
+            `;
+            checkButton.className = checkButton.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-green-600 hover:bg-green-700');
+            checkButton.disabled = true;
+        } else if (hasAnswer) {
+            // 답안 선택 후 상태
+            checkButton.innerHTML = `
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                정답 확인
+            `;
+            checkButton.className = checkButton.className.replace('bg-gray-400', 'bg-blue-600 hover:bg-blue-700');
+            checkButton.disabled = false;
+        } else {
+            // 답안 미선택 상태
+            checkButton.innerHTML = `
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                답안 선택 필요
+            `;
+            checkButton.className = checkButton.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-gray-400');
+            checkButton.disabled = true;
+        }
+    }
+}
+
+// 새로운 기능들 (향후 확장 가능)
+function toggleBookmark() {
+    // 북마크 기능 (향후 구현)
+    console.log('북마크 토글');
+}
+
+function openMemo() {
+    // 메모 기능 (향후 구현)
+    console.log('메모 열기');
+}
+
+// 답안 선택 시 버튼 상태 업데이트
+document.addEventListener('answerSelected', function() {
+    updateNavigationState(true, false);
+});
+
+// 정답 확인 후 버튼 상태 업데이트
+document.addEventListener('answerChecked', function() {
+    updateNavigationState(true, true);
+});
+
+// 새 문제 로드 시 버튼 상태 초기화
+document.addEventListener('questionLoaded', function() {
+    updateNavigationState(false, false);
+});
+</script>

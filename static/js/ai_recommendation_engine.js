@@ -562,3 +562,10 @@ window.aiRecommendationEngine = new AIRecommendationEngine();
 console.log('🎯 AI 추천 엔진 모듈 로드 완료');
 
 
+
+
+
+
+
+
+

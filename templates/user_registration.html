@@ -223,6 +223,17 @@
                     // LocalStorage에 사용자 정보 저장
                     localStorage.setItem('aicu_user_data', JSON.stringify(result.user_data));
                     
+                    // 등록 완료 플래그 설정 (홈페이지 접근 제어용)
+                    const registrationData = {
+                        type: 'guest',
+                        registration_timestamp: result.user_data.created_at,
+                        is_permanent: true,
+                        user_name: result.user_data.name,
+                        registration_date: result.user_data.registration_date.split('T')[0]
+                    };
+                    localStorage.setItem('aicu_registration_completed', JSON.stringify(registrationData));
+                    localStorage.setItem('aicu_registration_timestamp', result.user_data.created_at);
+                    
                     // 등록 시점 기반 통계 초기화
                     initializeUserStatistics(result.user_data);
                     
@@ -230,7 +241,7 @@
                     
                     // 2초 후 대문으로 이동
                     setTimeout(() => {
-                        window.location.href = '/home';
+                        window.location.replace('/');
                     }, 2000);
                     } else {
                     showStatusMessage(result.message, 'error');
@@ -266,6 +277,17 @@
                     // LocalStorage에 사용자 정보 저장
                     localStorage.setItem('aicu_user_data', JSON.stringify(result.user_data));
                     
+                    // 등록 완료 플래그 설정 (홈페이지 접근 제어용)
+                    const registrationData = {
+                        type: 'registered',
+                        registration_timestamp: result.user_data.created_at,
+                        is_permanent: true,
+                        user_name: result.user_data.name,
+                        registration_date: result.user_data.registration_date.split('T')[0]
+                    };
+                    localStorage.setItem('aicu_registration_completed', JSON.stringify(registrationData));
+                    localStorage.setItem('aicu_registration_timestamp', result.user_data.created_at);
+                    
                     // 등록 시점 기반 통계 초기화
                     initializeUserStatistics(result.user_data);
                     
@@ -273,7 +295,7 @@
                     
                     // 2초 후 대문으로 이동
                     setTimeout(() => {
-                        window.location.href = '/home';
+                        window.location.replace('/');
                     }, 2000);
                 } else {
                     showStatusMessage(result.message, 'error');

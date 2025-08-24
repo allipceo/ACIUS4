@@ -1,0 +1,12 @@
+코드,분류,설명,예시
+A,시험종류,보험중개사,ABAA-10
+B,시험종류,보험심사역,BBAA-05
+C,시험종류,손해사정사,CBAA-08
+A,중분류,생명보험,AAAB-12
+B,중분류,손해보험,ABAA-10
+C,중분류,제3보험,ACAA-15
+A,LAYER1,관계법령,ABAA-10
+B,LAYER1,손보1부,ABBA-20
+C,LAYER1,손보2부,ABCA-30
+A,QTYPE,기출문제(선택형),ABAA-10
+B,QTYPE,진위형,ABAB-15

@@ -1,0 +1,50 @@
+{
+  "summary": {
+    "total_verifications": 4,
+    "successful_verifications": 4,
+    "failed_verifications": 0,
+    "success_rate": 100.0,
+    "final_status": "perfect"
+  },
+  "detailed_results": [
+    {
+      "test": "json_structure_integrity",
+      "status": "success",
+      "total_questions": 789,
+      "categories_count": 4
+    },
+    {
+      "test": "question_type_consistency",
+      "status": "success",
+      "type_counts": {
+        "진위형": 721,
+        "선택형": 68
+      },
+      "answer_counts": {
+        "O": 442,
+        "X": 279,
+        "4": 21,
+        "1": 13,
+        "2": 16,
+        "3": 18
+      }
+    },
+    {
+      "test": "category_mapping_consistency",
+      "status": "success",
+      "system_category_counts": {
+        "06재산보험": 169,
+        "07특종보험": 182,
+        "08배상책임보험": 268,
+        "09해상보험": 170
+      }
+    },
+    {
+      "test": "data_flow_simulation",
+      "status": "success",
+      "total_solved": 73,
+      "total_correct": 50,
+      "overall_accuracy": 68.4931506849315
+    }
+  ]
+}

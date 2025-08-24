@@ -1,0 +1,353 @@
+{
+  "시뮬레이션_정보": {
+    "실행_시간": "2025-08-21T07:14:32.366659",
+    "총_테스트": 40,
+    "성공": 40,
+    "실패": 0,
+    "성공률": "100.0%"
+  },
+  "테스트_데이터": {
+    "registration_date": "2025-08-21T07:14:16.363403",
+    "user_name": "테스트사용자",
+    "basic_learning_results": [
+      {
+        "question_id": "BL001",
+        "category": "06재산보험",
+        "is_correct": true,
+        "user_answer": "O",
+        "correct_answer": "O",
+        "timestamp": "2025-08-21T07:14:21.287688",
+        "learning_type": "basic_learning"
+      },
+      {
+        "question_id": "BL002",
+        "category": "06재산보험",
+        "is_correct": false,
+        "user_answer": "X",
+        "correct_answer": "O",
+        "timestamp": "2025-08-21T07:14:21.287710",
+        "learning_type": "basic_learning"
+      },
+      {
+        "question_id": "BL003",
+        "category": "06재산보험",
+        "is_correct": true,
+        "user_answer": "O",
+        "correct_answer": "O",
+        "timestamp": "2025-08-21T07:14:21.287718",
+        "learning_type": "basic_learning"
+      }
+    ],
+    "category_learning_results": [
+      {
+        "question_id": "LC001",
+        "category": "07특종보험",
+        "is_correct": true,
+        "user_answer": "O",
+        "correct_answer": "O",
+        "timestamp": "2025-08-21T07:14:23.917323",
+        "learning_type": "large_category_learning"
+      },
+      {
+        "question_id": "LC002",
+        "category": "07특종보험",
+        "is_correct": false,
+        "user_answer": "O",
+        "correct_answer": "X",
+        "timestamp": "2025-08-21T07:14:23.917350",
+        "learning_type": "large_category_learning"
+      },
+      {
+        "question_id": "LC003",
+        "category": "08배상책임보험",
+        "is_correct": true,
+        "user_answer": "X",
+        "correct_answer": "X",
+        "timestamp": "2025-08-21T07:14:23.917357",
+        "learning_type": "large_category_learning"
+      }
+    ]
+  },
+  "상세_결과": [
+    {
+      "test": "설정 페이지 접속",
+      "status": "성공",
+      "message": "설정 페이지 정상 접속",
+      "timestamp": "2025-08-21T07:14:18.903576",
+      "details": "상태코드: 200"
+    },
+    {
+      "test": "사용자 등록",
+      "status": "성공",
+      "message": "사용자 등록 완료",
+      "timestamp": "2025-08-21T07:14:21.272266",
+      "details": "등록일: 2025-08-21T07:14:16.363403"
+    },
+    {
+      "test": "누적 카운팅 시작점 설정",
+      "status": "성공",
+      "message": "등록일 기준 누적 통계 시작점 설정 완료",
+      "timestamp": "2025-08-21T07:14:21.284587",
+      "details": "시작일: 2025-08-21T07:14:16.363403"
+    },
+    {
+      "test": "기본학습 페이지 접속",
+      "status": "성공",
+      "message": "기본학습 페이지 정상 접속",
+      "timestamp": "2025-08-21T07:14:23.791277",
+      "details": null
+    },
+    {
+      "test": "문제 1 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 BL001 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.793023",
+      "details": "선택: O, 시간: 07:14:23"
+    },
+    {
+      "test": "문제 1 정답확인 기록",
+      "status": "성공",
+      "message": "문제 BL001 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.804505",
+      "details": "정답여부: True, 풀이횟수: 1"
+    },
+    {
+      "test": "문제 1 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 BL001 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:23.822644",
+      "details": "카테고리: 06재산보험, 정답률: 정답"
+    },
+    {
+      "test": "문제 2 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 BL002 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.824173",
+      "details": "선택: X, 시간: 07:14:23"
+    },
+    {
+      "test": "문제 2 정답확인 기록",
+      "status": "성공",
+      "message": "문제 BL002 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.825828",
+      "details": "정답여부: False, 풀이횟수: 1"
+    },
+    {
+      "test": "문제 2 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 BL002 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:23.833592",
+      "details": "카테고리: 06재산보험, 정답률: 오답"
+    },
+    {
+      "test": "문제 3 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 BL003 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.835453",
+      "details": "선택: O, 시간: 07:14:23"
+    },
+    {
+      "test": "문제 3 정답확인 기록",
+      "status": "성공",
+      "message": "문제 BL003 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:23.839038",
+      "details": "정답여부: True, 풀이횟수: 1"
+    },
+    {
+      "test": "문제 3 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 BL003 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:23.841283",
+      "details": "카테고리: 06재산보험, 정답률: 정답"
+    },
+    {
+      "test": "대분류학습 페이지 접속",
+      "status": "성공",
+      "message": "대분류학습 페이지 정상 접속",
+      "timestamp": "2025-08-21T07:14:26.327552",
+      "details": null
+    },
+    {
+      "test": "대분류 문제 1 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 LC001 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.339989",
+      "details": "선택: O, 시간: 07:14:26"
+    },
+    {
+      "test": "대분류 문제 1 정답확인 기록",
+      "status": "성공",
+      "message": "문제 LC001 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.342988",
+      "details": "정답여부: True, 풀이횟수: 1"
+    },
+    {
+      "test": "대분류 문제 1 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 LC001 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:26.373663",
+      "details": "카테고리: 07특종보험, 정답률: 정답"
+    },
+    {
+      "test": "대분류 문제 2 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 LC002 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.378182",
+      "details": "선택: O, 시간: 07:14:26"
+    },
+    {
+      "test": "대분류 문제 2 정답확인 기록",
+      "status": "성공",
+      "message": "문제 LC002 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.395149",
+      "details": "정답여부: False, 풀이횟수: 1"
+    },
+    {
+      "test": "대분류 문제 2 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 LC002 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:26.423192",
+      "details": "카테고리: 07특종보험, 정답률: 오답"
+    },
+    {
+      "test": "대분류 문제 3 답안 클릭 기록",
+      "status": "성공",
+      "message": "문제 LC003 답안 클릭 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.424428",
+      "details": "선택: X, 시간: 07:14:26"
+    },
+    {
+      "test": "대분류 문제 3 정답확인 기록",
+      "status": "성공",
+      "message": "문제 LC003 정답확인 기록 완료",
+      "timestamp": "2025-08-21T07:14:26.441370",
+      "details": "정답여부: True, 풀이횟수: 1"
+    },
+    {
+      "test": "대분류 문제 3 중앙 아키텍처 저장",
+      "status": "성공",
+      "message": "문제 LC003 중앙 아키텍처 저장 완료",
+      "timestamp": "2025-08-21T07:14:26.456442",
+      "details": "카테고리: 08배상책임보험, 정답률: 정답"
+    },
+    {
+      "test": "기초데이터 통합",
+      "status": "성공",
+      "message": "총 6개 기초데이터 통합 완료",
+      "timestamp": "2025-08-21T07:14:26.469352",
+      "details": null
+    },
+    {
+      "test": "06재산보험 통계 생성",
+      "status": "성공",
+      "message": "06재산보험 통계 생성 완료",
+      "timestamp": "2025-08-21T07:14:26.470875",
+      "details": "총 3문제, 정답 2문제, 정답률 66.7%"
+    },
+    {
+      "test": "07특종보험 통계 생성",
+      "status": "성공",
+      "message": "07특종보험 통계 생성 완료",
+      "timestamp": "2025-08-21T07:14:26.472191",
+      "details": "총 2문제, 정답 1문제, 정답률 50.0%"
+    },
+    {
+      "test": "08배상책임보험 통계 생성",
+      "status": "성공",
+      "message": "08배상책임보험 통계 생성 완료",
+      "timestamp": "2025-08-21T07:14:26.473406",
+      "details": "총 1문제, 정답 1문제, 정답률 100.0%"
+    },
+    {
+      "test": "전체 통계 생성",
+      "status": "성공",
+      "message": "전체 통계 생성 완료",
+      "timestamp": "2025-08-21T07:14:26.475339",
+      "details": "총 6문제, 정답 4문제, 전체 정답률 66.7%"
+    },
+    {
+      "test": "오답 분석 - BL002",
+      "status": "성공",
+      "message": "문제 BL002 오답 분석 완료",
+      "timestamp": "2025-08-21T07:14:26.490923",
+      "details": "총 1회 풀이, 1회 오답"
+    },
+    {
+      "test": "오답 분석 - LC002",
+      "status": "성공",
+      "message": "문제 LC002 오답 분석 완료",
+      "timestamp": "2025-08-21T07:14:26.494958",
+      "details": "총 1회 풀이, 1회 오답"
+    },
+    {
+      "test": "06재산보험 이어풀기",
+      "status": "성공",
+      "message": "06재산보험 이어풀기 기능 정상 작동",
+      "timestamp": "2025-08-21T07:14:26.508828",
+      "details": "마지막 풀이: 3번, 다음 문제: 4번"
+    },
+    {
+      "test": "06재산보험 중앙 아키텍처 조회",
+      "status": "성공",
+      "message": "06재산보험 마지막 문제 번호 중앙 아키텍처에서 조회 완료",
+      "timestamp": "2025-08-21T07:14:26.509586",
+      "details": "저장된 마지막 문제: 3번"
+    },
+    {
+      "test": "07특종보험 이어풀기",
+      "status": "성공",
+      "message": "07특종보험 이어풀기 기능 정상 작동",
+      "timestamp": "2025-08-21T07:14:26.510270",
+      "details": "마지막 풀이: 2번, 다음 문제: 3번"
+    },
+    {
+      "test": "07특종보험 중앙 아키텍처 조회",
+      "status": "성공",
+      "message": "07특종보험 마지막 문제 번호 중앙 아키텍처에서 조회 완료",
+      "timestamp": "2025-08-21T07:14:26.511250",
+      "details": "저장된 마지막 문제: 2번"
+    },
+    {
+      "test": "08배상책임보험 이어풀기",
+      "status": "성공",
+      "message": "08배상책임보험 이어풀기 기능 정상 작동",
+      "timestamp": "2025-08-21T07:14:26.512039",
+      "details": "마지막 풀이: 1번, 다음 문제: 2번"
+    },
+    {
+      "test": "08배상책임보험 중앙 아키텍처 조회",
+      "status": "성공",
+      "message": "08배상책임보험 마지막 문제 번호 중앙 아키텍처에서 조회 완료",
+      "timestamp": "2025-08-21T07:14:26.519144",
+      "details": "저장된 마지막 문제: 1번"
+    },
+    {
+      "test": "이어풀기 유지 확인",
+      "status": "성공",
+      "message": "강제 초기화 없이 이어풀기 기능 정상 유지",
+      "timestamp": "2025-08-21T07:14:26.521283",
+      "details": "설정에서 강제 초기화하지 않는 한 각 문제의 마지막 번호 기억"
+    },
+    {
+      "test": "홈페이지 통계 확인",
+      "status": "성공",
+      "message": "홈페이지에서 통계 데이터 정상 표시",
+      "timestamp": "2025-08-21T07:14:29.314788",
+      "details": null
+    },
+    {
+      "test": "통계 페이지 확인",
+      "status": "성공",
+      "message": "통계 페이지에서 상세 통계 정상 표시",
+      "timestamp": "2025-08-21T07:14:31.730648",
+      "details": null
+    },
+    {
+      "test": "중앙 아키텍처 데이터 일관성",
+      "status": "성공",
+      "message": "중앙 아키텍처 데이터 일관성 확인 완료",
+      "timestamp": "2025-08-21T07:14:31.740785",
+      "details": "총 6문제, 정답 4문제"
+    }
+  ]
+}

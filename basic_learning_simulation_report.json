@@ -1,0 +1,36 @@
+{
+  "시뮬레이션_정보": {
+    "실행_시간": "2025-08-16 11:10:13",
+    "총_테스트": 5,
+    "성공": 0,
+    "실패": 5,
+    "성공률": "0.0%"
+  },
+  "상세_결과": [
+    {
+      "test": "웹드라이버 설정",
+      "status": "실패",
+      "error": "Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home\n"
+    },
+    {
+      "test": "기본학습 자동 시작",
+      "status": "실패",
+      "error": "'NoneType' object has no attribute 'get'"
+    },
+    {
+      "test": "정답 확인",
+      "status": "실패",
+      "error": "'NoneType' object has no attribute 'find_elements'"
+    },
+    {
+      "test": "중앙 데이터 연동",
+      "status": "실패",
+      "error": "'NoneType' object has no attribute 'execute_script'"
+    },
+    {
+      "test": "데이터 동기화",
+      "status": "실패",
+      "error": "'NoneType' object has no attribute 'get'"
+    }
+  ]
+}

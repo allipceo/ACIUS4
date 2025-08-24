@@ -102,6 +102,38 @@
                 </div>
             </div>
 
+            <!-- 개발자 도구 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🔧 개발자 도구</h3>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-blue-800 text-sm">
+                            <strong>개발자 전용:</strong> 시스템 관리 및 디버깅을 위한 고급 도구입니다.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="/developer-tools" 
+                           class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors text-center">
+                            🔧 개발자 도구 열기
+                        </a>
+                        <button onclick="openSystemDiagnostics()" 
+                                class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            🔍 시스템 진단
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="testDataIntegrity()" 
+                                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            ✅ 데이터 무결성 검사
+                        </button>
+                        <button onclick="clearSystemCache()" 
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            🗑️ 시스템 캐시 정리
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- 시스템 정보 -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">ℹ️ 시스템 정보</h3>
@@ -128,7 +160,7 @@
             <!-- 액션 버튼들 -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <a href="/home" 
+                    <a href="/" 
                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-center">
                         🏠 대문으로 돌아가기
                     </a>
@@ -390,6 +422,189 @@
             } catch (error) {
                 console.error('❌ 사용자 데이터 내보내기 실패:', error);
                 alert('데이터 내보내기에 실패했습니다.');
+            }
+        }
+
+        // === 개발자 도구 관련 함수들 ===
+
+        // 시스템 진단 실행
+        function openSystemDiagnostics() {
+            try {
+                console.log('=== 시스템 진단 시작 ===');
+                
+                const diagnostics = {
+                    timestamp: new Date().toISOString(),
+                    browser: navigator.userAgent,
+                    localStorage: {
+                        available: typeof(Storage) !== "undefined",
+                        used: 0,
+                        total: 0
+                    },
+                    userData: null,
+                    statistics: null,
+                    systemHealth: 'unknown'
+                };
+
+                // LocalStorage 사용량 계산
+                let usedSpace = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key) {
+                        usedSpace += localStorage.getItem(key).length;
+                    }
+                }
+                diagnostics.localStorage.used = usedSpace;
+                diagnostics.localStorage.total = 5 * 1024 * 1024; // 5MB (일반적인 제한)
+
+                // 사용자 데이터 확인
+                const userData = localStorage.getItem('aicu_user_data');
+                if (userData) {
+                    diagnostics.userData = JSON.parse(userData);
+                }
+
+                // 통계 데이터 확인
+                const statisticsData = localStorage.getItem('aicu_statistics');
+                if (statisticsData) {
+                    diagnostics.statistics = JSON.parse(statisticsData);
+                }
+
+                // 시스템 건강도 평가
+                if (diagnostics.userData && diagnostics.statistics) {
+                    diagnostics.systemHealth = 'healthy';
+                } else if (diagnostics.userData) {
+                    diagnostics.systemHealth = 'partial';
+                } else {
+                    diagnostics.systemHealth = 'unhealthy';
+                }
+
+                // 결과 표시
+                const resultText = `시스템 진단 결과:
+                
+📊 시스템 상태: ${diagnostics.systemHealth === 'healthy' ? '✅ 정상' : diagnostics.systemHealth === 'partial' ? '⚠️ 부분적' : '❌ 문제있음'}
+💾 LocalStorage 사용량: ${Math.round(usedSpace / 1024)}KB / ${Math.round(diagnostics.localStorage.total / 1024)}KB
+👤 사용자 데이터: ${diagnostics.userData ? '✅ 있음' : '❌ 없음'}
+📈 통계 데이터: ${diagnostics.statistics ? '✅ 있음' : '❌ 없음'}
+🌐 브라우저: ${navigator.userAgent.split(' ')[0]}`;
+
+                alert(resultText);
+                console.log('✅ 시스템 진단 완료:', diagnostics);
+
+            } catch (error) {
+                console.error('❌ 시스템 진단 실패:', error);
+                alert('시스템 진단 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 데이터 무결성 검사
+        function testDataIntegrity() {
+            try {
+                console.log('=== 데이터 무결성 검사 시작 ===');
+                
+                const results = {
+                    userData: { valid: false, errors: [] },
+                    statistics: { valid: false, errors: [] },
+                    overall: 'unknown'
+                };
+
+                // 사용자 데이터 검사
+                const userData = localStorage.getItem('aicu_user_data');
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        if (user.name && user.exam_date) {
+                            results.userData.valid = true;
+                        } else {
+                            results.userData.errors.push('필수 필드 누락');
+                        }
+                    } catch (e) {
+                        results.userData.errors.push('JSON 파싱 오류');
+                    }
+                } else {
+                    results.userData.errors.push('데이터 없음');
+                }
+
+                // 통계 데이터 검사
+                const statisticsData = localStorage.getItem('aicu_statistics');
+                if (statisticsData) {
+                    try {
+                        const stats = JSON.parse(statisticsData);
+                        if (stats.meta && stats.stats) {
+                            results.statistics.valid = true;
+                        } else {
+                            results.statistics.errors.push('필수 구조 누락');
+                        }
+                    } catch (e) {
+                        results.statistics.errors.push('JSON 파싱 오류');
+                    }
+                } else {
+                    results.statistics.errors.push('데이터 없음');
+                }
+
+                // 전체 결과 평가
+                if (results.userData.valid && results.statistics.valid) {
+                    results.overall = 'excellent';
+                } else if (results.userData.valid || results.statistics.valid) {
+                    results.overall = 'partial';
+                } else {
+                    results.overall = 'poor';
+                }
+
+                // 결과 표시
+                const resultText = `데이터 무결성 검사 결과:
+                
+📊 전체 상태: ${results.overall === 'excellent' ? '✅ 우수' : results.overall === 'partial' ? '⚠️ 부분적' : '❌ 문제있음'}
+👤 사용자 데이터: ${results.userData.valid ? '✅ 정상' : '❌ 오류: ' + results.userData.errors.join(', ')}
+📈 통계 데이터: ${results.statistics.valid ? '✅ 정상' : '❌ 오류: ' + results.statistics.errors.join(', ')}`;
+
+                alert(resultText);
+                console.log('✅ 데이터 무결성 검사 완료:', results);
+
+            } catch (error) {
+                console.error('❌ 데이터 무결성 검사 실패:', error);
+                alert('데이터 무결성 검사 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 시스템 캐시 정리
+        function clearSystemCache() {
+            if (confirm('시스템 캐시를 정리하시겠습니까?\n\n이 작업은 임시 데이터만 정리하며, 중요한 사용자 데이터는 보존됩니다.')) {
+                try {
+                    console.log('=== 시스템 캐시 정리 시작 ===');
+                    
+                    // 캐시 관련 키들 정리
+                    const cacheKeys = [
+                        'aicu_temp_data',
+                        'aicu_debug_info',
+                        'aicu_test_data',
+                        'aicu_cache'
+                    ];
+                    
+                    let clearedCount = 0;
+                    cacheKeys.forEach(key => {
+                        if (localStorage.getItem(key)) {
+                            localStorage.removeItem(key);
+                            clearedCount++;
+                        }
+                    });
+
+                    // 브라우저 캐시 정리 (가능한 경우)
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                if (name.includes('aicu')) {
+                                    caches.delete(name);
+                                }
+                            });
+                        });
+                    }
+
+                    alert(`시스템 캐시 정리가 완료되었습니다.\n\n정리된 항목: ${clearedCount}개`);
+                    console.log('✅ 시스템 캐시 정리 완료');
+
+                } catch (error) {
+                    console.error('❌ 시스템 캐시 정리 실패:', error);
+                    alert('시스템 캐시 정리 중 오류가 발생했습니다.');
+                }
             }
         }
     </script>

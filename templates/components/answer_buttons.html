@@ -1,0 +1,138 @@
+<!-- 
+AICU S4 V5.0 - 답안버튼 모듈 (Day 3)
+작성자: 서대리
+작성일: 2025년 8월 16일
+크기: 100줄 이하
+기능: 답안 버튼 생성 및 이벤트 처리
+통계 연결: 기존 checkAnswer() 함수 그대로 호출
+-->
+
+<!-- 답안 버튼 컨테이너 -->
+<div class="mb-6">
+    <!-- 답안 선택 헤더 -->
+    <div class="mb-4 flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h2m0-12h10a2 2 0 012 2v10a2 2 0 01-2 2H9m0-12V3a2 2 0 012-2h2a2 2 0 012 2v2M9 5v12"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-800">답안 선택</h3>
+        </div>
+        
+        <!-- 선택 상태 표시 -->
+        <div id="selection-status" class="text-sm text-gray-500 hidden">
+            <span class="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+                선택 완료
+            </span>
+        </div>
+    </div>
+    
+    <!-- 답안 버튼 영역 (기존 DOM ID 유지) -->
+    <div id="answer-buttons" class="space-y-3">
+        <!-- 동적으로 생성될 답안 버튼들이 여기에 표시됩니다 -->
+        <!-- 기존 createAnswerButtons() 함수가 이 영역을 채웁니다 -->
+    </div>
+    
+    <!-- 답안 선택 가이드 -->
+    <div id="answer-guide" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div class="flex items-start">
+            <svg class="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div class="text-sm text-blue-800">
+                <p class="font-medium mb-1">답안 선택 가이드</p>
+                <ul class="text-blue-700 space-y-1">
+                    <li>• 가장 적절한 답안을 하나 선택하세요</li>
+                    <li>• 선택 후 "정답 확인" 버튼을 눌러주세요</li>
+                    <li>• 선택을 변경하려면 다른 답안을 클릭하세요</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 답안 버튼 관련 스크립트 (기존 시스템과 호환) -->
+<script>
+// 답안 버튼 스타일 개선 함수 (기존 createAnswerButtons와 호환)
+function enhanceAnswerButtons() {
+    const answerButtons = document.querySelectorAll('#answer-buttons button, #answer-buttons .answer-option');
+    
+    answerButtons.forEach((button, index) => {
+        // 기존 기능 보존하면서 스타일만 개선
+        if (!button.classList.contains('enhanced')) {
+            // 기본 스타일 적용
+            button.className = `w-full p-4 text-left rounded-lg border-2 border-gray-200 
+                               hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+                               ${button.className}`.trim();
+            
+            // 선택 효과 추가 (기존 onclick 이벤트 보존)
+            const originalOnClick = button.onclick;
+            button.onclick = function(event) {
+                // 기존 선택 해제
+                answerButtons.forEach(btn => {
+                    btn.classList.remove('selected', 'bg-blue-100', 'border-blue-500');
+                    btn.classList.add('border-gray-200');
+                });
+                
+                // 현재 버튼 선택
+                this.classList.add('selected', 'bg-blue-100', 'border-blue-500');
+                this.classList.remove('border-gray-200');
+                
+                // 선택 상태 표시
+                const statusElement = document.getElementById('selection-status');
+                if (statusElement) {
+                    statusElement.classList.remove('hidden');
+                }
+                
+                // 기존 onclick 함수 실행 (통계 기능 보존)
+                if (originalOnClick) {
+                    originalOnClick.call(this, event);
+                }
+            };
+            
+            // 답안 번호 표시 추가
+            const answerNumber = String.fromCharCode(65 + index); // A, B, C, D...
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-600 rounded-full text-sm font-bold mr-3';
+            numberSpan.textContent = answerNumber;
+            
+            button.insertBefore(numberSpan, button.firstChild);
+            button.classList.add('enhanced', 'flex', 'items-center');
+        }
+    });
+}
+
+// 기존 createAnswerButtons 함수 호출 후 스타일 개선 적용
+const originalCreateAnswerButtons = window.createAnswerButtons;
+if (originalCreateAnswerButtons) {
+    window.createAnswerButtons = function(...args) {
+        // 기존 함수 실행
+        const result = originalCreateAnswerButtons.apply(this, args);
+        
+        // 스타일 개선 적용
+        setTimeout(enhanceAnswerButtons, 100);
+        
+        return result;
+    };
+}
+
+// DOM 변경 감지하여 자동 스타일 적용
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList' && mutation.target.id === 'answer-buttons') {
+            setTimeout(enhanceAnswerButtons, 50);
+        }
+    });
+});
+
+// 관찰 시작
+document.addEventListener('DOMContentLoaded', function() {
+    const answerContainer = document.getElementById('answer-buttons');
+    if (answerContainer) {
+        observer.observe(answerContainer, { childList: true, subtree: true });
+    }
+});
+</script>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ACIU S4 - 시뮬레이션 샌드박스</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+	<div class="container mx-auto px-4 py-8">
+		<h1 class="text-2xl font-bold mb-4">🎛️ 중앙 아키텍처 시뮬레이션</h1>
+		<p class="text-gray-600 mb-6">정답확인 이벤트 → 저장 → 집계 → UI 갱신 흐름을 검증합니다.</p>
+
+		<div class="grid md:grid-cols-2 gap-6">
+			<!-- 좌: 컨트롤 -->
+			<div class="bg-white rounded-lg shadow p-4">
+				<h2 class="font-semibold mb-3">컨트롤</h2>
+				<label class="block text-sm mb-1">카테고리</label>
+				<select id="sim-category" class="w-full border rounded px-2 py-1 mb-3">
+					<option>재산보험</option>
+					<option>특종보험</option>
+					<option>배상책임보험</option>
+					<option>해상보험</option>
+				</select>
+
+				<label class="block text-sm mb-1">문제 ID</label>
+				<input id="sim-qid" type="number" class="w-full border rounded px-2 py-1 mb-3" placeholder="예: 101" />
+
+				<label class="block text-sm mb-1">정답 여부</label>
+				<select id="sim-correct" class="w-full border rounded px-2 py-1 mb-4">
+					<option value="true">정답</option>
+					<option value="false">오답</option>
+				</select>
+
+				<div class="flex gap-2">
+					<button id="btn-submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">정답확인 이벤트 발생</button>
+					<button id="btn-clear" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded">스토리지 초기화</button>
+				</div>
+			</div>
+
+			<!-- 우: 상태 출력 -->
+			<div class="bg-white rounded-lg shadow p-4">
+				<h2 class="font-semibold mb-3">상태</h2>
+				<div class="grid grid-cols-2 gap-4 text-sm">
+					<div>
+						<h3 class="font-semibold mb-1">실시간 데이터</h3>
+						<pre id="out-realtime" class="bg-gray-50 border rounded p-2 overflow-auto h-48"></pre>
+					</div>
+					<div>
+						<h3 class="font-semibold mb-1">카테고리 통계</h3>
+						<pre id="out-category" class="bg-gray-50 border rounded p-2 overflow-auto h-48"></pre>
+					</div>
+					<div class="col-span-2">
+						<h3 class="font-semibold mb-1">문제 풀이 결과 로그</h3>
+						<pre id="out-results" class="bg-gray-50 border rounded p-2 overflow-auto h-48"></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 시스템 스크립트 로드 -->
+	<script src="/static/js/central_data_manager.js"></script>
+	<script src="/static/js/realtime_sync_manager.js"></script>
+
+	<script>
+		function refreshOutputs() {
+			try {
+				const realtime = JSON.parse(localStorage.getItem('aicu_real_time_data')||'{}');
+				const category = JSON.parse(localStorage.getItem('aicu_category_statistics')||'{}');
+				const results = JSON.parse(localStorage.getItem('aicu_quiz_results')||'{}');
+				document.getElementById('out-realtime').textContent = JSON.stringify(realtime, null, 2);
+				document.getElementById('out-category').textContent = JSON.stringify(category, null, 2);
+				document.getElementById('out-results').textContent = JSON.stringify(results, null, 2);
+			} catch(e) { console.error(e); }
+		}
+
+		document.addEventListener('DOMContentLoaded', () => {
+			refreshOutputs();
+			document.getElementById('btn-submit').addEventListener('click', () => {
+				const category = document.getElementById('sim-category').value;
+				const qid = Number(document.getElementById('sim-qid').value) || Math.floor(Math.random()*1000)+1;
+				const isCorrect = document.getElementById('sim-correct').value === 'true';
+				
+				// 카테고리별 실제 답안 형식 사용
+				let userAnswer, correctAnswer;
+				if (category === '재산보험' || category === '특종보험') {
+					// 진위형 문제가 많음
+					userAnswer = isCorrect ? 'O' : 'X';
+					correctAnswer = 'O';
+				} else {
+					// 선택형 문제가 많음
+					userAnswer = isCorrect ? '1' : '2';
+					correctAnswer = '1';
+				}
+				
+				if (window.CentralDataManager && typeof window.CentralDataManager.recordQuizResult === 'function') {
+					window.CentralDataManager.recordQuizResult(qid, category, isCorrect, userAnswer, correctAnswer);
+				}
+				setTimeout(refreshOutputs, 50);
+			});
+
+			document.getElementById('btn-clear').addEventListener('click', () => {
+				localStorage.removeItem('aicu_real_time_data');
+				localStorage.removeItem('aicu_quiz_results');
+				localStorage.removeItem('aicu_category_statistics');
+				if (window.CentralDataManager && typeof window.CentralDataManager.syncData === 'function') {
+					window.CentralDataManager.syncData();
+				}
+				setTimeout(refreshOutputs, 50);
+			});
+
+			document.addEventListener('dataUpdated', refreshOutputs);
+		});
+	</script>
+</body>
+</html>
+
+
+
+

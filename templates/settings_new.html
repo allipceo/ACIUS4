@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AICU S4 - 설정</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">⚙️ 설정</h1>
+            <p class="text-white/80">사용자 정보 및 데이터 관리</p>
+        </div>
+
+        <!-- 메인 설정 카드 -->
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-xl card-shadow p-8">
+                
+                <!-- 현재 사용자 정보 표시 -->
+                <div class="mb-8 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">👤 현재 사용자</h3>
+                    <div id="current-user-info" class="text-blue-700">
+                        로딩 중...
+                    </div>
+                </div>
+
+                <!-- 사용자 등록 폼 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">📝 사용자 등록</h3>
+                    
+                    <form id="user-registration-form" class="space-y-4">
+                        <div>
+                            <label for="user-name" class="block text-sm font-medium text-gray-700 mb-1">
+                                이름 *
+                            </label>
+                            <input type="text" 
+                                   id="user-name" 
+                                   name="name" 
+                                   required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   placeholder="예: 조은상">
+                        </div>
+                        
+                        <div>
+                            <label for="user-phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                전화번호
+                            </label>
+                            <input type="tel" 
+                                   id="user-phone" 
+                                   name="phone" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   placeholder="예: 010-1234-5678">
+                        </div>
+                        
+                        <div>
+                            <label for="exam-date" class="block text-sm font-medium text-gray-700 mb-1">
+                                시험일자
+                            </label>
+                            <input type="date" 
+                                   id="exam-date" 
+                                   name="exam_date" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                                ✅ 사용자 등록
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 데이터 관리 섹션 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">🗄️ 데이터 관리</h3>
+                    
+                    <div class="space-y-3">
+                        <button onclick="clearAllData()" 
+                                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🗑️ 모든 데이터 초기화
+                        </button>
+                        
+                        <button onclick="exportUserData()" 
+                                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            📤 사용자 데이터 내보내기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 개발자 도구 섹션 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">🔧 개발자 도구</h3>
+                    
+                    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-blue-800 text-sm">
+                            <strong>개발자 전용:</strong> 시스템 관리 및 디버깅을 위한 고급 도구입니다.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <a href="/developer-tools" 
+                           class="block w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center">
+                            🔧 개발자 도구 열기
+                        </a>
+                        
+                        <button onclick="openSystemDiagnostics()" 
+                                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🔍 시스템 진단
+                        </button>
+                        
+                        <button onclick="testDataIntegrity()" 
+                                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            ✅ 데이터 무결성 검사
+                        </button>
+                        
+                        <button onclick="clearSystemCache()" 
+                                class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🗑️ 시스템 캐시 정리
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 네비게이션 -->
+                <div class="border-t pt-6">
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="goToHome()" 
+                                class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🏠 홈으로 돌아가기
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 상태 메시지 -->
+        <div id="status-message" class="fixed top-4 right-4 max-w-sm bg-white rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300">
+            <div class="flex items-center">
+                <div id="status-icon" class="mr-3 text-xl">✅</div>
+                <div>
+                    <div id="status-title" class="font-semibold text-gray-800">성공</div>
+                    <div id="status-text" class="text-sm text-gray-600">작업이 완료되었습니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 현재 사용자 정보 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentUserInfo();
+        });
+
+        // 현재 사용자 정보 로드
+        function loadCurrentUserInfo() {
+            try {
+                const userData = localStorage.getItem('aicu_user_data');
+                const userInfoDiv = document.getElementById('current-user-info');
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    userInfoDiv.innerHTML = `
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div><strong>이름:</strong> ${user.name || '미등록'}</div>
+                            <div><strong>전화번호:</strong> ${user.phone || '미등록'}</div>
+                            <div><strong>시험일자:</strong> ${user.exam_date || '미등록'}</div>
+                            <div><strong>등록일:</strong> ${user.registration_date || '미등록'}</div>
+                        </div>
+                    `;
+                } else {
+                    userInfoDiv.innerHTML = '<div class="text-red-600">사용자 정보가 없습니다.</div>';
+                }
+            } catch (error) {
+                console.error('사용자 정보 로드 실패:', error);
+                document.getElementById('current-user-info').innerHTML = '<div class="text-red-600">사용자 정보 로드 실패</div>';
+            }
+        }
+
+        // 사용자 등록 폼 처리
+        document.getElementById('user-registration-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const userData = {
+                name: formData.get('name'),
+                phone: formData.get('phone') || '',
+                exam_date: formData.get('exam_date') || '',
+                registration_date: new Date().toISOString().split('T')[0],
+                exam_subject: 'AICU',
+                is_guest: false,
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                // 사용자 데이터 저장
+                localStorage.setItem('aicu_user_data', JSON.stringify(userData));
+                
+                // 통계 데이터 초기화 (등록일 기준)
+                initializeStatistics(userData);
+                
+                showStatusMessage('✅ 사용자 등록 완료', '사용자 정보가 성공적으로 저장되었습니다.', 'success');
+                
+                // 현재 사용자 정보 새로고침
+                setTimeout(() => {
+                    loadCurrentUserInfo();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('사용자 등록 실패:', error);
+                showStatusMessage('❌ 등록 실패', '사용자 등록 중 오류가 발생했습니다.', 'error');
+            }
+        });
+
+        // 통계 데이터 초기화
+        function initializeStatistics(userData) {
+            const today = new Date().toISOString().split('T')[0];
+            
+            const statistics = {
+                user_id: userData.name,
+                registration_date: userData.registration_date,
+                last_updated: today,
+                total_problems_solved: 0,
+                total_correct_answers: 0,
+                total_accuracy: 0,
+                daily_stats: {
+                    [today]: {
+                        problems_solved: 0,
+                        correct_answers: 0,
+                        accuracy: 0
+                    }
+                },
+                category_stats: {},
+                learning_log: []
+            };
+            
+            localStorage.setItem('aicu_statistics', JSON.stringify(statistics));
+            console.log('✅ 통계 데이터 초기화 완료:', statistics);
+        }
+
+                        // 모든 데이터 초기화 (등록 시점 포함)
+                function clearAllData() {
+                    if (confirm('⚠️ 정말로 모든 데이터를 초기화하시겠습니까?\n\n이 작업은 다음을 포함합니다:\n• 모든 학습 데이터\n• 모든 통계 데이터\n• 등록 시점 정보\n• 사용자 정보\n\n이 작업은 되돌릴 수 없습니다.')) {
+                        try {
+                            console.log('=== 완전한 데이터 초기화 시작 ===');
+                            
+                            // 등록 시점 관련 데이터 명시적 삭제
+                            localStorage.removeItem('aicu_registration_completed');
+                            localStorage.removeItem('aicu_registration_timestamp');
+                            localStorage.removeItem('aicu_user_data');
+                            localStorage.removeItem('aicu_statistics');
+                            localStorage.removeItem('aicu_real_time_data');
+                            localStorage.removeItem('aicu_quiz_results');
+                            localStorage.removeItem('aicu_category_statistics');
+                            
+                            // localStorage 완전 클리어
+                            localStorage.clear();
+                            
+                            // 게스트 모드 기본값 재적용 (새로운 등록 시점으로)
+                            setTimeout(() => {
+                                applyGuestModeDefaults();
+                            }, 100);
+                            
+                            showStatusMessage('🗑️ 데이터 초기화 완료', '모든 데이터와 등록 시점이 성공적으로 삭제되었습니다.', 'success');
+                            
+                            // 현재 사용자 정보 새로고침
+                            setTimeout(() => {
+                                loadCurrentUserInfo();
+                            }, 1000);
+                            
+                            console.log('✅ 완전한 데이터 초기화 완료 (등록 시점 포함)');
+                            
+                        } catch (error) {
+                            console.error('데이터 초기화 실패:', error);
+                            showStatusMessage('❌ 초기화 실패', '데이터 초기화 중 오류가 발생했습니다.', 'error');
+                        }
+                    }
+                }
+
+        // 게스트 모드 기본값 적용
+        function applyGuestModeDefaults() {
+            try {
+                console.log('=== 게스트 모드 기본값 적용 ===');
+                
+                const defaultUserData = {
+                    name: '게스트',
+                    registration_date: new Date().toISOString().split('T')[0],
+                    exam_subject: 'AICU',
+                    exam_date: '2025-09-13',
+                    phone: '010-1234-5678',
+                    is_guest: true,
+                    created_at: new Date().toISOString()
+                };
+                
+                const defaultStatistics = {
+                    user_id: '게스트',
+                    registration_date: defaultUserData.registration_date,
+                    last_updated: new Date().toISOString().split('T')[0],
+                    total_problems_solved: 0,
+                    total_correct_answers: 0,
+                    total_accuracy: 0,
+                    daily_stats: {},
+                    category_stats: {},
+                    learning_log: []
+                };
+                
+                // 예상점수 계산에 사용되는 실시간 데이터도 초기화
+                const defaultRealTimeData = {
+                    categories: {
+                        "06재산보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "07특종보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "08배상책임보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 },
+                        "09해상보험": { total: 0, correct: 0, incorrect: 0, accuracy: 0 }
+                    },
+                    last_updated: new Date().toISOString()
+                };
+                
+                // 학습 로그 초기화 (누락된 키)
+                const defaultLearningLog = {
+                    user_id: '게스트',
+                    registration_date: defaultUserData.registration_date,
+                    logs: [],
+                    last_updated: new Date().toISOString()
+                };
+                
+                // 기본값 저장
+                localStorage.setItem('aicu_user_data', JSON.stringify(defaultUserData));
+                localStorage.setItem('aicu_statistics', JSON.stringify(defaultStatistics));
+                localStorage.setItem('aicu_real_time_data', JSON.stringify(defaultRealTimeData));
+                localStorage.setItem('aicu_learning_log', JSON.stringify(defaultLearningLog));
+                
+                console.log('✅ 게스트 모드 기본값 적용 완료 (실시간 데이터 및 학습 로그 포함)');
+                
+            } catch (error) {
+                console.error('❌ 게스트 모드 기본값 적용 실패:', error);
+            }
+        }
+
+        // 사용자 데이터 내보내기
+        function exportUserData() {
+            try {
+                const userData = localStorage.getItem('aicu_user_data');
+                const statistics = localStorage.getItem('aicu_statistics');
+                
+                if (!userData) {
+                    showStatusMessage('❌ 내보내기 실패', '내보낼 사용자 데이터가 없습니다.', 'error');
+                    return;
+                }
+                
+                const exportData = {
+                    user_data: JSON.parse(userData),
+                    statistics: statistics ? JSON.parse(statistics) : null,
+                    export_date: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `aicu_user_data_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showStatusMessage('📤 내보내기 완료', '사용자 데이터가 성공적으로 내보내졌습니다.', 'success');
+                
+            } catch (error) {
+                console.error('데이터 내보내기 실패:', error);
+                showStatusMessage('❌ 내보내기 실패', '데이터 내보내기 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 홈으로 이동
+        function goToHome() {
+            try {
+                window.location.replace('/');
+            } catch (error) {
+                window.location.assign('/');
+            }
+        }
+
+        // 상태 메시지 표시
+        function showStatusMessage(title, text, type = 'success') {
+            const statusMessage = document.getElementById('status-message');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusText = document.getElementById('status-text');
+            
+            // 아이콘 설정
+            if (type === 'success') {
+                statusIcon.textContent = '✅';
+                statusMessage.className = 'fixed top-4 right-4 max-w-sm bg-green-50 border border-green-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300';
+            } else if (type === 'error') {
+                statusIcon.textContent = '❌';
+                statusMessage.className = 'fixed top-4 right-4 max-w-sm bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300';
+            } else {
+                statusIcon.textContent = 'ℹ️';
+                statusMessage.className = 'fixed top-4 right-4 max-w-sm bg-blue-50 border border-blue-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300';
+            }
+            
+            statusTitle.textContent = title;
+            statusText.textContent = text;
+            
+            // 메시지 표시
+            statusMessage.classList.remove('translate-x-full');
+            
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                statusMessage.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // === 개발자 도구 관련 함수들 ===
+
+        // 시스템 진단 실행
+        function openSystemDiagnostics() {
+            try {
+                console.log('=== 시스템 진단 시작 ===');
+                
+                const diagnostics = {
+                    timestamp: new Date().toISOString(),
+                    browser: navigator.userAgent,
+                    localStorage: {
+                        available: typeof(Storage) !== "undefined",
+                        used: 0,
+                        total: 0
+                    },
+                    userData: null,
+                    statistics: null,
+                    systemHealth: 'unknown'
+                };
+
+                // LocalStorage 사용량 계산
+                let usedSpace = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key) {
+                        usedSpace += localStorage.getItem(key).length;
+                    }
+                }
+                diagnostics.localStorage.used = usedSpace;
+                diagnostics.localStorage.total = 5 * 1024 * 1024; // 5MB (일반적인 제한)
+
+                // 사용자 데이터 확인
+                const userData = localStorage.getItem('aicu_user_data');
+                if (userData) {
+                    diagnostics.userData = JSON.parse(userData);
+                }
+
+                // 통계 데이터 확인
+                const statisticsData = localStorage.getItem('aicu_statistics');
+                if (statisticsData) {
+                    diagnostics.statistics = JSON.parse(statisticsData);
+                }
+
+                // 시스템 건강도 평가
+                if (diagnostics.userData && diagnostics.statistics) {
+                    diagnostics.systemHealth = 'healthy';
+                } else if (diagnostics.userData) {
+                    diagnostics.systemHealth = 'partial';
+                } else {
+                    diagnostics.systemHealth = 'unhealthy';
+                }
+
+                // 결과 표시
+                const resultText = `시스템 진단 결과:
+                
+📊 시스템 상태: ${diagnostics.systemHealth === 'healthy' ? '✅ 정상' : diagnostics.systemHealth === 'partial' ? '⚠️ 부분적' : '❌ 문제있음'}
+💾 LocalStorage 사용량: ${Math.round(usedSpace / 1024)}KB / ${Math.round(diagnostics.localStorage.total / 1024)}KB
+👤 사용자 데이터: ${diagnostics.userData ? '✅ 있음' : '❌ 없음'}
+📈 통계 데이터: ${diagnostics.statistics ? '✅ 있음' : '❌ 없음'}
+🌐 브라우저: ${navigator.userAgent.split(' ')[0]}`;
+
+                alert(resultText);
+                console.log('✅ 시스템 진단 완료:', diagnostics);
+
+            } catch (error) {
+                console.error('❌ 시스템 진단 실패:', error);
+                alert('시스템 진단 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 데이터 무결성 검사
+        function testDataIntegrity() {
+            try {
+                console.log('=== 데이터 무결성 검사 시작 ===');
+                
+                const results = {
+                    userData: { valid: false, errors: [] },
+                    statistics: { valid: false, errors: [] },
+                    overall: 'unknown'
+                };
+
+                // 사용자 데이터 검사
+                const userData = localStorage.getItem('aicu_user_data');
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        if (user.name && user.exam_date) {
+                            results.userData.valid = true;
+                        } else {
+                            results.userData.errors.push('필수 필드 누락');
+                        }
+                    } catch (e) {
+                        results.userData.errors.push('JSON 파싱 오류');
+                    }
+                } else {
+                    results.userData.errors.push('데이터 없음');
+                }
+
+                // 통계 데이터 검사
+                const statisticsData = localStorage.getItem('aicu_statistics');
+                if (statisticsData) {
+                    try {
+                        const stats = JSON.parse(statisticsData);
+                        if (stats.meta && stats.stats) {
+                            results.statistics.valid = true;
+                        } else {
+                            results.statistics.errors.push('필수 구조 누락');
+                        }
+                    } catch (e) {
+                        results.statistics.errors.push('JSON 파싱 오류');
+                    }
+                } else {
+                    results.statistics.errors.push('데이터 없음');
+                }
+
+                // 전체 결과 평가
+                if (results.userData.valid && results.statistics.valid) {
+                    results.overall = 'excellent';
+                } else if (results.userData.valid || results.statistics.valid) {
+                    results.overall = 'partial';
+                } else {
+                    results.overall = 'poor';
+                }
+
+                // 결과 표시
+                const resultText = `데이터 무결성 검사 결과:
+                
+📊 전체 상태: ${results.overall === 'excellent' ? '✅ 우수' : results.overall === 'partial' ? '⚠️ 부분적' : '❌ 문제있음'}
+👤 사용자 데이터: ${results.userData.valid ? '✅ 정상' : '❌ 오류: ' + results.userData.errors.join(', ')}
+📈 통계 데이터: ${results.statistics.valid ? '✅ 정상' : '❌ 오류: ' + results.statistics.errors.join(', ')}`;
+
+                alert(resultText);
+                console.log('✅ 데이터 무결성 검사 완료:', results);
+
+            } catch (error) {
+                console.error('❌ 데이터 무결성 검사 실패:', error);
+                alert('데이터 무결성 검사 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 시스템 캐시 정리
+        function clearSystemCache() {
+            if (confirm('시스템 캐시를 정리하시겠습니까?\n\n이 작업은 임시 데이터만 정리하며, 중요한 사용자 데이터는 보존됩니다.')) {
+                try {
+                    console.log('=== 시스템 캐시 정리 시작 ===');
+                    
+                    // 캐시 관련 키들 정리
+                    const cacheKeys = [
+                        'aicu_temp_data',
+                        'aicu_debug_info',
+                        'aicu_test_data',
+                        'aicu_cache'
+                    ];
+                    
+                    let clearedCount = 0;
+                    cacheKeys.forEach(key => {
+                        if (localStorage.getItem(key)) {
+                            localStorage.removeItem(key);
+                            clearedCount++;
+                        }
+                    });
+
+                    // 브라우저 캐시 정리 (가능한 경우)
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                if (name.includes('aicu')) {
+                                    caches.delete(name);
+                                }
+                            });
+                        });
+                    }
+
+                    alert(`시스템 캐시 정리가 완료되었습니다.\n\n정리된 항목: ${clearedCount}개`);
+                    console.log('✅ 시스템 캐시 정리 완료');
+
+                } catch (error) {
+                    console.error('❌ 시스템 캐시 정리 실패:', error);
+                    alert('시스템 캐시 정리 중 오류가 발생했습니다.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

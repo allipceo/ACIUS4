@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 디버그 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-red-600 mb-2">🔧 AICU S4 디버그 페이지</h1>
+            <p class="text-gray-600">LocalStorage 데이터 확인 및 문제 진단</p>
+        </header>
+
+        <!-- 디버그 정보 -->
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-semibold mb-6">📊 LocalStorage 데이터 현황</h2>
+            
+            <!-- 사용자 정보 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3 text-blue-600">👤 사용자 정보</h3>
+                <div id="user-info" class="bg-blue-50 p-4 rounded border border-blue-200">
+                    <p class="text-sm text-gray-600">로딩 중...</p>
+                </div>
+            </div>
+
+            <!-- D-day 정보 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3 text-green-600">📅 D-day 정보</h3>
+                <div id="dday-info" class="bg-green-50 p-4 rounded border border-green-200">
+                    <p class="text-sm text-gray-600">로딩 중...</p>
+                </div>
+            </div>
+
+            <!-- 학습 진행상황 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3 text-purple-600">📈 학습 진행상황</h3>
+                <div id="progress-info" class="bg-purple-50 p-4 rounded border border-purple-200">
+                    <p class="text-sm text-gray-600">로딩 중...</p>
+                </div>
+            </div>
+
+            <!-- 전체 LocalStorage -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3 text-orange-600">🗄️ 전체 LocalStorage</h3>
+                <div id="all-storage" class="bg-orange-50 p-4 rounded border border-orange-200">
+                    <p class="text-sm text-gray-600">로딩 중...</p>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="flex gap-4">
+                <button onclick="refreshData()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                    🔄 새로고침
+                </button>
+                <button onclick="clearAllData()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                    🗑️ 모든 데이터 삭제
+                </button>
+                <button onclick="goToHome()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                    🏠 홈으로
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 데이터 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 디버그 페이지 로드 ===');
+            displayAllData();
+        });
+
+        // 모든 데이터 표시
+        function displayAllData() {
+            displayUserInfo();
+            displayDdayInfo();
+            displayProgressInfo();
+            displayAllStorage();
+        }
+
+        // 사용자 정보 표시
+        function displayUserInfo() {
+            const userInfo = localStorage.getItem('aicu_user_info');
+            const container = document.getElementById('user-info');
+            
+            if (userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    container.innerHTML = `
+                        <div class="space-y-2">
+                            <p><strong>사용자 타입:</strong> ${user.user_type || 'N/A'}</p>
+                            <p><strong>이름:</strong> ${user.name || 'N/A'}</p>
+                            <p><strong>전화번호:</strong> ${user.phone || 'N/A'}</p>
+                            <p><strong>시험 과목:</strong> ${user.exam_subject || 'N/A'}</p>
+                            <p><strong>시험일:</strong> ${user.exam_date || 'N/A'}</p>
+                            <p><strong>등록일:</strong> ${user.registration_date || 'N/A'}</p>
+                            <p><strong>생성일시:</strong> ${user.created_at || 'N/A'}</p>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<p class="text-red-600">❌ JSON 파싱 오류: ${e.message}</p>`;
+                }
+            } else {
+                container.innerHTML = '<p class="text-red-600">❌ 사용자 정보가 없습니다.</p>';
+            }
+        }
+
+        // D-day 정보 표시
+        function displayDdayInfo() {
+            const examDate = localStorage.getItem('aicu_exam_date');
+            const container = document.getElementById('dday-info');
+            
+            if (examDate) {
+                const today = new Date();
+                const exam = new Date(examDate);
+                const diffTime = exam - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                container.innerHTML = `
+                    <div class="space-y-2">
+                        <p><strong>시험일:</strong> ${examDate}</p>
+                        <p><strong>오늘:</strong> ${today.toISOString().split('T')[0]}</p>
+                        <p><strong>D-day:</strong> <span class="font-bold text-red-600">${diffDays}일</span></p>
+                        <p><strong>상태:</strong> ${diffDays > 0 ? '시험 전' : diffDays === 0 ? '시험일' : '시험 후'}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '<p class="text-red-600">❌ 시험일 정보가 없습니다.</p>';
+            }
+        }
+
+        // 학습 진행상황 표시
+        function displayProgressInfo() {
+            const progress = localStorage.getItem('aicu_quiz_progress');
+            const container = document.getElementById('progress-info');
+            
+            if (progress) {
+                try {
+                    const data = JSON.parse(progress);
+                    container.innerHTML = `
+                        <div class="space-y-2">
+                            <p><strong>현재 문제:</strong> ${data.currentQuestionIndex || 0}</p>
+                            <p><strong>총 시도:</strong> ${data.totalAttempts || 0}</p>
+                            <p><strong>정답:</strong> ${data.correctAnswers || 0}</p>
+                            <p><strong>정답률:</strong> ${data.accuracy || 0}%</p>
+                            <p><strong>마지막 업데이트:</strong> ${data.lastUpdated || 'N/A'}</p>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<p class="text-red-600">❌ JSON 파싱 오류: ${e.message}</p>`;
+                }
+            } else {
+                container.innerHTML = '<p class="text-red-600">❌ 학습 진행상황이 없습니다.</p>';
+            }
+        }
+
+        // 전체 LocalStorage 표시
+        function displayAllStorage() {
+            const container = document.getElementById('all-storage');
+            let html = '<div class="space-y-2">';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                html += `
+                    <div class="border-b border-gray-200 pb-2">
+                        <p><strong>키:</strong> ${key}</p>
+                        <p><strong>값:</strong> <span class="text-xs bg-gray-100 p-1 rounded">${value}</span></p>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // 데이터 새로고침
+        function refreshData() {
+            console.log('🔄 데이터 새로고침');
+            displayAllData();
+        }
+
+        // 모든 데이터 삭제
+        function clearAllData() {
+            if (confirm('정말로 모든 데이터를 삭제하시겠습니까?')) {
+                localStorage.clear();
+                console.log('🗑️ 모든 데이터 삭제 완료');
+                displayAllData();
+            }
+        }
+
+        // 홈으로 이동
+        function goToHome() {
+            // 현재 창에서 홈으로 이동 (새 창 열림 방지)
+            window.location.replace('/home');
+        }
+    </script>
+</body>
+</html>

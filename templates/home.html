@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACIU S4 - 대문</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/dday_counter.css">
+    <link rel="stylesheet" href="/static/css/predicted_scores.css">
+    <link rel="stylesheet" href="/static/css/incorrect_analysis.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -19,8 +22,19 @@
             
             <!-- 중앙: 제목 -->
             <div class="text-center">
-                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎓 AICU Season 4</h1>
-                <p class="text-gray-600">보험중개사 시험 준비 플랫폼</p>
+                        <h1 class="text-4xl font-bold text-gray-800 mb-2">🎓 AICU Season 4</h1>
+        <p class="text-gray-600">보험중개사 시험 준비 플랫폼</p>
+        
+        <!-- D-day 카운터 영역 -->
+        <div class="dday-container text-center mb-6">
+            <h3 class="text-lg font-semibold mb-2">📅 시험까지 남은 시간</h3>
+            <div id="dday-counter" class="dday-display"></div>
+        </div>
+        
+        <!-- 사용자 정보 표시 영역 -->  
+        <div id="user-exam-info" class="user-info-container">
+            <!-- D-day 카운터가 여기에 표시됨 -->
+        </div>
             </div>
             
             <!-- 우측: 빈 공간 (균형을 위해) -->
@@ -121,24 +135,20 @@
                     </a>
                 </div>
             </div>
-        </div>
 
-        <!-- 개발자 도구 섹션 -->
-        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">🔧 개발자 도구</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onclick="testStatisticsSystem()" 
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
-                    🚀 통계 시스템 테스트
-                </button>
-                <button onclick="debugSession()" 
-                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
-                    🔍 세션 디버그
-                </button>
-                <button onclick="testAdvancedStatistics()" 
-                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
-                    📊 고도화된 통계 테스트
-                </button>
+
+        </div>
+                          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      🔍 최종 통합 테스트
+                  </button>
+                  <button onclick="testDocumentation()" 
+                          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      📚 문서화 테스트
+                  </button>
+                  <button onclick="testDataMigration()" 
+                          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                      🔄 데이터 마이그레이션 테스트
+                  </button>
             </div>
         </div>
     </div>
@@ -152,25 +162,43 @@
         });
 
         // 사용자 정보 로드 및 표시
-        function loadUserInfo() {
+        // 등록 상태 확인 및 홈페이지 접근 제어
+        function checkRegistrationStatus() {
             try {
+                console.log('=== 등록 상태 확인 시작 ===');
+                
                 const userData = localStorage.getItem('aicu_user_data');
                 
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    displayUserInfo(user);
-                    console.log('✅ 사용자 정보 로드 완료:', user);
-                } else {
-                    console.log('❌ 사용자 정보 없음');
-                    // 사용자 정보가 없으면 등록 페이지로 이동
-                    window.location.href = '/register';
+                console.log('📋 등록 상태 확인:');
+                console.log('  - 사용자 데이터:', userData ? '있음' : '없음');
+                
+                // 사용자 데이터가 없으면 등록 페이지로 이동
+                if (!userData) {
+                    console.log('❌ 사용자 데이터 없음 - 등록 페이지로 이동');
+                    window.location.replace('/register');
+                    return false;
                 }
                 
+                const user = JSON.parse(userData);
+                
+                console.log('✅ 등록 상태 확인 완료:');
+                console.log('  - 사용자:', user.name);
+                console.log('  - 등록 타입:', user.type || 'unknown');
+                console.log('  - 등록 시점:', user.created_at || user.registration_date);
+                
+                displayUserInfo(user);
+                return true;
+                
             } catch (error) {
-                console.error('❌ 사용자 정보 로드 실패:', error);
-                // 에러 발생 시 등록 페이지로 이동
-                window.location.href = '/register';
+                console.error('❌ 등록 상태 확인 실패:', error);
+                window.location.replace('/register');
+                return false;
             }
+        }
+
+        // 사용자 정보 로드 (기존 함수명 유지)
+        function loadUserInfo() {
+            return checkRegistrationStatus();
         }
 
         // 사용자 정보 표시
@@ -295,63 +323,20 @@
                 accuracy_rate: stats.accuracy_rate || 0,
                 today_stats: stats.daily_progress?.[new Date().toISOString().split('T')[0]] || { attempted: 0, correct: 0, accuracy: 0 }
             });
-        }
 
-        // 개발자 도구 함수들
-        function testStatisticsSystem() {
-            console.log('=== 통계 시스템 테스트 시작 ===');
-            const userData = localStorage.getItem('aicu_user_data');
-            const statsData = localStorage.getItem('aicu_statistics');
-            
-            console.log('사용자 데이터:', userData ? JSON.parse(userData) : '없음');
-            console.log('통계 데이터:', statsData ? JSON.parse(statsData) : '없음');
-            
-            alert('통계 시스템 테스트가 콘솔에 출력되었습니다. (F12로 확인)');
-        }
+                                  
+                                          }
 
-        function debugSession() {
-            console.log('=== 세션 디버그 시작 ===');
-            console.log('LocalStorage 전체 내용:');
-            
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const value = localStorage.getItem(key);
-                console.log(`${key}:`, value);
-            }
-            
-            alert('세션 디버그 정보가 콘솔에 출력되었습니다. (F12로 확인)');
-        }
+    </script>
 
-        function testAdvancedStatistics() {
-            console.log('=== 고도화된 통계 테스트 시작 ===');
-            
-            // 테스트 데이터 생성
-            const testStats = {
-                totalQuestions: 789,
-                solvedQuestions: 150,
-                correctAnswers: 120,
-                totalAttempts: 200,
-                todayAttempts: 25,
-                todayCorrect: 20,
-                categories: {
-                    '보험법': { solved: 50, correct: 40 },
-                    '보험상품': { solved: 30, correct: 25 },
-                    '보험영업': { solved: 40, correct: 35 },
-                    '보험계리': { solved: 30, correct: 20 }
-                },
-                lastUpdated: new Date().toISOString()
-            };
-            
-            // LocalStorage에 테스트 데이터 저장
-            localStorage.setItem('aicu_statistics', JSON.stringify(testStats));
-            
-            // 화면 새로고침
-            location.reload();
-            
-            alert('고도화된 통계 테스트 데이터가 생성되었습니다.');
-        }
+
 
 
     </script>
+    
+    <!-- 필수 스크립트 -->
+    <script src="/static/js/guest_mode_defaults.js"></script>
+    <script src="/static/js/dday_counter.js"></script>
+    <script src="/static/js/central_data_manager.js"></script>
 </body>
 </html>

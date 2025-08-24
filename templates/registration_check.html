@@ -35,19 +35,19 @@
                     console.log('✅ 기존 사용자 정보 발견:', user);
                     
                     // 등록된 사용자는 대문으로 이동
-                    window.location.href = '/home';
+                    window.location.replace('/home');
                 } else {
                     console.log('❌ 등록된 사용자 정보 없음');
                     
                     // 등록되지 않은 사용자는 등록 페이지로 이동
-                    window.location.href = '/register';
+                    window.location.replace('/register');
                 }
                 
             } catch (error) {
                 console.error('❌ 등록 상태 확인 실패:', error);
                 
                 // 에러 발생 시 등록 페이지로 이동
-                window.location.href = '/register';
+                window.location.replace('/register');
             }
         }
     </script>

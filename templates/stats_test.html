@@ -351,7 +351,8 @@
         }
 
         function goHome() {
-            window.location.href = '/home';
+            // 현재 창에서 홈으로 이동 (새 창 열림 방지)
+            window.location.replace('/home');
         }
 
         // 페이지 로드 시 초기화

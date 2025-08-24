@@ -1,0 +1,128 @@
+/* 예상 점수 및 합격 확률 스타일 */
+/* 파일: static/css/predicted_scores.css */
+
+/* 예상 점수 카드 스타일 */
+.score-card {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.score-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.score-card.border-green-500 {
+    background: linear-gradient(135deg, #f0fff4, #dcfce7);
+    border-color: #10b981;
+}
+
+.score-card.border-red-500 {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #ef4444;
+}
+
+/* 합격 확률 카드 스타일 */
+.probability-card {
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.probability-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 위험도별 스타일 */
+.risk-high {
+    background: linear-gradient(135deg, #f0fff4, #dcfce7);
+    border-color: #10b981;
+    color: #065f46;
+}
+
+.risk-medium {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-color: #f59e0b;
+    color: #92400e;
+}
+
+.risk-low {
+    background: linear-gradient(135deg, #fff7ed, #fed7aa);
+    border-color: #f97316;
+    color: #c2410c;
+}
+
+.risk-critical {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #ef4444;
+    color: #991b1b;
+}
+
+/* 전체 상태 스타일 */
+.overall-status {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-pass {
+    background: linear-gradient(135deg, #f0fff4, #dcfce7);
+    border-color: #10b981;
+    color: #065f46;
+}
+
+.status-fail {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #ef4444;
+    color: #991b1b;
+}
+
+/* 애니메이션 효과 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.probability-card .text-4xl {
+    animation: pulse 2s infinite;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .score-card {
+        margin-bottom: 1rem;
+    }
+    
+    .probability-card {
+        margin: 1rem 0;
+    }
+}
+
+/* 점수 표시 강조 */
+.score-card .text-3xl {
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 합격 확률 강조 */
+.probability-card .text-4xl {
+    background: linear-gradient(45deg, #10b981, #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 호버 효과 개선 */
+.score-card:hover .text-3xl {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.probability-card:hover .text-4xl {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}

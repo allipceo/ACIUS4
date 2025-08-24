@@ -1,0 +1,82 @@
+/* D-day 카운터 스타일 */
+/* 파일: static/css/dday_counter.css */
+
+.dday-container {
+    margin: 1rem 0;
+}
+
+.dday-display {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    min-width: 120px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* D-day 상태별 스타일 */
+.dday-before {
+    background-color: #fef3c7;
+    color: #d97706;
+    border: 2px solid #f59e0b;
+}
+
+.dday-today {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 2px solid #ef4444;
+    animation: pulse 2s infinite;
+}
+
+.dday-after {
+    background-color: #d1fae5;
+    color: #059669;
+    border: 2px solid #10b981;
+}
+
+/* 사용자 정보 스타일 */
+.user-info-container {
+    margin-top: 1rem;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.user-info span {
+    padding: 0.25rem 0.5rem;
+    background-color: #f3f4f6;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* 펄스 애니메이션 (D-day 당일) */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .dday-display {
+        font-size: 1.5rem;
+        min-width: 100px;
+    }
+    
+    .user-info {
+        font-size: 0.75rem;
+    }
+}

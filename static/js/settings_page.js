@@ -143,7 +143,11 @@ async function registerRealUser() {
                 
                 // 3초 후 대문으로 이동
                 setTimeout(() => {
-                    window.location.href = '/home';
+                    try {
+                        window.location.replace('/');
+                    } catch (error) {
+                        window.location.assign('/');
+                    }
                 }, 3000);
             } else {
                 throw new Error(result.message || '사용자 등록 실패');
@@ -176,7 +180,11 @@ async function registerRealUser() {
             
             // 3초 후 대문으로 이동
             setTimeout(() => {
-                window.location.href = '/home';
+                try {
+                    window.location.replace('/');
+                } catch (error) {
+                    window.location.assign('/');
+                }
             }, 3000);
         }
         

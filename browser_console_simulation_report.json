@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-08-20T13:36:36.312638",
+  "test_summary": {
+    "total_tests": 6,
+    "passed": 1,
+    "failed": 5,
+    "errors": [
+      "HTML 구조 검증 실패",
+      "JavaScript 초기화 검증 실패",
+      "loadQuestions 함수 검증 실패",
+      "displayQuestion 함수 검증 실패",
+      "중앙 데이터 통합 검증 실패"
+    ]
+  },
+  "detailed_results": [
+    {
+      "test": "기본학습 HTML 구조",
+      "status": "FAIL",
+      "timestamp": "2025-08-20T13:36:35.706619",
+      "details": null,
+      "error": "HTML 구조 검증 실패"
+    },
+    {
+      "test": "JavaScript 초기화",
+      "status": "FAIL",
+      "timestamp": "2025-08-20T13:36:35.722388",
+      "details": null,
+      "error": "JavaScript 초기화 검증 실패"
+    },
+    {
+      "test": "loadQuestions 함수",
+      "status": "FAIL",
+      "timestamp": "2025-08-20T13:36:35.756761",
+      "details": null,
+      "error": "loadQuestions 함수 검증 실패"
+    },
+    {
+      "test": "displayQuestion 함수",
+      "status": "FAIL",
+      "timestamp": "2025-08-20T13:36:35.797509",
+      "details": null,
+      "error": "displayQuestion 함수 검증 실패"
+    },
+    {
+      "test": "오류 처리",
+      "status": "PASS",
+      "timestamp": "2025-08-20T13:36:35.973425",
+      "details": {
+        "checks_passed": 5,
+        "total_checks": 5
+      }
+    },
+    {
+      "test": "중앙 데이터 통합",
+      "status": "FAIL",
+      "timestamp": "2025-08-20T13:36:36.067497",
+      "details": null,
+      "error": "중앙 데이터 통합 검증 실패"
+    }
+  ]
+}

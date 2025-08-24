@@ -1,0 +1,249 @@
+/* 오답 분석 및 개인 맞춤 인사이트 스타일 */
+/* 파일: static/css/incorrect_analysis.css */
+
+/* 오답 분석 요약 카드 */
+.incorrect-summary {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.incorrect-summary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 위험도별 색상 강조 */
+.incorrect-summary .text-red-600 {
+    background: linear-gradient(45deg, #dc2626, #b91c1c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.incorrect-summary .text-orange-600 {
+    background: linear-gradient(45deg, #ea580c, #c2410c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 위험도별 문제 목록 */
+.critical-questions {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.critical-questions:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 위험도별 텍스트 색상 */
+.text-red-600 {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.text-orange-600 {
+    color: #ea580c;
+    font-weight: 600;
+}
+
+.text-yellow-600 {
+    color: #ca8a04;
+    font-weight: 600;
+}
+
+.text-green-600 {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* 과목별 분석 카드 */
+.subject-analysis {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.subject-analysis:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 인사이트 카드 */
+.insights {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.insights:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 인사이트 타입별 스타일 */
+.border-red-500 {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+}
+
+.border-orange-500 {
+    border-color: #f97316;
+    background: linear-gradient(135deg, #fff7ed, #fed7aa);
+}
+
+.border-yellow-500 {
+    border-color: #eab308;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+}
+
+.border-blue-500 {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+/* 권장사항 카드 */
+.recommendations {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recommendations:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 애니메이션 효과 */
+@keyframes pulse-warning {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.incorrect-summary .text-red-600 {
+    animation: pulse-warning 2s infinite;
+}
+
+/* 호버 효과 */
+.incorrect-summary .text-2xl:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .incorrect-summary .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .critical-questions .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .subject-analysis .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 문제 카드 스타일 */
+.bg-gray-50 {
+    transition: all 0.2s ease;
+}
+
+.bg-gray-50:hover {
+    background-color: #f9fafb;
+    transform: scale(1.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 우선순위 표시 */
+.priority-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.priority-1 {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.priority-2 {
+    background-color: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+/* 학습 방법 개선 표시 */
+.study-method-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #dbeafe;
+}
+
+/* 통계 숫자 강조 */
+.stat-number {
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* 경고 아이콘 */
+.warning-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #dc2626;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+/* 성공 아이콘 */
+.success-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #16a34a;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+/* 정보 아이콘 */
+.info-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+
+
+
+
+
+

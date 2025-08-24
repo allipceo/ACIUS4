@@ -1,0 +1,53 @@
+{
+  "verification_start": "2025-08-22T06:56:43.310261",
+  "localStorage_keys": {
+    "aicu_user_data": {
+      "exists": true,
+      "status": "✅ 존재"
+    },
+    "aicu_statistics": {
+      "exists": true,
+      "status": "✅ 존재"
+    },
+    "aicu_real_time_data": {
+      "exists": true,
+      "status": "✅ 존재"
+    },
+    "aicu_learning_log": {
+      "exists": false,
+      "status": "❌ 없음"
+    },
+    "aicu_registration_completed": {
+      "exists": true,
+      "status": "✅ 존재"
+    },
+    "aicu_registration_timestamp": {
+      "exists": true,
+      "status": "✅ 존재"
+    }
+  },
+  "data_consistency": {
+    "json_format": {
+      "valid": false,
+      "status": "❌ JSON 형식 미사용"
+    },
+    "cross_page": {
+      "consistent": false,
+      "status": "❌ 페이지 간 불일치"
+    }
+  },
+  "errors": [
+    "localStorage 키 없음: aicu_learning_log",
+    "JSON 형식 사용 미확인",
+    "키 aicu_user_data의 페이지별 사용 불일치",
+    "키 aicu_statistics의 페이지별 사용 불일치",
+    "키 aicu_real_time_data의 페이지별 사용 불일치",
+    "키 aicu_learning_log의 페이지별 사용 불일치",
+    "키 aicu_registration_completed의 페이지별 사용 불일치",
+    "키 aicu_registration_timestamp의 페이지별 사용 불일치"
+  ],
+  "success_count": 5,
+  "total_count": 8,
+  "verification_end": "2025-08-22T06:56:56.786266",
+  "total_duration": 13.476005
+}

@@ -498,3 +498,10 @@ window.basicStatisticsSystem = new BasicStatisticsSystem();
 console.log('✅ 기본 통계 시스템 로드 완료');
 
 
+
+
+
+
+
+
+

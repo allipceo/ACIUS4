@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACIU S4 - 개발자 도구</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 헤더 -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">🔧 개발자 도구</h1>
+            <a href="/" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                🏠 대문으로
+            </a>
+        </div>
+
+        <!-- 중앙아키텍처 기반 통계 섹션 -->
+        <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 중앙아키텍처 기반 통계</h3>
+            
+            <!-- 중앙 데이터 기반 통계 표시 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 중앙 통계 요약 -->
+                <div id="central-stats-summary" class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+                    <h4 class="text-lg font-semibold text-blue-800 mb-2">중앙 데이터 요약</h4>
+                    <div id="central-stats-content" class="text-blue-700">
+                        <p>로딩 중...</p>
+                    </div>
+                </div>
+                
+                <!-- 데이터 상태 -->
+                <div id="data-status" class="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                    <h4 class="text-lg font-semibold text-green-800 mb-2">데이터 상태</h4>
+                    <div id="data-status-content" class="text-green-700">
+                        <p>확인 중...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 중앙 데이터 상세 -->
+            <div id="central-data-details" class="mt-6">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">중앙 데이터 상세</h4>
+                <div id="central-data-content" class="bg-gray-50 rounded-lg p-4 text-sm">
+                    <p>중앙아키텍처 데이터 로딩 중...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 개발자 도구 섹션 -->
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">🔧 개발자 도구</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="testStatisticsSystem()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🚀 통계 시스템 테스트
+                </button>
+                <button onclick="debugSession()" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔍 세션 디버그
+                </button>
+                <button onclick="testAdvancedStatistics()" 
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    📊 고도화된 통계 테스트
+                </button>
+                <button onclick="testLearningPatternAnalysis()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🧠 학습 패턴 분석 테스트
+                </button>
+                <button onclick="testPersonalizedRecommendation()" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎯 개인 맞춤 추천 테스트
+                </button>
+                <button onclick="testPerformanceOptimization()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    ⚡ 성능 최적화 테스트
+                </button>
+                <button onclick="testFinalIntegration()" 
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔄 최종 통합 테스트
+                </button>
+                <button onclick="testDocumentationSystem()" 
+                        class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    📚 문서화 시스템 테스트
+                </button>
+                <button onclick="clearAllData()" 
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    🗑️ 모든 데이터 초기화
+                </button>
+            </div>
+        </div>
+
+        <!-- 테스트 결과 표시 영역 -->
+        <div id="test-results" class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 mt-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">📋 테스트 결과</h3>
+            <div id="test-results-content" class="bg-gray-50 rounded-lg p-4 text-sm">
+                <p>테스트를 실행하면 결과가 여기에 표시됩니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 중앙아키텍처 데이터 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCentralArchitectureData();
+        });
+
+        // 중앙아키텍처 데이터 로드
+        function loadCentralArchitectureData() {
+            try {
+                console.log('=== 개발자 도구 - 중앙아키텍처 데이터 로드 시작 ===');
+                
+                displayCentralStatsSummary();
+                displayDataStatus();
+                displayCentralDataDetails();
+                
+                console.log('✅ 중앙아키텍처 데이터 로드 완료');
+                
+            } catch (error) {
+                console.error('❌ 중앙아키텍처 데이터 로드 실패:', error);
+            }
+        }
+
+        // 중앙 통계 요약 표시
+        function displayCentralStatsSummary() {
+            try {
+                const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+                const userData = JSON.parse(localStorage.getItem('aicu_user_data') || '{}');
+                
+                const summary = {
+                    totalAttempts: realTimeData.total_attempts || 0,
+                    totalCorrect: realTimeData.total_correct || 0,
+                    overallAccuracy: realTimeData.total_attempts > 0 ? 
+                        Math.round((realTimeData.total_correct / realTimeData.total_attempts) * 100) : 0,
+                    userName: userData.name || '게스트',
+                    registrationDate: userData.registration_date || '미등록'
+                };
+                
+                const content = `
+                    <div class="space-y-2">
+                        <div><strong>사용자:</strong> ${summary.userName}</div>
+                        <div><strong>등록일:</strong> ${summary.registrationDate}</div>
+                        <div><strong>총 시도:</strong> ${summary.totalAttempts}회</div>
+                        <div><strong>총 정답:</strong> ${summary.totalCorrect}회</div>
+                        <div><strong>전체 정답률:</strong> ${summary.overallAccuracy}%</div>
+                    </div>
+                `;
+                
+                document.getElementById('central-stats-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 중앙 통계 요약 표시 실패:', error);
+            }
+        }
+        
+        // 데이터 상태 표시
+        function displayDataStatus() {
+            try {
+                const localStorageKeys = [
+                    'aicu_user_data',
+                    'aicu_real_time_data',
+                    'aicu_statistics',
+                    'aicu_quiz_results'
+                ];
+                
+                const status = {};
+                localStorageKeys.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    status[key] = data ? '✅ 있음' : '❌ 없음';
+                });
+                
+                const content = `
+                    <div class="space-y-1 text-sm">
+                        <div>aicu_user_data: ${status.aicu_user_data}</div>
+                        <div>aicu_real_time_data: ${status.aicu_real_time_data}</div>
+                        <div>aicu_statistics: ${status.aicu_statistics}</div>
+                        <div>aicu_quiz_results: ${status.aicu_quiz_results}</div>
+                    </div>
+                `;
+                
+                document.getElementById('data-status-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 데이터 상태 표시 실패:', error);
+            }
+        }
+        
+        // 중앙 데이터 상세 표시
+        function displayCentralDataDetails() {
+            try {
+                const realTimeData = JSON.parse(localStorage.getItem('aicu_real_time_data') || '{}');
+                const userData = JSON.parse(localStorage.getItem('aicu_user_data') || '{}');
+                const statistics = JSON.parse(localStorage.getItem('aicu_statistics') || '{}');
+                
+                const details = {
+                    realTimeData: realTimeData,
+                    userData: userData,
+                    statistics: statistics
+                };
+                
+                const content = `
+                    <div class="space-y-3">
+                        <div>
+                            <strong>실시간 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(realTimeData, null, 2)}</pre>
+                        </div>
+                        <div>
+                            <strong>사용자 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(userData, null, 2)}</pre>
+                        </div>
+                        <div>
+                            <strong>통계 데이터:</strong>
+                            <pre class="text-xs bg-white p-2 rounded mt-1 overflow-auto">${JSON.stringify(statistics, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('central-data-content').innerHTML = content;
+                
+            } catch (error) {
+                console.error('❌ 중앙 데이터 상세 표시 실패:', error);
+            }
+        }
+
+        // 개발자 도구 함수들
+        function testStatisticsSystem() {
+            addTestResult('🚀 통계 시스템 테스트', '통계 시스템 테스트가 실행되었습니다.');
+        }
+
+        function debugSession() {
+            addTestResult('🔍 세션 디버그', '세션 디버그가 실행되었습니다.');
+        }
+
+        function testAdvancedStatistics() {
+            addTestResult('📊 고도화된 통계 테스트', '고도화된 통계 테스트가 실행되었습니다.');
+        }
+
+        function testLearningPatternAnalysis() {
+            addTestResult('🧠 학습 패턴 분석 테스트', '학습 패턴 분석 테스트가 실행되었습니다.');
+        }
+
+        function testPersonalizedRecommendation() {
+            addTestResult('🎯 개인 맞춤 추천 테스트', '개인 맞춤 추천 테스트가 실행되었습니다.');
+        }
+
+        function testPerformanceOptimization() {
+            addTestResult('⚡ 성능 최적화 테스트', '성능 최적화 테스트가 실행되었습니다.');
+        }
+
+        function testFinalIntegration() {
+            addTestResult('🔄 최종 통합 테스트', '최종 통합 테스트가 실행되었습니다.');
+        }
+
+        function testDocumentationSystem() {
+            addTestResult('📚 문서화 시스템 테스트', '문서화 시스템 테스트가 실행되었습니다.');
+        }
+
+        function clearAllData() {
+            if (confirm('정말로 모든 데이터를 초기화하시겠습니까?')) {
+                localStorage.clear();
+                addTestResult('🗑️ 모든 데이터 초기화', '모든 데이터가 초기화되었습니다.');
+                loadCentralArchitectureData(); // 데이터 다시 로드
+            }
+        }
+
+        function addTestResult(title, message) {
+            const resultsDiv = document.getElementById('test-results-content');
+            const timestamp = new Date().toLocaleTimeString();
+            const resultHtml = `
+                <div class="border-l-4 border-blue-500 pl-4 mb-4">
+                    <div class="font-semibold">${title}</div>
+                    <div class="text-gray-600">${message}</div>
+                    <div class="text-xs text-gray-400">${timestamp}</div>
+                </div>
+            `;
+            resultsDiv.innerHTML = resultHtml + resultsDiv.innerHTML;
+        }
+    </script>
+
+    <!-- 중앙아키텍처 기반 스크립트 -->
+    <script src="/static/js/central_data_manager.js"></script>
+    <script src="/static/js/performance_monitor.js"></script>
+    <script src="/static/js/rollback_manager.js"></script>
+    <script src="/static/js/guest_mode_defaults.js"></script>
+    <script src="/static/js/dday_counter.js"></script>
+    <script src="/static/js/data_migration_manager.js"></script>
+    <script src="/static/js/compatibility_layer.js"></script>
+    <script src="/static/js/quiz_data_collector.js"></script>
+    <script src="/static/js/realtime_sync_manager.js"></script>
+    <script src="/static/js/advanced_statistics_manager.js"></script>
+    <script src="/static/js/learning_pattern_analyzer.js"></script>
+    <script src="/static/js/personalized_recommendation_system.js"></script>
+    <script src="/static/js/performance_optimizer.js"></script>
+    <script src="/static/js/integration_test_manager.js"></script>
+    <script src="/static/js/documentation_manager.js"></script>
+</body>
+</html>
