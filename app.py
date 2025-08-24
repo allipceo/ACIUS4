@@ -5,14 +5,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# 기존 블루프린트 등록 제거 (새 설정 페이지 사용)
-# from routes.settings_routes import settings_bp
-# app.register_blueprint(settings_bp)
-
-# 문제 데이터 로드
+# 문제 데이터 로드 - static 폴더에서 로드
 def load_questions():
     try:
-        with open('questions.json', 'r', encoding='utf-8') as f:
+        with open('static/questions.json', 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         return {"questions": []}
@@ -155,7 +151,7 @@ def api_register():
         user_data = {
             'name': name,
             'exam_date': exam_date,
-            'registration_date': datetime.now().toISOString(),
+            'registration_date': datetime.now().isoformat(),
             'type': 'registered'
         }
         
@@ -209,18 +205,16 @@ def api_statistics():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("🚀 AICU S4 v4.12 - 문서화 및 배포 준비 완료")
+    print("🚀 AICU S4 v4.12 - Heroku 배포 준비 완료")
     print("📍 URL: http://localhost:5000")
-    print("📋 v4.12 문서화 및 배포 준비:")
-    print("   ✅ DocumentationManager 클래스 구축 완료")
-    print("   ✅ 사용자 매뉴얼 생성 완료")
-    print("   ✅ 개발자 문서 생성 완료")
-    print("   ✅ API 문서 생성 완료")
-    print("   ✅ 시스템 아키텍처 문서 생성 완료")
-    print("   ✅ 설치 가이드 생성 완료")
-    print("   ✅ 문서화 테스트 기능 완료")
-    print("   ✅ 홈페이지 통합 완료")
-    print("   ✅ 116번 문서 과업15 완료")
+    print("📋 배포 준비 사항:")
+    print("   ✅ requirements.txt 생성 완료")
+    print("   ✅ Procfile 생성 완료")
+    print("   ✅ app.py 생성 완료")
+    print("   ✅ static 폴더 경로 수정 완료")
+    print("   ✅ Heroku 배포 준비 완료")
     print("=" * 60)
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Heroku 환경에서는 포트를 환경변수에서 가져옴
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
