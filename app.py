@@ -5,6 +5,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# 기존 블루프린트 등록 제거 (새 설정 페이지 사용)
+# from routes.settings_routes import settings_bp
+# app.register_blueprint(settings_bp)
+
 # 문제 데이터 로드
 def load_questions():
     try:
@@ -37,13 +41,13 @@ def home():
 
 @app.route('/register')
 def register():
-    return render_template('register.html')
+    return render_template('user_registration.html')
 
-@app.route('/basic_learning')
+@app.route('/basic-learning')
 def basic_learning():
     return render_template('basic_learning.html')
 
-@app.route('/large_category_learning')
+@app.route('/large-category-learning')
 def large_category_learning():
     return render_template('large_category_learning_v3.7.html')
 
@@ -54,6 +58,89 @@ def statistics():
 @app.route('/debug')
 def debug():
     return render_template('debug.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings_new.html')
+
+# 누락된 엔드포인트들 추가
+@app.route('/user-registration')
+def user_registration():
+    return render_template('user_registration.html')
+
+@app.route('/stats-test')
+def stats_test():
+    return render_template('stats_test.html')
+
+@app.route('/registration-check')
+def registration_check():
+    return render_template('registration_check.html')
+
+@app.route('/developer-tools')
+def developer_tools():
+    return render_template('developer_tools.html')
+
+@app.route('/api/register/guest', methods=['POST'])
+def api_register_guest():
+    try:
+        data = request.get_json()
+        name = data.get('name', '')
+        exam_date = data.get('exam_date', '')
+        
+        if not name or not exam_date:
+            return jsonify({'success': False, 'message': '이름과 시험일을 입력해주세요.'})
+        
+        user_data = {
+            'name': name,
+            'exam_date': exam_date,
+            'registration_date': datetime.now().isoformat(),
+            'type': 'guest',
+            'created_at': datetime.now().isoformat()
+        }
+        
+        if save_user_data(user_data):
+            return jsonify({
+                'success': True, 
+                'message': '게스트 등록이 완료되었습니다.',
+                'user_data': user_data
+            })
+        else:
+            return jsonify({'success': False, 'message': '등록 중 오류가 발생했습니다.'})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'서버 오류: {str(e)}'})
+
+@app.route('/api/register/user', methods=['POST'])
+def api_register_user():
+    try:
+        data = request.get_json()
+        name = data.get('name', '')
+        phone = data.get('phone', '')
+        exam_date = data.get('exam_date', '')
+        
+        if not name or not phone or not exam_date:
+            return jsonify({'success': False, 'message': '이름, 전화번호, 시험일을 모두 입력해주세요.'})
+        
+        user_data = {
+            'name': name,
+            'phone': phone,
+            'exam_date': exam_date,
+            'registration_date': datetime.now().isoformat(),
+            'type': 'registered',
+            'created_at': datetime.now().isoformat()
+        }
+        
+        if save_user_data(user_data):
+            return jsonify({
+                'success': True, 
+                'message': '사용자 등록이 완료되었습니다.',
+                'user_data': user_data
+            })
+        else:
+            return jsonify({'success': False, 'message': '등록 중 오류가 발생했습니다.'})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'서버 오류: {str(e)}'})
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
@@ -68,7 +155,7 @@ def api_register():
         user_data = {
             'name': name,
             'exam_date': exam_date,
-            'registration_date': datetime.now().isoformat(),
+            'registration_date': datetime.now().toISOString(),
             'type': 'registered'
         }
         
@@ -122,23 +209,18 @@ def api_statistics():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("🚀 AICU S4 v4.10 - 성능 최적화 및 안정성 강화 완료")
+    print("🚀 AICU S4 v4.12 - 문서화 및 배포 준비 완료")
     print("📍 URL: http://localhost:5000")
-    print("📋 v4.10 성능 최적화 및 안정성 강화:")
-    print("   ✅ PerformanceOptimizer 클래스 구축 완료")
-    print("   ✅ 메모리 사용량 최적화 완료")
-    print("   ✅ 이벤트 리스너 최적화 완료")
-    print("   ✅ 데이터 구조 최적화 완료")
-    print("   ✅ 캐싱 시스템 구축 완료")
-    print("   ✅ 지연 로딩 시스템 구축 완료")
-    print("   ✅ 에러 처리 강화 완료")
-    print("   ✅ 복구 메커니즘 구축 완료")
-    print("   ✅ 성능 모니터링 시스템 구축 완료")
-    print("   ✅ 자동 정리 시스템 구축 완료")
-    print("   ✅ 메모리 누수 방지 시스템 구축 완료")
-    print("   ✅ 성능 최적화 테스트 기능 완료")
+    print("📋 v4.12 문서화 및 배포 준비:")
+    print("   ✅ DocumentationManager 클래스 구축 완료")
+    print("   ✅ 사용자 매뉴얼 생성 완료")
+    print("   ✅ 개발자 문서 생성 완료")
+    print("   ✅ API 문서 생성 완료")
+    print("   ✅ 시스템 아키텍처 문서 생성 완료")
+    print("   ✅ 설치 가이드 생성 완료")
+    print("   ✅ 문서화 테스트 기능 완료")
     print("   ✅ 홈페이지 통합 완료")
-    print("   ✅ 116번 문서 과업12 완료")
+    print("   ✅ 116번 문서 과업15 완료")
     print("=" * 60)
     
     app.run(debug=True, host='0.0.0.0', port=5000)
