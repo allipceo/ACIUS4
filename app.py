@@ -203,18 +203,7 @@ def api_statistics():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Heroku 배포용 설정
 if __name__ == '__main__':
-    print("=" * 60)
-    print("🚀 AICU S4 v4.12 - Heroku 배포 준비 완료")
-    print("📍 URL: http://localhost:5000")
-    print("📋 배포 준비 사항:")
-    print("   ✅ requirements.txt 생성 완료")
-    print("   ✅ Procfile 생성 완료")
-    print("   ✅ app.py 생성 완료")
-    print("   ✅ static 폴더 경로 수정 완료")
-    print("   ✅ Heroku 배포 준비 완료")
-    print("=" * 60)
-    
-    # Heroku 환경에서는 포트를 환경변수에서 가져옴
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
